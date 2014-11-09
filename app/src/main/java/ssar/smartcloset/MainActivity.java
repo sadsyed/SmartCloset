@@ -15,9 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ssar.smartcloset.util.SmartClosetConstants;
+
 
 public class MainActivity extends Activity {
-    private static final String TAG = "SmartCloset";
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -51,7 +52,7 @@ public class MainActivity extends Activity {
     }
 
     private void enableForegroundMode() {
-        Log.d(TAG, CLASSNAME + ": enableForegroundMode...");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": enableForegroundMode...");
 
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
@@ -60,26 +61,26 @@ public class MainActivity extends Activity {
     }
 
     private void disableForegroundMode() {
-        Log.d(TAG, "disableForegroundMode...");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "disableForegroundMode...");
         nfcAdapter.disableForegroundDispatch(this);
     }
 
     /* OnNewIntent read the tag */
     @Override
     public void onNewIntent(Intent intent) {
-        Log.d(TAG, CLASSNAME + ": onNewIntent...");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNewIntent...");
         setIntent(intent);
         readTag(intent);
     }
 
     private void handleIntent(Intent intent) {
-        Log.d(TAG, CLASSNAME + ": handling event...");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": handling event...");
         setIntent(intent);
         readTag(intent);
     }
 
     private void readTag(Intent intent) {
-        Log.d(TAG, CLASSNAME + ": readTag...");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": readTag...");
         String action = intent.getAction();
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
@@ -111,14 +112,14 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d(TAG, CLASSNAME + ": onPause.... ");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onPause.... ");
         super.onPause();
         disableForegroundMode();
     }
 
     @Override
     protected void onResume() {
-        Log.d(TAG, CLASSNAME + ": on Resume.... ");
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": on Resume.... ");
         super.onResume();
         enableForegroundMode();
     }

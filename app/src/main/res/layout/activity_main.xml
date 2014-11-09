@@ -28,8 +28,8 @@
         android:text="@string/appTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/testUploadButton"
         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tagDataEditText"
         android:id="@+id/statusTextView" />
 
     <Button
@@ -37,7 +37,10 @@
         android:layout_height="wrap_content"
         android:text="Test Upload"
         android:id="@+id/testUploadButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:onClick="testUpload"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/statusTextView"/>
+
+
 
 </RelativeLayout>

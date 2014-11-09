@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -141,5 +142,12 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void testUpload(View view) {
+        Intent intent = new Intent(this, TestUploadActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.viewStreamsButton);
+        intent.putExtra("message", "Test Upload Activity Test");
+        startActivity(intent);
     }
 }

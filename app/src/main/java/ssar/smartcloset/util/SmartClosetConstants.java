@@ -5,4 +5,5 @@ package ssar.smartcloset.util;
  */
 public class SmartClosetConstants {
     public static final String SMARTCLOSET_DEBUG_TAG = "SMARTCLOSET_DEBUG_TAG";
+    public static final String[] ARTICLE_TYPES = {"Shirt","Pants","Skirt","Coat","Sweater","Dress","Hat","Scarf","Gloves","Shorts","Shoes"};
 }

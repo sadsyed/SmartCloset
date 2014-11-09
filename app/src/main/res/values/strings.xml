@@ -6,5 +6,21 @@
     <string name="action_settings">Settings</string>
     <string name="appTitle">Smart Closet Inventory</string>
     <string name="title_activity_test_upload">TestUploadActivity</string>
+    <string name="article_type_prompt">Choose an article type</string>
+
+    <string-array name="article_type_array">
+        <item>Select and article type...</item>
+        <item>Coat</item>
+        <item>Dress</item>
+        <item>Gloves</item>
+        <item>Hat</item>
+        <item>Pants</item>
+        <item>Scarf</item>
+        <item>Shirt</item>
+        <item>Shoes</item>
+        <item>Shorts</item>
+        <item>Skirt</item>
+        <item>Sweater</item>
+    </string-array>
 
 </resources>

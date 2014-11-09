@@ -8,9 +8,95 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ssar.smartcloset.TestUploadActivity">
 
-    <TextView
-        android:text="@string/hello_world"
+    <EditText
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/articleIdEditText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article ID."/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleNameEditText"
+        android:layout_below="@+id/articleIdEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article name."/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleDescriptionEditText"
+        android:layout_below="@+id/articleNameEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article description."/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleTagsEditText"
+        android:layout_below="@+id/articleDescriptionEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article tags."/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articlePriceEditText"
+        android:layout_below="@+id/articleTagsEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article price."/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleOwnerEditText"
+        android:layout_below="@+id/articlePriceEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Enter article owner."/>
+
+    <Spinner
+        android:id="@+id/articleTypeSelector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/articleOwnerEditText"
+        android:entries="@array/article_type_array"
+        android:prompt="@string/article_type_prompt" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This item OK to sell."
+        android:id="@+id/articleOkToSellCheckbox"
+        android:layout_below="@+id/articleTypeSelector"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Article"
+        android:id="@+id/createArticleButton"
+        android:layout_below="@+id/articleOkToSellCheckbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select File For Upload"
+        android:id="@+id/selectFileButton"
+        android:layout_below="@+id/createArticleButton"
+        android:onClick="selectFile"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

@@ -9,7 +9,7 @@
     <string name="article_type_prompt">Choose an article type</string>
 
     <string-array name="article_type_array">
-        <item>Select and article type...</item>
+        <item>Select an article type...</item>
         <item>Coat</item>
         <item>Dress</item>
         <item>Gloves</item>

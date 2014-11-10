@@ -1,6 +1,9 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,21 +14,17 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MenuFragment.OnViewsSelectedListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
 
-    //private TextView statusTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, ((Object) this).getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         if (nfcAdapter == null) {
             ToastMessage.displayShortToastMessage(this,  "NFC is not supported on this device.");
@@ -48,6 +47,20 @@ public class MainActivity extends Activity {
         }
 
         handleIntent(getIntent());
+
+        if (findViewById(R.id.main_fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+        }
+
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
+
+        if (menuFragment == null) {
+            menuFragment = new MenuFragment();
+            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
+        }
     }
 
     private void enableForegroundMode() {
@@ -141,5 +154,21 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onViewSelected(int position) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Item Selected.");
+
+        ViewFragment viewFragment = new ViewFragment();
+        Bundle args = new Bundle();
+        args.putInt(ViewFragment.ARG_POSITION, position);
+        viewFragment.setArguments(args);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_fragment_container, viewFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
 }

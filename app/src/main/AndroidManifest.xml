@@ -3,6 +3,9 @@
     package="ssar.smartcloset" >
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.nfc"
@@ -43,6 +46,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ssar.smartcloset.MainActivity" />
         </activity>
+
+        <service
+            android:name=".SmartClosetIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

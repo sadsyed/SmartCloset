@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ssar.smartcloset.util.SmartClosetConstants;
+import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity {
@@ -24,28 +25,26 @@ public class MainActivity extends Activity {
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
 
-    private TextView statusTextView;
+    //private TextView statusTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        statusTextView = (TextView) findViewById(R.id.statusTextView);
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         if (nfcAdapter == null) {
-            Toast.makeText(this, "NFC is not supported on this device.", Toast.LENGTH_LONG).show();
+            ToastMessage.displayShortToastMessage(this,  "NFC is not supported on this device.");
             finish();
             return;
         }
 
         if (!nfcAdapter.isEnabled()) {
-            statusTextView.setText("NFC is disabled.");
+            ToastMessage.displayShortToastMessage(this,  "NFC is disabled.");
         } else {
-            statusTextView.setText("NFC is enabled.");
+            ToastMessage.displayShortToastMessage(this,  "NFC is enabled.");
         }
 
         handleIntent(getIntent());
@@ -104,9 +103,10 @@ public class MainActivity extends Activity {
             StringBuilder tagDataBuilder = new StringBuilder();
             tagDataBuilder.append("Tag Data: ").append(body);
 
-            EditText tagDataEditText = (EditText) findViewById(R.id.tagDataEditText);
+            ToastMessage.displayLongToastMessage(this, tagDataBuilder.toString());
+            //EditText tagDataEditText = (EditText) findViewById(R.id.tagDataEditText);
             //tagDataEditText.setText("test string");
-            tagDataEditText.setText(tagDataBuilder.toString());
+            //tagDataEditText.setText(tagDataBuilder.toString());
         }
     }
 

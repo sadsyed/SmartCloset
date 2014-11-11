@@ -76,7 +76,6 @@ public class MainActivity extends Activity implements
     private void enableForegroundMode() {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": enableForegroundMode...");
 
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         IntentFilter[] filters = new IntentFilter[] { tagDetected };
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, null);
@@ -166,31 +165,15 @@ public class MainActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void onCategorySelected(int position) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Item Selected.");
-
-        ViewFragment viewFragment = new ViewFragment();
-        Bundle args = new Bundle();
-        args.putInt(ViewFragment.ARG_POSITION, position);
-        viewFragment.setArguments(args);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.main_fragment_container, viewFragment);
-        transaction.addToBackStack(null);
-
-        transaction.commit();
-    }
-
     public void onFragmentRouterInteraction(View view) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Tag Button CLicked.");
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view + " was clicked.");
-        ToastMessage.displayShortToastMessage(this, "Wheeeee...");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view.getId() + " was clicked.");
+        //ToastMessage.displayShortToastMessage(this, "Wheeeee...");
 
         switch (view.getId()) {
             case R.id.closetButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Closet Fragment..... ");
-                //display Closet Frgament
+                //display Closet Fragment
                 ClosetFragment closetFragment = new ClosetFragment();
                 updateFragment(closetFragment);
                 break;
@@ -202,7 +185,7 @@ public class MainActivity extends Activity implements
                 break;
             case R.id.newTagButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
-                //display New Tag Fragement
+                //display New Tag Fragment
                 CategoryFragment categoryFragment = new CategoryFragment();
                 updateFragment(categoryFragment);
                 break;
@@ -215,6 +198,22 @@ public class MainActivity extends Activity implements
 
     public void onSearchFragmentInteraction(Uri uri) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onSearchFragmentInteraction......");
+    }
+
+    public void onCategorySelected(int position) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onCategorySelected.......");
+
+        ViewFragment viewFragment = new ViewFragment();
+        Bundle args = new Bundle();
+        args.putInt(ViewFragment.ARG_POSITION, position);
+        viewFragment.setArguments(args);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_fragment_container, viewFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
 
     private void updateFragment(Fragment fragment) {

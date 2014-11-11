@@ -25,7 +25,7 @@ import ssar.smartcloset.types.MainMenu;
  */
 public class CategoryFragment extends Fragment implements AbsListView.OnItemClickListener {
 
-    // TODO: Rename parameter arguments, choose names that match
+/*    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -33,7 +33,7 @@ public class CategoryFragment extends Fragment implements AbsListView.OnItemClic
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+*/
     private OnCategorySelectedListener categorySelectedListener;
 
     /**
@@ -47,7 +47,7 @@ public class CategoryFragment extends Fragment implements AbsListView.OnItemClic
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
+/*    // TODO: Rename and change types of parameters
     public static CategoryFragment newInstance(String param1, String param2) {
         CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
@@ -68,11 +68,11 @@ public class CategoryFragment extends Fragment implements AbsListView.OnItemClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+/*        if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+*/
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, MainMenu.ViewTitles);
@@ -153,5 +153,4 @@ public class CategoryFragment extends Fragment implements AbsListView.OnItemClic
         // TODO: Update argument type and name
         public void onCategorySelected(int id);
     }
-
 }

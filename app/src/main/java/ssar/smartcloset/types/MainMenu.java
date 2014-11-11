@@ -8,9 +8,9 @@ package ssar.smartcloset.types;
  */
 public class MainMenu {
     public static String[] ViewTitles = {
-            "Closet View",
-            "Search View",
-            "Tag View"
+            "Category 1",
+            "Category 2",
+            "Category 3"
     };
 }
 

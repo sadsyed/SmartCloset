@@ -22,9 +22,10 @@ import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
-        MenuFragment.OnViewsSelectedListener,
+        CategoryFragment.OnCategorySelectedListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
-        ClosetFragment.OnClosetFragmentInteractionListener {
+        ClosetFragment.OnClosetFragmentInteractionListener,
+        SearchFragment.OnSearchFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -165,7 +166,7 @@ public class MainActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void onViewSelected(int position) {
+    public void onCategorySelected(int position) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Item Selected.");
 
         ViewFragment viewFragment = new ViewFragment();
@@ -196,16 +197,24 @@ public class MainActivity extends Activity implements
             case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Search Fragment..... ");
                 //display Search Fragment
+                SearchFragment searchFragment = new SearchFragment();
+                updateFragment(searchFragment);
                 break;
             case R.id.newTagButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
                 //display New Tag Fragement
+                CategoryFragment categoryFragment = new CategoryFragment();
+                updateFragment(categoryFragment);
                 break;
         }
     }
 
-    public void OnClosetFragmentInteraction(Uri uri) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "OnClosetFragmentListener......");
+    public void onClosetFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onClosetFragmentListener......");
+    }
+
+    public void onSearchFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onSearchFragmentInteraction......");
     }
 
     private void updateFragment(Fragment fragment) {

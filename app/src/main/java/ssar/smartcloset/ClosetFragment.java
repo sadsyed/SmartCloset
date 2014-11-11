@@ -29,7 +29,7 @@ public class ClosetFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnClosetFragmentInteractionListener mListener;
+    private OnClosetFragmentInteractionListener onClosetFragmentInteractionListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -70,8 +70,8 @@ public class ClosetFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.OnClosetFragmentInteraction(uri);
+        if (onClosetFragmentInteractionListener != null) {
+            onClosetFragmentInteractionListener.onClosetFragmentInteraction(uri);
         }
     }
 
@@ -79,7 +79,7 @@ public class ClosetFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnClosetFragmentInteractionListener) activity;
+            onClosetFragmentInteractionListener = (OnClosetFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -89,7 +89,7 @@ public class ClosetFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        onClosetFragmentInteractionListener = null;
     }
 
     /**
@@ -104,7 +104,7 @@ public class ClosetFragment extends Fragment {
      */
     public interface OnClosetFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void OnClosetFragmentInteraction(Uri uri);
+        public void onClosetFragmentInteraction(Uri uri);
     }
 
 }

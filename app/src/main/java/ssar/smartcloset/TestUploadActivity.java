@@ -1,10 +1,12 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import ssar.smartcloset.CustomOnItemSelectedListener;
@@ -28,9 +31,13 @@ public class TestUploadActivity extends Activity {
 
     private Spinner articleTypeSelector;
     private Button createArticleButton;
+    public TestUploadRequestReceiver createArticleRequestReceiver;
     public TestUploadRequestReceiver testUploadRequestReceiver;
     private static final String CLASSNAME = TestUploadActivity.class.getSimpleName();
     IntentFilter filter;
+    Uri selectedimg;
+    String imagePath;
+    String currentUuid="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,60 @@ public class TestUploadActivity extends Activity {
         setContentView(R.layout.activity_test_upload);
         addListenerOnButton();
         addListenerOnSpinnerItemSelection();
+    }
+
+    public void updateArticleId(View view) {
+        EditText articleIdEditText = (EditText) findViewById(R.id.articleId);
+        articleIdEditText.setText(currentUuid);
+    }
+
+    @Override
+    public void onDestroy() {
+        if(testUploadRequestReceiver != null) {
+            try {
+                this.unregisterReceiver(testUploadRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
+        if(createArticleRequestReceiver != null) {
+            try {
+                this.unregisterReceiver(createArticleRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        if(testUploadRequestReceiver != null) {
+            try {
+                this.unregisterReceiver(testUploadRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
+        if(createArticleRequestReceiver != null) {
+            try {
+                this.unregisterReceiver(createArticleRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        if(testUploadRequestReceiver != null) {
+            this.registerReceiver(testUploadRequestReceiver, filter);
+        }
+        if(createArticleRequestReceiver != null) {
+            this.registerReceiver(createArticleRequestReceiver, filter);
+        }
+        super.onResume();
     }
 
     public void addListenerOnSpinnerItemSelection() {
@@ -56,11 +117,6 @@ public class TestUploadActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                /*Toast.makeText(TestUploadActivity.this,
-                        "OnClickListener : " +
-                                "\nSpinner 1 : " + String.valueOf(articleTypeSelector.getSelectedItem()),
-                        Toast.LENGTH_SHORT).show();*/
-                EditText articleIdEditText = (EditText) findViewById(R.id.articleIdEditText);
                 EditText articleNameEditText = (EditText) findViewById(R.id.articleNameEditText);
                 EditText articleDescriptionEditText = (EditText) findViewById(R.id.articleDescriptionEditText);
                 EditText articleTagsEditText = (EditText) findViewById(R.id.articleTagsEditText);
@@ -69,13 +125,12 @@ public class TestUploadActivity extends Activity {
                 CheckBox articleOkToSellCheckbox = (CheckBox) findViewById(R.id.articleOkToSellCheckbox);
                 filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
                 filter.addCategory(Intent.CATEGORY_DEFAULT);
-                testUploadRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
-                registerReceiver(testUploadRequestReceiver, filter);
+                createArticleRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
+                registerReceiver(createArticleRequestReceiver, filter);
 
                 //set the JSON request object
                 JSONObject requestJSON = new JSONObject();
                 try {
-                    requestJSON.put("articleId", articleIdEditText.getText().toString());
                     requestJSON.put("articleName", articleNameEditText.getText().toString());
                     requestJSON.put("articleDescription", articleDescriptionEditText.getText().toString());
                     requestJSON.put("articleType", String.valueOf(articleTypeSelector.getSelectedItem()));
@@ -116,6 +171,40 @@ public class TestUploadActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(resultCode==RESULT_CANCELED)
+        {
+            // action cancelled
+        }
+        if(resultCode==RESULT_OK) {
+            selectedimg = data.getData();
+            imagePath = SmartClosetFileService.getRealPathFromURI(selectedimg, this);
+            Log.i(CLASSNAME, "Selected img path is: " + imagePath);
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            testUploadRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
+            registerReceiver(testUploadRequestReceiver, filter);
+
+            Intent msgIntent = new Intent(TestUploadActivity.this, SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
+            EditText articleIdEditText = (EditText) findViewById(R.id.articleId);
+            currentUuid = articleIdEditText.getText().toString();
+            msgIntent.putExtra("articleId", currentUuid);
+            msgIntent.putExtra("ImagePath", imagePath);
+            startService(msgIntent);
+        }
+    }
+
+    public void chooseImageFile(View view) {
+        //Select file
+        Intent intentChooser = new Intent();
+        intentChooser.setType("image/*");
+        intentChooser.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentChooser, "Choose Picture"), 1);
+    }
+
     public void testUpload(View view) {
         Intent intent = new Intent(this, TestUploadActivity.class);
         intent.putExtra("message", "Test Upload Activity Test");
@@ -132,8 +221,34 @@ public class TestUploadActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(testUploadRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(testUploadRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+                }
+            }
+            if(createArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(createArticleRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+                }
+            }
             String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
             Log.i(CLASSNAME, "Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    currentUuid = (String) json.get("returnval");
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("returnval");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(CLASSNAME, "Exception creating json object: " + e.getMessage());
+            }
         }
     }
 }

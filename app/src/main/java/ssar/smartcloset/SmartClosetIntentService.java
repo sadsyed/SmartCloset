@@ -75,9 +75,7 @@ private static final String CLASSNAME = SmartClosetIntentService.class.getSimple
                 case SmartClosetConstants.UPLOAD_ARTICLE_IMAGE:
                     post.addHeader("Accept", "application/json");
                     post.addHeader("Content-type", "multipart/form-data");
-                    post.addHeader("Streamname", intent.getStringExtra("Streamname"));
-                    post.addHeader("DroidLatitude", intent.getStringExtra("latitude"));
-                    post.addHeader("DroidLongitude", intent.getStringExtra("longitude"));
+                    post.addHeader("articleId", intent.getStringExtra("articleId"));
                     MultipartEntityBuilder builder = MultipartEntityBuilder.create();
                     builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                     String imagePath = intent.getStringExtra("ImagePath");

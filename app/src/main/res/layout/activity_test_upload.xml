@@ -11,15 +11,6 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/articleIdEditText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="Enter article ID."/>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/articleNameEditText"
         android:layout_below="@+id/articleIdEditText"
         android:layout_alignParentLeft="true"
@@ -88,13 +79,32 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleId"
+        android:layout_below="@+id/createArticleButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="No current article."/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update article Id"
+        android:id="@+id/updateArticleIdButton"
+        android:layout_below="@+id/articleId"
+        android:onClick="updateArticleId"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select File For Upload"
         android:id="@+id/selectFileButton"
-        android:layout_below="@+id/createArticleButton"
-        android:onClick="selectFile"
+        android:layout_below="@+id/updateArticleIdButton"
+        android:onClick="chooseImageFile"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

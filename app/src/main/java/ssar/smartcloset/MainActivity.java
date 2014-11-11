@@ -17,16 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.net.URI;
-
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
         MenuFragment.OnViewsSelectedListener,
-        NewTagFragment.OnNewTagClickedListener,
-        ClosetFragment.OnClosetFragmentListener {
+        FragmentRouter.OnFragmentRouterInteractionListener,
+        ClosetFragment.OnClosetFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -38,6 +36,26 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initializeNfcAdapter();
+        handleNfcIntent(getIntent());
+
+        if (findViewById(R.id.main_fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+        }
+
+        //display FragmentRouter
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
+
+        if (menuFragment == null) {
+            menuFragment = new FragmentRouter();
+            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
+        }
+    }
+
+    private void initializeNfcAdapter() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, ((Object) this).getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
@@ -51,23 +69,6 @@ public class MainActivity extends Activity implements
             ToastMessage.displayShortToastMessage(this,  "NFC is disabled.");
         } else {
             ToastMessage.displayShortToastMessage(this,  "NFC is enabled.");
-        }
-
-        handleIntent(getIntent());
-
-        if (findViewById(R.id.main_fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-        }
-
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
-
-        if (menuFragment == null) {
-            //menuFragment = new MenuFragment();
-            menuFragment = new NewTagFragment();
-            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
         }
     }
 
@@ -93,7 +94,7 @@ public class MainActivity extends Activity implements
         readTag(intent);
     }
 
-    private void handleIntent(Intent intent) {
+    private void handleNfcIntent(Intent intent) {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": handling event...");
         setIntent(intent);
         readTag(intent);
@@ -180,7 +181,7 @@ public class MainActivity extends Activity implements
         transaction.commit();
     }
 
-    public void onNewTagClickedListener(View view) {
+    public void onFragmentRouterInteraction(View view) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Tag Button CLicked.");
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view + " was clicked.");
         ToastMessage.displayShortToastMessage(this, "Wheeeee...");
@@ -203,7 +204,7 @@ public class MainActivity extends Activity implements
         }
     }
 
-    public void OnClosetFragmentListener(Uri uri) {
+    public void OnClosetFragmentInteraction(Uri uri) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "OnClosetFragmentListener......");
     }
 

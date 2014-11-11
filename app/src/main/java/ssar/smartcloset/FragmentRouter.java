@@ -1,25 +1,23 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
+import android.widget.Button;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment with a Google +1 button.
  * Activities that contain this fragment must implement the
- * {@link ssar.smartcloset.ClosetFragment.OnClosetFragmentInteractionListener} interface
+ * {@link ssar.smartcloset.FragmentRouter.OnFragmentRouterInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ClosetFragment#newInstance} factory method to
+ * Use the {@link FragmentRouter#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class ClosetFragment extends Fragment {
+public class FragmentRouter extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +27,17 @@ public class ClosetFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnClosetFragmentInteractionListener mListener;
+    // The URL to +1.  Must be a valid URL.
+    private final String PLUS_ONE_URL = "http://developer.android.com";
+
+    // The request code must be 0 or greater.
+    private static final int PLUS_ONE_REQUEST_CODE = 0;
+
+    private Button closetButton;
+    private Button searchButton;
+    private Button newTagButton;
+
+    private OnFragmentRouterInteractionListener fragmentRouterInteractionListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -37,18 +45,18 @@ public class ClosetFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ClosetFragment.
+     * @return A new instance of fragment NewTagFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ClosetFragment newInstance(String param1, String param2) {
-        ClosetFragment fragment = new ClosetFragment();
+    public static FragmentRouter newInstance(String param1, String param2) {
+        FragmentRouter fragment = new FragmentRouter();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public ClosetFragment() {
+    public FragmentRouter() {
         // Required empty public constructor
     }
 
@@ -65,13 +73,31 @@ public class ClosetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_closet, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_tag, container, false);
+
+        closetButton = (Button) view.findViewById(R.id.closetButton);
+        searchButton = (Button) view.findViewById(R.id.searchButton);
+        newTagButton = (Button) view.findViewById(R.id.newTagButton);
+
+        closetButton.setOnClickListener(this);
+        searchButton.setOnClickListener(this);
+        newTagButton.setOnClickListener(this);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Refresh the state of the +1 button each time the activity receives focus.
+        //newTagButton.initialize(PLUS_ONE_URL, PLUS_ONE_REQUEST_CODE);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.OnClosetFragmentInteraction(uri);
+    public void onButtonPressed(View view) {
+        if (fragmentRouterInteractionListener != null) {
+            fragmentRouterInteractionListener.onFragmentRouterInteraction(view);
         }
     }
 
@@ -79,7 +105,7 @@ public class ClosetFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnClosetFragmentInteractionListener) activity;
+            fragmentRouterInteractionListener = (OnFragmentRouterInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -89,7 +115,12 @@ public class ClosetFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        fragmentRouterInteractionListener = null;
+    }
+
+    @Override
+    public void onClick (View view) {
+        fragmentRouterInteractionListener.onFragmentRouterInteraction(view);
     }
 
     /**
@@ -102,9 +133,9 @@ public class ClosetFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnClosetFragmentInteractionListener {
+    public interface OnFragmentRouterInteractionListener {
         // TODO: Update argument type and name
-        public void OnClosetFragmentInteraction(Uri uri);
+        public void onFragmentRouterInteraction(View view);
     }
 
 }

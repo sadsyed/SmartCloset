@@ -7,21 +7,19 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 
-import com.google.android.gms.plus.PlusOneButton;
 
 /**
- * A fragment with a Google +1 button.
+ * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ssar.smartcloset.NewTagFragment.OnNewTagClickedListener} interface
+ * {@link SearchFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewTagFragment#newInstance} factory method to
+ * Use the {@link SearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class NewTagFragment extends Fragment implements View.OnClickListener{
+public class SearchFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,18 +29,7 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
     private String mParam1;
     private String mParam2;
 
-    // The URL to +1.  Must be a valid URL.
-    private final String PLUS_ONE_URL = "http://developer.android.com";
-
-    // The request code must be 0 or greater.
-    private static final int PLUS_ONE_REQUEST_CODE = 0;
-
-    private Button closetButton;
-    private Button searchButton;
-    private Button newTagButton;
-    //private PlusOneButton newTagButton;
-
-    private OnNewTagClickedListener newTagClickedListener;
+    private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -50,18 +37,18 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NewTagFragment.
+     * @return A new instance of fragment SearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewTagFragment newInstance(String param1, String param2) {
-        NewTagFragment fragment = new NewTagFragment();
+    public static SearchFragment newInstance(String param1, String param2) {
+        SearchFragment fragment = new SearchFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public NewTagFragment() {
+    public SearchFragment() {
         // Required empty public constructor
     }
 
@@ -78,32 +65,13 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_new_tag, container, false);
-
-        //Find the +1 button
-        closetButton = (Button) view.findViewById(R.id.closetButton);
-        searchButton = (Button) view.findViewById(R.id.searchButton);
-        newTagButton = (Button) view.findViewById(R.id.newTagButton);
-
-        closetButton.setOnClickListener(this);
-        searchButton.setOnClickListener(this);
-        newTagButton.setOnClickListener(this);
-
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Refresh the state of the +1 button each time the activity receives focus.
-        //newTagButton.initialize(PLUS_ONE_URL, PLUS_ONE_REQUEST_CODE);
+        return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(View view) {
-        if (newTagClickedListener != null) {
-            newTagClickedListener.onNewTagClickedListener(view);
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
         }
     }
 
@@ -111,7 +79,7 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            newTagClickedListener = (OnNewTagClickedListener) activity;
+            mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -121,12 +89,7 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onDetach() {
         super.onDetach();
-        newTagClickedListener = null;
-    }
-
-    @Override
-    public void onClick (View view) {
-        newTagClickedListener.onNewTagClickedListener(view);
+        mListener = null;
     }
 
     /**
@@ -139,9 +102,9 @@ public class NewTagFragment extends Fragment implements View.OnClickListener{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnNewTagClickedListener {
+    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onNewTagClickedListener(View view);
+        public void onFragmentInteraction(Uri uri);
     }
 
 }

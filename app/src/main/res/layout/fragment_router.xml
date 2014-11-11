@@ -7,7 +7,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
+        android:text="@string/search_button_label"
         android:id="@+id/searchButton"
         android:layout_gravity="center"
         android:layout_centerVertical="true"
@@ -16,7 +16,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Closet"
+        android:text="@string/closet_button_label"
         android:id="@+id/closetButton"
         android:layout_above="@+id/searchButton"
         android:layout_centerHorizontal="true"/>
@@ -24,7 +24,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Tag"
+        android:text="@string/newtag_button_label"
         android:id="@+id/newTagButton"
         android:layout_below="@+id/searchButton"
         android:layout_centerHorizontal="true"/>

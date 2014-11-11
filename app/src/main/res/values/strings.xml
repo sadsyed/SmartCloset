@@ -6,5 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="appTitle">Smart Closet Inventory</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="close_fragment_title">Closet Fragment</string>
+    <string name="search_button_label">Search</string>
+    <string name="closet_button_label">Closet</string>
+    <string name="newtag_button_label">New Tag</string>
+    <string name="search_fragment_title">Search Fragment</string>
 
 </resources>

@@ -24,7 +24,7 @@ import ssar.smartcloset.util.ToastMessage;
 public class MainActivity extends Activity implements
         CategoryFragment.OnCategorySelectedListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
-        ClosetFragment.OnClosetFragmentInteractionListener,
+        NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
@@ -174,8 +174,8 @@ public class MainActivity extends Activity implements
             case R.id.closetButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Closet Fragment..... ");
                 //display Closet Fragment
-                ClosetFragment closetFragment = new ClosetFragment();
-                updateFragment(closetFragment);
+                CategoryFragment categoryFragment = new CategoryFragment();
+                updateFragment(categoryFragment);
                 break;
             case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Search Fragment..... ");
@@ -186,13 +186,13 @@ public class MainActivity extends Activity implements
             case R.id.newTagButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
                 //display New Tag Fragment
-                CategoryFragment categoryFragment = new CategoryFragment();
-                updateFragment(categoryFragment);
+                NewTagFragment newTagFragment = new NewTagFragment();
+                updateFragment(newTagFragment);
                 break;
         }
     }
 
-    public void onClosetFragmentInteraction(Uri uri) {
+    public void onNewTagFragmentInteraction(Uri uri) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onClosetFragmentListener......");
     }
 

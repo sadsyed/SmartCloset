@@ -13,13 +13,13 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ssar.smartcloset.ClosetFragment.OnClosetFragmentInteractionListener} interface
+ * {@link ssar.smartcloset.NewTagFragment.OnNewTagFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ClosetFragment#newInstance} factory method to
+ * Use the {@link NewTagFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class ClosetFragment extends Fragment {
+public class NewTagFragment extends Fragment {
 /*    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +29,7 @@ public class ClosetFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 */
-    private OnClosetFragmentInteractionListener onClosetFragmentInteractionListener;
+    private OnNewTagFragmentInteractionListener onNewTagFragmentInteractionListener;
 
 /*    /**
      * Use this factory method to create a new instance of
@@ -49,7 +49,7 @@ public class ClosetFragment extends Fragment {
         return fragment;
     }
 */
-    public ClosetFragment() {
+    public NewTagFragment() {
         // Required empty public constructor
     }
 
@@ -67,13 +67,13 @@ public class ClosetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_closet, container, false);
+        return inflater.inflate(R.layout.fragment_newtag, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (onClosetFragmentInteractionListener != null) {
-            onClosetFragmentInteractionListener.onClosetFragmentInteraction(uri);
+        if (onNewTagFragmentInteractionListener != null) {
+            onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(uri);
         }
     }
 
@@ -81,7 +81,7 @@ public class ClosetFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            onClosetFragmentInteractionListener = (OnClosetFragmentInteractionListener) activity;
+            onNewTagFragmentInteractionListener = (OnNewTagFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -91,7 +91,7 @@ public class ClosetFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        onClosetFragmentInteractionListener = null;
+        onNewTagFragmentInteractionListener = null;
     }
 
     /**
@@ -104,9 +104,9 @@ public class ClosetFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnClosetFragmentInteractionListener {
+    public interface OnNewTagFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onClosetFragmentInteraction(Uri uri);
+        public void onNewTagFragmentInteraction(Uri uri);
     }
 
 }

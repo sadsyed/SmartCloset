@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -14,12 +15,18 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.net.URI;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
-public class MainActivity extends Activity implements MenuFragment.OnViewsSelectedListener {
+public class MainActivity extends Activity implements
+        MenuFragment.OnViewsSelectedListener,
+        NewTagFragment.OnNewTagClickedListener,
+        ClosetFragment.OnClosetFragmentListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -58,7 +65,8 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
         if (menuFragment == null) {
-            menuFragment = new MenuFragment();
+            //menuFragment = new MenuFragment();
+            menuFragment = new NewTagFragment();
             fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
         }
     }
@@ -167,6 +175,42 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, viewFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
+
+    public void onNewTagClickedListener(View view) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Tag Button CLicked.");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view + " was clicked.");
+        ToastMessage.displayShortToastMessage(this, "Wheeeee...");
+
+        switch (view.getId()) {
+            case R.id.closetButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Closet Fragment..... ");
+                //display Closet Frgament
+                ClosetFragment closetFragment = new ClosetFragment();
+                updateFragment(closetFragment);
+                break;
+            case R.id.searchButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Search Fragment..... ");
+                //display Search Fragment
+                break;
+            case R.id.newTagButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
+                //display New Tag Fragement
+                break;
+        }
+    }
+
+    public void OnClosetFragmentListener(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "OnClosetFragmentListener......");
+    }
+
+    private void updateFragment(Fragment fragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
 
         transaction.commit();

@@ -7,85 +7,104 @@ import java.util.List;
  * Created by ssyed on 11/9/14.
  */
 public class Article {
-    private String name;
-    private String id;
-    private String type;
-    private String imageUrl;
-    private Date lastUsed;
-    private Date timeUsed;
-    private List<String> tags;
-    private Double price;
-    private Boolean availableForSale;
+    private String articleName;
+    private String articleId;
+    private String articleOwner;
+    private String articleType;
+    private String articleImageUrl;
+    private Date articleLastUsed;
+    private List<Date> articleTimesUsed;
+    private List<String> articleTags;
+    private Float articlePrice;
+    private String articleDescription;
+    private Boolean articleOkToSell;
 
-    public String getName() {
-        return name;
+
+    public String getArticleName() {
+        return articleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setArticleName(String name) {
+        this.articleName = name;
     }
 
-    public Boolean getAvailableForSale() {
-        return availableForSale;
+    public String getArticleId() {
+        return articleId;
     }
 
-    public void setAvailableForSale(Boolean availableForSale) {
-        this.availableForSale = availableForSale;
+    public void setArticleId(String id) {
+        this.articleId = id;
     }
 
-    public String getId() {
-        return id;
+    public String getArticleOwner() {
+        return articleOwner;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setArticleOwner(String owner) {
+        this.articleOwner = owner;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getArticleType() {
+        return articleType;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setArticleType(String type) {
+        this.articleType = type;
     }
 
-    public Date getLastUsed() {
-        return lastUsed;
+    public String getArticleImageUrl() {
+        return articleImageUrl;
     }
 
-    public void setLastUsed(Date lastUsed) {
-        this.lastUsed = lastUsed;
+    public void setArticleImageUrl(String imageUrl) {
+        this.articleImageUrl = imageUrl;
     }
 
-    public Double getPrice() {
-        return price;
+    public Date getArticleLastUsed() {
+        return articleLastUsed;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setArticleLastUsed(Date lastUsed) {
+        this.articleLastUsed = lastUsed;
+    }
+
+    public Float getArticlePrice() {
+        return articlePrice;
+    }
+
+    public void setArticlePrice(Float price) {
+        this.articlePrice = price;
     }
 
     public List<String> getTags() {
-        return tags;
+        return articleTags;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
+    public void setArticleTags(List<String> tags) {
+        this.articleTags = tags;
     }
 
-    public Date getTimeUsed() {
-        return timeUsed;
+    public List<Date> getArticleTimesUsed() {
+        return articleTimesUsed;
     }
 
-    public void setTimeUsed(Date timeUsed) {
-        this.timeUsed = timeUsed;
+    public void setArticleTimesUsed(List<Date> timeUsed) {
+        this.articleTimesUsed = timeUsed;
     }
 
-    public String getType() {
-        return type;
+    public String getArticleDescription() {
+        return articleDescription;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setArticleDescription(String description) {
+        this.articleDescription = description;
+    }
+
+    public Boolean getArticleOkToSell() {
+        return articleOkToSell;
+    }
+
+    public void setArticleOkToSell(Boolean oktosell) {
+        this.articleOkToSell = oktosell;
     }
 }

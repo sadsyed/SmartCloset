@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -14,12 +15,17 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
-public class MainActivity extends Activity implements MenuFragment.OnViewsSelectedListener {
+public class MainActivity extends Activity implements
+        CategoryFragment.OnCategorySelectedListener,
+        FragmentRouter.OnFragmentRouterInteractionListener,
+        NewTagFragment.OnNewTagFragmentInteractionListener,
+        SearchFragment.OnSearchFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -31,6 +37,26 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initializeNfcAdapter();
+        handleNfcIntent(getIntent());
+
+        if (findViewById(R.id.main_fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+        }
+
+        //display FragmentRouter
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
+
+        if (menuFragment == null) {
+            menuFragment = new FragmentRouter();
+            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
+        }
+    }
+
+    private void initializeNfcAdapter() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, ((Object) this).getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
@@ -45,28 +71,11 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         } else {
             ToastMessage.displayShortToastMessage(this,  "NFC is enabled.");
         }
-
-        handleIntent(getIntent());
-
-        if (findViewById(R.id.main_fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-        }
-
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
-
-        if (menuFragment == null) {
-            menuFragment = new MenuFragment();
-            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
-        }
     }
 
     private void enableForegroundMode() {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": enableForegroundMode...");
 
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         IntentFilter[] filters = new IntentFilter[] { tagDetected };
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, null);
@@ -85,7 +94,7 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         readTag(intent);
     }
 
-    private void handleIntent(Intent intent) {
+    private void handleNfcIntent(Intent intent) {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": handling event...");
         setIntent(intent);
         readTag(intent);
@@ -156,8 +165,43 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         return super.onOptionsItemSelected(item);
     }
 
-    public void onViewSelected(int position) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Item Selected.");
+    public void onFragmentRouterInteraction(View view) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Tag Button CLicked.");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view.getId() + " was clicked.");
+        //ToastMessage.displayShortToastMessage(this, "Wheeeee...");
+
+        switch (view.getId()) {
+            case R.id.closetButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Closet Fragment..... ");
+                //display Closet Fragment
+                CategoryFragment categoryFragment = new CategoryFragment();
+                updateFragment(categoryFragment);
+                break;
+            case R.id.searchButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Search Fragment..... ");
+                //display Search Fragment
+                SearchFragment searchFragment = new SearchFragment();
+                updateFragment(searchFragment);
+                break;
+            case R.id.newTagButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
+                //display New Tag Fragment
+                NewTagFragment newTagFragment = new NewTagFragment();
+                updateFragment(newTagFragment);
+                break;
+        }
+    }
+
+    public void onNewTagFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onClosetFragmentListener......");
+    }
+
+    public void onSearchFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onSearchFragmentInteraction......");
+    }
+
+    public void onCategorySelected(int position) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onCategorySelected.......");
 
         ViewFragment viewFragment = new ViewFragment();
         Bundle args = new Bundle();
@@ -167,6 +211,15 @@ public class MainActivity extends Activity implements MenuFragment.OnViewsSelect
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, viewFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
+
+    private void updateFragment(Fragment fragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
 
         transaction.commit();

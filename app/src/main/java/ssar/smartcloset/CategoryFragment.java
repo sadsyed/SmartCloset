@@ -10,7 +10,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import ssar.smartcloset.types.MainMenu;
@@ -21,12 +20,12 @@ import ssar.smartcloset.types.MainMenu;
  * Large screen devices (such as tablets) are supported by replacing the ListView
  * with a GridView.
  * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
+ * Activities containing this fragment MUST implement the {@link   Callbacks}
  * interface.
  */
-public class MenuFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class CategoryFragment extends Fragment implements AbsListView.OnItemClickListener {
 
-    // TODO: Rename parameter arguments, choose names that match
+/*    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -34,8 +33,8 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private OnViewsSelectedListener viewSelectedListener;
+*/
+    private OnCategorySelectedListener categorySelectedListener;
 
     /**
      * The fragment's ListView/GridView.
@@ -48,9 +47,9 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
      */
     private ListAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
-    public static MenuFragment newInstance(String param1, String param2) {
-        MenuFragment fragment = new MenuFragment();
+/*    // TODO: Rename and change types of parameters
+    public static CategoryFragment newInstance(String param1, String param2) {
+        CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -62,18 +61,18 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MenuFragment() {
+    public CategoryFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+/*        if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+*/
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, MainMenu.ViewTitles);
@@ -98,7 +97,7 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            viewSelectedListener = (OnViewsSelectedListener) activity;
+            categorySelectedListener = (OnCategorySelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                 + " must implement OnFragmentInteractionListener");
@@ -108,7 +107,7 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
     @Override
     public void onDetach() {
         super.onDetach();
-        viewSelectedListener = null;
+        categorySelectedListener = null;
     }
 
 
@@ -122,8 +121,8 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        if (null != viewSelectedListener) {
-            viewSelectedListener.onViewSelected(position);
+        if (null != categorySelectedListener) {
+            categorySelectedListener.onCategorySelected(position);
         }
     }
 
@@ -150,9 +149,8 @@ public class MenuFragment extends Fragment implements AbsListView.OnItemClickLis
     * "http://developer.android.com/training/basics/fragments/communicating.html"
     * >Communicating with Other Fragments</a> for more information.
     */
-    public interface OnViewsSelectedListener {
+    public interface OnCategorySelectedListener {
         // TODO: Update argument type and name
-        public void onViewSelected(int id);
+        public void onCategorySelected(int id);
     }
-
 }

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Spinner;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
@@ -215,6 +216,8 @@ public class MainActivity extends Activity implements
 
         transaction.commit();
     }
+
+
 
     private void updateFragment(Fragment fragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

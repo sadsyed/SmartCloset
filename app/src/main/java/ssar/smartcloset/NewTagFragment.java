@@ -1,13 +1,26 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Spinner;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ssar.smartcloset.util.SmartClosetConstants;
 
 
 /**
@@ -30,6 +43,15 @@ public class NewTagFragment extends Fragment {
     private String mParam2;
 */
     private OnNewTagFragmentInteractionListener onNewTagFragmentInteractionListener;
+    private Spinner articleTypeSelector;
+    private Button createArticleButton;
+    public TestUploadRequestReceiver createArticleRequestReceiver;
+    public TestUploadRequestReceiver testUploadRequestReceiver;
+    private static final String CLASSNAME = NewTagFragment.class.getSimpleName();
+    IntentFilter filter;
+    Uri selectedimg;
+    String imagePath;
+    String currentUuid="";
 
 /*    /**
      * Use this factory method to create a new instance of
@@ -63,11 +85,19 @@ public class NewTagFragment extends Fragment {
 */
     }
 
+    public void updateArticleId(View view) {
+        EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
+        articleIdEditText.setText(currentUuid);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_newtag, container, false);
+        View thisView = inflater.inflate(R.layout.fragment_newtag, container, false);
+        addListenerOnButton();
+        addListenerOnSpinnerItemSelection();
+        return thisView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -86,13 +116,167 @@ public class NewTagFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if(testUploadRequestReceiver != null) {
+            ((MainActivity)getActivity()).registerReceiver(testUploadRequestReceiver, filter);
+        }
+        if(createArticleRequestReceiver != null) {
+            ((MainActivity)getActivity()).registerReceiver(createArticleRequestReceiver, filter);
+        }
+    }
+
+    public void addListenerOnSpinnerItemSelection() {
+        articleTypeSelector = (Spinner) getView().findViewById(R.id.articleTypeSelector);
+        articleTypeSelector.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+    }
+
+    public void addListenerOnButton() {
+
+        articleTypeSelector = (Spinner) getView().findViewById(R.id.articleTypeSelector);
+        createArticleButton = (Button) getView().findViewById(R.id.createArticleButton);
+
+        createArticleButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                EditText articleNameEditText = (EditText) getView().findViewById(R.id.articleNameEditText);
+                EditText articleDescriptionEditText = (EditText) getView().findViewById(R.id.articleDescriptionEditText);
+                EditText articleTagsEditText = (EditText) getView().findViewById(R.id.articleTagsEditText);
+                EditText articlePriceEditText = (EditText) getView().findViewById(R.id.articlePriceEditText);
+                EditText articleOwnerEditText = (EditText) getView().findViewById(R.id.articleOwnerEditText);
+                CheckBox articleOkToSellCheckbox = (CheckBox) getView().findViewById(R.id.articleOkToSellCheckbox);
+                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                createArticleRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
+                ((MainActivity)getActivity()).registerReceiver(createArticleRequestReceiver, filter);
+
+                //set the JSON request object
+                JSONObject requestJSON = new JSONObject();
+                try {
+                    requestJSON.put("articleName", articleNameEditText.getText().toString());
+                    requestJSON.put("articleDescription", articleDescriptionEditText.getText().toString());
+                    requestJSON.put("articleType", String.valueOf(articleTypeSelector.getSelectedItem()));
+                    requestJSON.put("articleTags", articleTagsEditText.getText().toString());
+                    requestJSON.put("articlePrice", articlePriceEditText.getText().toString());
+                    requestJSON.put("articleOkToSell", articleOkToSellCheckbox.getText().toString());
+                    requestJSON.put("articleOwner", articleOwnerEditText.getText().toString());
+                } catch (Exception e) {
+                    Log.e(CLASSNAME, "Exception while creating an request JSON.");
+                }
+                Log.i(CLASSNAME, "Starting Create Article request");
+                Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.CREATE_ARTICLE);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+                Log.i(CLASSNAME, "Finished Creating intent");
+                ((MainActivity)getActivity()).startService(msgIntent);
+                Log.i(CLASSNAME, "Started intent service");
+            }
+        });
     }
 
     @Override
     public void onDetach() {
+        if(testUploadRequestReceiver != null) {
+            try {
+                ((MainActivity)getActivity()).unregisterReceiver(testUploadRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
+        if(createArticleRequestReceiver != null) {
+            try {
+                ((MainActivity)getActivity()).unregisterReceiver(createArticleRequestReceiver);
+            } catch (IllegalArgumentException e){
+                Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+            }
+        }
         super.onDetach();
         onNewTagFragmentInteractionListener = null;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(resultCode==android.app.Activity.RESULT_CANCELED)
+        {
+            // action cancelled
+        }
+        if(resultCode==android.app.Activity.RESULT_OK) {
+            selectedimg = data.getData();
+            imagePath = SmartClosetFileService.getRealPathFromURI(selectedimg, getActivity());
+            Log.i(CLASSNAME, "Selected img path is: " + imagePath);
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            testUploadRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
+            ((MainActivity)getActivity()).registerReceiver(testUploadRequestReceiver, filter);
+
+            Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
+            EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
+            currentUuid = articleIdEditText.getText().toString();
+            msgIntent.putExtra("articleId", currentUuid);
+            msgIntent.putExtra("ImagePath", imagePath);
+            ((MainActivity)getActivity()).startService(msgIntent);
+        }
+    }
+
+    public void chooseImageFile(View view) {
+        //Select file
+        Intent intentChooser = new Intent();
+        intentChooser.setType("image/*");
+        intentChooser.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentChooser, "Choose Picture"), 1);
+    }
+
+    public void testUpload(View view) {
+        Intent intent = new Intent(getActivity(), NewTagFragment.class);
+        intent.putExtra("message", "Test Upload Activity Test");
+        startActivity(intent);
+    }
+
+    public class TestUploadRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = TestUploadRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public TestUploadRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(testUploadRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(testUploadRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+                }
+            }
+            if(createArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(createArticleRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
+                }
+            }
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(CLASSNAME, "Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    currentUuid = (String) json.get("returnval");
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("returnval");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(CLASSNAME, "Exception creating json object: " + e.getMessage());
+            }
+        }
+    }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this

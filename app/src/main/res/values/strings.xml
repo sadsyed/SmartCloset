@@ -11,5 +11,33 @@
     <string name="newtag_button_label">New Tag</string>
     <string name="search_fragment_title">Search Fragment</string>
     <string name="newtag_title">New Tag Fragment</string>
+    <string name="newtag_article_id">No current article.</string>
+    <string name="newtag_article_description">Enter article description.</string>
+    <string name="newtag_article_name">Enter article name.</string>
+    <string name="newtag_article_tags">Enter article tags.</string>
+    <string name="newtag_article_price">Enter article price.</string>
+    <string name="newtag_article_owner">Enter article owner.</string>
+    <string name="newtag_id_button">Update article Id</string>
+    <string name="newtag_articledescription">Enter article description.</string>
+    <string name="newtag_article_type_prompt">Select an article type...</string>
+    <string name="newtag_select_file_button">Select File For Upload</string>
+    <string name="newtag_create_article_button">Create Article</string>
+    <string name="newtag_ok_sell_checkbox">This item OK to sell.</string>
+
+    <string-array name="newtag_article_type_array">
+        <item>Select an article type...</item>
+        <item>Coat</item>
+        <item>Dress</item>
+        <item>Gloves</item>
+        <item>Hat</item>
+        <item>Pants</item>
+        <item>Scarf</item>
+        <item>Shirt</item>
+        <item>Shoes</item>
+        <item>Shorts</item>
+        <item>Skirt</item>
+        <item>Sweater</item>
+    </string-array>
+
 
 </resources>

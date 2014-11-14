@@ -87,7 +87,10 @@ public class NewTagFragment extends Fragment {
 
     public void updateArticleId(View view) {
         EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
-        articleIdEditText.setText(currentUuid);
+        Log.i(CLASSNAME, "Article ID: " + currentUuid);
+        if(articleIdEditText != null) {
+            articleIdEditText.setText(currentUuid);
+        }
     }
 
     @Override
@@ -97,7 +100,33 @@ public class NewTagFragment extends Fragment {
         View thisView = inflater.inflate(R.layout.fragment_newtag, container, false);
         addListenerOnButton(thisView);
         addListenerOnSpinnerItemSelection(thisView);
+        addListenerOnUpdateArticleButton(thisView);
+        addListenerOnSelectFileForUploadButton(thisView);
         return thisView;
+    }
+
+    public void addListenerOnUpdateArticleButton(View view) {
+        Button button = (Button) view.findViewById(R.id.updateArticleIdButton);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                updateArticleId(v);
+            }
+        });
+    }
+
+    public void addListenerOnSelectFileForUploadButton(View view) {
+        Button button = (Button) view.findViewById(R.id.selectFileButton);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                chooseImageFile(v);
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -233,6 +262,7 @@ public class NewTagFragment extends Fragment {
         intent.putExtra("message", "Test Upload Activity Test");
         startActivity(intent);
     }
+
 
     public class TestUploadRequestReceiver extends BroadcastReceiver {
         public final String CLASSNAME = TestUploadRequestReceiver.class.getSimpleName();

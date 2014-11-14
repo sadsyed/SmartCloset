@@ -95,8 +95,8 @@ public class NewTagFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View thisView = inflater.inflate(R.layout.fragment_newtag, container, false);
-        addListenerOnButton();
-        addListenerOnSpinnerItemSelection();
+        addListenerOnButton(thisView);
+        addListenerOnSpinnerItemSelection(thisView);
         return thisView;
     }
 
@@ -124,15 +124,15 @@ public class NewTagFragment extends Fragment {
         }
     }
 
-    public void addListenerOnSpinnerItemSelection() {
-        articleTypeSelector = (Spinner) getView().findViewById(R.id.articleTypeSelector);
+    public void addListenerOnSpinnerItemSelection(View view) {
+        articleTypeSelector = (Spinner) view.findViewById(R.id.articleTypeSelector);
         articleTypeSelector.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton(View view) {
 
-        articleTypeSelector = (Spinner) getView().findViewById(R.id.articleTypeSelector);
-        createArticleButton = (Button) getView().findViewById(R.id.createArticleButton);
+        articleTypeSelector = (Spinner) view.findViewById(R.id.articleTypeSelector);
+        createArticleButton = (Button) view.findViewById(R.id.createArticleButton);
 
         createArticleButton.setOnClickListener(new View.OnClickListener() {
 

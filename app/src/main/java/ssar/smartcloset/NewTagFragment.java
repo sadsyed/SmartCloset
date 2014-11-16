@@ -85,14 +85,14 @@ public class NewTagFragment extends Fragment {
 */
     }
 
-    public void updateArticleId(View view) {
+/*    public void updateArticleId(View view) {
         EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
         Log.i(CLASSNAME, "Article ID: " + currentUuid);
         if(articleIdEditText != null) {
             articleIdEditText.setText(currentUuid);
         }
     }
-
+*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,12 +100,12 @@ public class NewTagFragment extends Fragment {
         View thisView = inflater.inflate(R.layout.fragment_newtag, container, false);
         addListenerOnButton(thisView);
         addListenerOnSpinnerItemSelection(thisView);
-        addListenerOnUpdateArticleButton(thisView);
-        addListenerOnSelectFileForUploadButton(thisView);
+        //addListenerOnUpdateArticleButton(thisView);
+        //addListenerOnSelectFileForUploadButton(thisView);
         return thisView;
     }
 
-    public void addListenerOnUpdateArticleButton(View view) {
+/*    public void addListenerOnUpdateArticleButton(View view) {
         Button button = (Button) view.findViewById(R.id.updateArticleIdButton);
         button.setOnClickListener(new View.OnClickListener()
         {
@@ -128,11 +128,11 @@ public class NewTagFragment extends Fragment {
             }
         });
     }
-
+*/
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(String str) {
         if (onNewTagFragmentInteractionListener != null) {
-            onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(uri);
+            onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(str);
         }
     }
 
@@ -223,7 +223,7 @@ public class NewTagFragment extends Fragment {
         onNewTagFragmentInteractionListener = null;
     }
 
-    @Override
+/*    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if(resultCode==android.app.Activity.RESULT_CANCELED)
@@ -248,7 +248,7 @@ public class NewTagFragment extends Fragment {
             ((MainActivity)getActivity()).startService(msgIntent);
         }
     }
-
+*/
     public void chooseImageFile(View view) {
         //Select file
         Intent intentChooser = new Intent();
@@ -288,6 +288,7 @@ public class NewTagFragment extends Fragment {
                     Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
                 }
             }
+
             String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
             Log.i(CLASSNAME, "Service response JSON: " + responseJSON);
             JSONObject json = new JSONObject();
@@ -295,6 +296,8 @@ public class NewTagFragment extends Fragment {
                 json = new JSONObject(responseJSON);
                 try {
                     currentUuid = (String) json.get("returnval");
+                    //callback to launch UploadImageFragment upon the successful creation of new article
+                    onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
                 } catch (Exception e) {
                     Integer temp = (Integer)json.get("returnval");
                 }
@@ -320,7 +323,7 @@ public class NewTagFragment extends Fragment {
      */
     public interface OnNewTagFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onNewTagFragmentInteraction(Uri uri);
+        public void onNewTagFragmentInteraction(String articleId);
     }
 
 }

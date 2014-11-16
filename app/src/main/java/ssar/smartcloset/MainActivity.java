@@ -26,7 +26,8 @@ public class MainActivity extends Activity implements
         CategoryFragment.OnCategorySelectedListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
-        SearchFragment.OnSearchFragmentInteractionListener {
+        SearchFragment.OnSearchFragmentInteractionListener,
+        UploadImageFragment.OnUploadImageFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -193,8 +194,16 @@ public class MainActivity extends Activity implements
         }
     }
 
-    public void onNewTagFragmentInteraction(Uri uri) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onClosetFragmentListener......");
+    public void onNewTagFragmentInteraction(String articleId) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onNewTagFragmentInteraction......");
+
+        //launch UploadImageFragment for the given articleId
+        UploadImageFragment uploadImageFragment = new UploadImageFragment();
+        Bundle args = new Bundle();
+        args.putString(UploadImageFragment.ARG_ARTICLE_ID, articleId);
+        uploadImageFragment.setArguments(args);
+
+        updateFragment(uploadImageFragment);
     }
 
     public void onSearchFragmentInteraction(Uri uri) {
@@ -209,12 +218,15 @@ public class MainActivity extends Activity implements
         args.putInt(ViewFragment.ARG_POSITION, position);
         viewFragment.setArguments(args);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        updateFragment(viewFragment);
+    }
 
-        transaction.replace(R.id.main_fragment_container, viewFragment);
-        transaction.addToBackStack(null);
+    public void onUploadImageFragmentInteraction(String currentUuid) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onUploadImageFragmentInteraction.......");
 
-        transaction.commit();
+        //TODO navigate to the category for which current item was loaded
+        FragmentRouter fragmentRouter = new FragmentRouter();
+        updateFragment(fragmentRouter);
     }
 
 

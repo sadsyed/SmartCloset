@@ -70,14 +70,14 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/newtag_create_article_button"
+        android:text="Next"
         android:id="@+id/createArticleButton"
         android:layout_below="@+id/articleOkToSellCheckbox"
         android:onClick="addListenerOnSpinnerItemSelection"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
+   <!-- <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/articleId"
@@ -103,6 +103,6 @@
         android:layout_below="@+id/updateArticleIdButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
+    -->
 
 </RelativeLayout>

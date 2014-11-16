@@ -24,7 +24,7 @@ import ssar.smartcloset.types.MainMenu;
  *
  */
 public class ViewFragment extends Fragment {
-    final static String ARG_POSITION = "postion";
+    final static String ARG_POSITION = "position";
     int currentPosition = -1;
 
 /*    // TODO: Rename parameter arguments, choose names that match
@@ -110,7 +110,7 @@ public class ViewFragment extends Fragment {
 /*    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onUploadImageFragmentInteraction(uri);
         }
     }
 
@@ -143,7 +143,7 @@ public class ViewFragment extends Fragment {
      */
 /*    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onUploadImageFragmentInteraction(Uri uri);
     }
 */
 }

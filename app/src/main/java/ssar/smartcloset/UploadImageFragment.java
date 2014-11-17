@@ -193,7 +193,7 @@ public class UploadImageFragment extends Fragment {
 
             //callback to launch UploadImageFragment upon the successful creation of new article
             ToastMessage.displayLongToastMessage(context, "Article successfully created");
-            onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(currentUuid);
+            onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(articleId);
         }
     }
 

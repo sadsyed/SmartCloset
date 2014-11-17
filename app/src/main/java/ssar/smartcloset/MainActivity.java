@@ -9,7 +9,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -17,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
+
+import java.nio.charset.Charset;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
@@ -34,6 +40,8 @@ public class MainActivity extends Activity implements
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
 
+    public boolean writeMode = false;
+    public String articleUuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,7 @@ public class MainActivity extends Activity implements
             }
         }
 
+
         //display FragmentRouter
         FragmentManager fragmentManager = getFragmentManager();
         Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
@@ -57,6 +66,7 @@ public class MainActivity extends Activity implements
             menuFragment = new FragmentRouter();
             fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
         }
+
     }
 
     private void initializeNfcAdapter() {
@@ -76,7 +86,7 @@ public class MainActivity extends Activity implements
         }
     }
 
-    private void enableForegroundMode() {
+    public void enableForegroundMode() {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": enableForegroundMode...");
 
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
@@ -92,15 +102,26 @@ public class MainActivity extends Activity implements
     /* OnNewIntent read the tag */
     @Override
     public void onNewIntent(Intent intent) {
-        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNewIntent...");
-        setIntent(intent);
-        readTag(intent);
+        if(writeMode) {
+            writeMode = false;
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            writeTag(tag);
+        } else {
+            Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNewIntent...");
+            setIntent(intent);
+            readTag(intent);
+        }
     }
 
     private void handleNfcIntent(Intent intent) {
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": handling event...");
         setIntent(intent);
         readTag(intent);
+    }
+
+    public void beginWrite() {
+        writeMode = true;
+        enableForegroundMode();
     }
 
     private void readTag(Intent intent) {
@@ -133,6 +154,55 @@ public class MainActivity extends Activity implements
             //tagDataEditText.setText("test string");
             //tagDataEditText.setText(tagDataBuilder.toString());
         }
+    }
+
+    private boolean writeTag(Tag tag) {
+        byte[] payload = articleUuid.getBytes();
+        byte[] mimeBytes = "text/plain".getBytes(Charset.forName("US-ASCII"));
+
+        NdefRecord ndefRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, mimeBytes, new byte[0], payload);
+        NdefMessage ndefMessage = new NdefMessage(new NdefRecord[] { ndefRecord });
+
+        try {
+            Ndef ndef = Ndef.get(tag);
+            if (ndef != null) {
+                ndef.connect();
+
+                if(!ndef.isWritable()) {
+                    ToastMessage.displayShortToastMessage(this, "This is a read-only tag");
+                    return false;
+                }
+
+                int size = ndefMessage.toByteArray().length;
+                if (ndef.getMaxSize() < size ) {
+                    ToastMessage.displayShortToastMessage(this, "There is not enough space to write.");
+                    return false;
+                }
+
+                ndef.writeNdefMessage(ndefMessage);
+                ToastMessage.displayShortToastMessage(this, "Write successful.");
+                return true;
+            } else {
+                NdefFormatable ndefFormatable = NdefFormatable.get(tag);
+                if (ndefFormatable != null) {
+                    try {
+                        ndefFormatable.connect();
+                        ndefFormatable.format(ndefMessage);
+                        ToastMessage.displayShortToastMessage(this, "Write successful\nLaunch a scanning app or scan and choose to read.");
+                        return true;
+                    } catch (Exception e){
+                        ToastMessage.displayShortToastMessage(this, "Unable to ndefFormatable tag to NDEF");
+                        return false;
+                    }
+                } else {
+                    ToastMessage.displayShortToastMessage(this, "Tag doesn't appear to support NDEF ndefFormatable.");
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            ToastMessage.displayShortToastMessage(this, "Write failed.");
+        }
+        return false;
     }
 
     @Override
@@ -222,12 +292,13 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUploadImageFragmentInteraction.......");
 
         WriteTagFragment writeTagFragment = WriteTagFragment.newInstance(currentUuid);
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + currentUuid);
         updateFragment(writeTagFragment);
     }
 
-    public void onWriteTagFragmentInteraction(Uri uri){
-
+    public void onWriteTagFragmentInteraction(String articleId){
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onWriteTagFragmentInteraction.......");
+        //articleUuid = articleId;
+        //beginWrite();
     }
 
     private void updateFragment(Fragment fragment) {

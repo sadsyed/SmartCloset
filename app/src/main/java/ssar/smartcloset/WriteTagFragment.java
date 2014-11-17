@@ -1,12 +1,20 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import ssar.smartcloset.util.SmartClosetConstants;
 
 
 /**
@@ -20,14 +28,12 @@ import android.view.ViewGroup;
 public class WriteTagFragment extends Fragment {
     public final static String CLASSNAME = WriteTagFragment.class.getSimpleName();
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // the fragment initialization parameters
     private static final String ARG_ARTICLE_ID = "articleId";
 
-    // TODO: Rename and change types of parameters
-    private String articleId;
-
     private OnWriteTagFragmentInteractionListener onWriteTagFragmentInteractionListener;
+    private String articleId;
+    private Button writeTagButton;
 
     /**
      * Use this factory method to create a new instance of
@@ -61,13 +67,22 @@ public class WriteTagFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_write_tag, container, false);
+        View view = inflater.inflate(R.layout.fragment_write_tag, container, false);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": launching NFC Write...");
+
+        ((MainActivity)getActivity()).articleUuid = articleId;
+        ((MainActivity)getActivity()).writeMode = true;
+        /*writeTagButton = (Button) view.findViewById(R.id.button);
+        writeTagButton.setPressed(true);
+        writeTagButton.invalidate();*/
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(String articleId) {
         if (onWriteTagFragmentInteractionListener != null) {
-            onWriteTagFragmentInteractionListener.onWriteTagFragmentInteraction(uri);
+            onWriteTagFragmentInteractionListener.onWriteTagFragmentInteraction(articleId);
         }
     }
 
@@ -100,7 +115,7 @@ public class WriteTagFragment extends Fragment {
      */
     public interface OnWriteTagFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onWriteTagFragmentInteraction(Uri uri);
+        public void onWriteTagFragmentInteraction(String articleId);
     }
 
 }

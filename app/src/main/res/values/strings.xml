@@ -39,5 +39,6 @@
         <item>Sweater</item>
     </string-array>
 
+    <string name="title_activity_write_tag">WriteTagActivity</string>
 
 </resources>

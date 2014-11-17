@@ -27,7 +27,8 @@ public class MainActivity extends Activity implements
         FragmentRouter.OnFragmentRouterInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
-        UploadImageFragment.OnUploadImageFragmentInteractionListener {
+        UploadImageFragment.OnUploadImageFragmentInteractionListener,
+        WriteTagFragment.OnWriteTagFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -168,25 +169,25 @@ public class MainActivity extends Activity implements
     }
 
     public void onFragmentRouterInteraction(View view) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "On Menu Tag Button CLicked.");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": On Menu Tag Button CLicked.");
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, view.getId() + " was clicked.");
         //ToastMessage.displayShortToastMessage(this, "Wheeeee...");
 
         switch (view.getId()) {
             case R.id.closetButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Closet Fragment..... ");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                 //display Closet Fragment
                 CategoryFragment categoryFragment = new CategoryFragment();
                 updateFragment(categoryFragment);
                 break;
             case R.id.searchButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "Search Fragment..... ");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchFragment searchFragment = new SearchFragment();
                 updateFragment(searchFragment);
                 break;
             case R.id.newTagButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "New Tag Fragment..... ");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
                 //display New Tag Fragment
                 NewTagFragment newTagFragment = new NewTagFragment();
                 updateFragment(newTagFragment);
@@ -195,7 +196,7 @@ public class MainActivity extends Activity implements
     }
 
     public void onNewTagFragmentInteraction(String articleId) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onNewTagFragmentInteraction......");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNewTagFragmentInteraction......");
 
         //launch UploadImageFragment for the given articleId
         UploadImageFragment uploadImageFragment = UploadImageFragment.newInstance(articleId);
@@ -203,11 +204,11 @@ public class MainActivity extends Activity implements
     }
 
     public void onSearchFragmentInteraction(Uri uri) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onSearchFragmentInteraction......");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
     }
 
     public void onCategorySelected(int position) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onCategorySelected.......");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategorySelected.......");
 
         ViewFragment viewFragment = new ViewFragment();
         Bundle args = new Bundle();
@@ -218,14 +219,16 @@ public class MainActivity extends Activity implements
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onUploadImageFragmentInteraction.......");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUploadImageFragmentInteraction.......");
 
-        //TODO navigate to the category for which current item was loaded
-        FragmentRouter fragmentRouter = new FragmentRouter();
-        updateFragment(fragmentRouter);
+        WriteTagFragment writeTagFragment = WriteTagFragment.newInstance(currentUuid);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + currentUuid);
+        updateFragment(writeTagFragment);
     }
 
+    public void onWriteTagFragmentInteraction(Uri uri){
 
+    }
 
     private void updateFragment(Fragment fragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

@@ -77,16 +77,12 @@ public class UploadImageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View thisView = inflater.inflate(R.layout.fragment_upload_image, container, false);
-        //addListenerOnButton(thisView);
-        //addListenerOnSpinnerItemSelection(thisView);
         addListenerOnUpdateArticleButton(thisView);
         addListenerOnSelectFileForUploadButton(thisView);
 
         EditText editText = (EditText) thisView.findViewById(R.id.articleId);
         editText.setText(articleId);
         return thisView;
-
-        //return inflater.inflate(R.layout.fragment_upload_image, container, false);
     }
 
     public void addListenerOnUpdateArticleButton(View view) {
@@ -131,8 +127,6 @@ public class UploadImageFragment extends Fragment {
 
             Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
             msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
-            EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
-            //currentUuid = articleIdEditText.getText().toString();
             msgIntent.putExtra("articleId", articleId);
             msgIntent.putExtra("ImagePath", imagePath);
             ((MainActivity)getActivity()).startService(msgIntent);

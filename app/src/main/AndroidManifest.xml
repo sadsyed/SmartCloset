@@ -47,10 +47,6 @@
             android:exported="false" >
         </service>
 
-        <activity
-            android:name="ssar.smartcloset.WriteTagActivity"
-            android:label="@string/title_activity_write_tag" >
-        </activity>
     </application>
 
 </manifest>

@@ -32,15 +32,13 @@ import ssar.smartcloset.util.ToastMessage;
  */
 public class UploadImageFragment extends Fragment {
     private static final String CLASSNAME = UploadImageFragment.class.getSimpleName();
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String ARG_ARTICLE_ID = "articleId";
-    //private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    // the fragment initialization parameters
+    public static final String ARG_ARTICLE_ID = "articleId";
+
     public TestUploadRequestReceiver testUploadRequestReceiver;
     IntentFilter filter;
     private String articleId;
-    private String mParam2;
     Uri selectedimg;
     String imagePath;
     String currentUuid="";
@@ -54,12 +52,10 @@ public class UploadImageFragment extends Fragment {
      * @param articleId Parameter 1.
      * @return A new instance of fragment UploadImageFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static UploadImageFragment newInstance(String articleId) {
         UploadImageFragment fragment = new UploadImageFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ARTICLE_ID, articleId);
-        //args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_ARTICLE_ID, articleId);;
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,15 +69,12 @@ public class UploadImageFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             articleId = getArguments().getString(ARG_ARTICLE_ID);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         // Inflate the layout for this fragment
         View thisView = inflater.inflate(R.layout.fragment_upload_image, container, false);
         //addListenerOnButton(thisView);
@@ -207,24 +200,6 @@ public class UploadImageFragment extends Fragment {
             //callback to launch UploadImageFragment upon the successful creation of new article
             ToastMessage.displayLongToastMessage(context, "Article successfully created");
             onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(currentUuid);
-
-            /*String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
-            Log.i(CLASSNAME, "Service response JSON: " + responseJSON);
-            JSONObject json = new JSONObject();
-            try {
-                json = new JSONObject(responseJSON);
-                try {
-                    currentUuid = (String) json.get("returnval");
-                    //callback to launch UploadImageFragment upon the successful creation of new article
-                    ToastMessage.displayLongToastMessage(context, "Article created with id: " + currentUuid);
-                    onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(currentUuid);
-                } catch (Exception e) {
-                    Integer temp = (Integer)json.get("returnval");
-                }
-            } catch (JSONException e)
-            {
-                Log.i(CLASSNAME, "Exception creating json object: " + e.getMessage());
-            }*/
         }
     }
 

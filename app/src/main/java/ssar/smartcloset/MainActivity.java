@@ -198,11 +198,7 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, "onNewTagFragmentInteraction......");
 
         //launch UploadImageFragment for the given articleId
-        UploadImageFragment uploadImageFragment = new UploadImageFragment();
-        Bundle args = new Bundle();
-        args.putString(UploadImageFragment.ARG_ARTICLE_ID, articleId);
-        uploadImageFragment.setArguments(args);
-
+        UploadImageFragment uploadImageFragment = UploadImageFragment.newInstance(articleId);
         updateFragment(uploadImageFragment);
     }
 

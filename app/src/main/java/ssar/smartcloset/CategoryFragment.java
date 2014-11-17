@@ -20,11 +20,10 @@ import ssar.smartcloset.types.MainMenu;
  * Large screen devices (such as tablets) are supported by replacing the ListView
  * with a GridView.
  * <p />
- * Activities containing this fragment MUST implement the {@link   Callbacks}
+ * Activities containing this fragment MUST implement the {@link }
  * interface.
  */
 public class CategoryFragment extends Fragment implements AbsListView.OnItemClickListener {
-
 /*    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,15 +46,14 @@ public class CategoryFragment extends Fragment implements AbsListView.OnItemClic
      */
     private ListAdapter mAdapter;
 
-/*    // TODO: Rename and change types of parameters
-    public static CategoryFragment newInstance(String param1, String param2) {
+/*    public static CategoryFragment newInstance(int position) {
         CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_POSITION, position);
+        //args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

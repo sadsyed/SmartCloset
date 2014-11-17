@@ -49,8 +49,6 @@ public class NewTagFragment extends Fragment {
     public TestUploadRequestReceiver testUploadRequestReceiver;
     private static final String CLASSNAME = NewTagFragment.class.getSimpleName();
     IntentFilter filter;
-    Uri selectedimg;
-    String imagePath;
     String currentUuid="";
 
 /*    /**
@@ -85,14 +83,6 @@ public class NewTagFragment extends Fragment {
 */
     }
 
-/*    public void updateArticleId(View view) {
-        EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
-        Log.i(CLASSNAME, "Article ID: " + currentUuid);
-        if(articleIdEditText != null) {
-            articleIdEditText.setText(currentUuid);
-        }
-    }
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,35 +90,10 @@ public class NewTagFragment extends Fragment {
         View thisView = inflater.inflate(R.layout.fragment_newtag, container, false);
         addListenerOnButton(thisView);
         addListenerOnSpinnerItemSelection(thisView);
-        //addListenerOnUpdateArticleButton(thisView);
-        //addListenerOnSelectFileForUploadButton(thisView);
+
         return thisView;
     }
 
-/*    public void addListenerOnUpdateArticleButton(View view) {
-        Button button = (Button) view.findViewById(R.id.updateArticleIdButton);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                updateArticleId(v);
-            }
-        });
-    }
-
-    public void addListenerOnSelectFileForUploadButton(View view) {
-        Button button = (Button) view.findViewById(R.id.selectFileButton);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                chooseImageFile(v);
-            }
-        });
-    }
-*/
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(String str) {
         if (onNewTagFragmentInteractionListener != null) {
@@ -223,47 +188,6 @@ public class NewTagFragment extends Fragment {
         onNewTagFragmentInteractionListener = null;
     }
 
-/*    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if(resultCode==android.app.Activity.RESULT_CANCELED)
-        {
-            // action cancelled
-        }
-        if(resultCode==android.app.Activity.RESULT_OK) {
-            selectedimg = data.getData();
-            imagePath = SmartClosetFileService.getRealPathFromURI(selectedimg, getActivity());
-            Log.i(CLASSNAME, "Selected img path is: " + imagePath);
-            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
-            filter.addCategory(Intent.CATEGORY_DEFAULT);
-            testUploadRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
-            ((MainActivity)getActivity()).registerReceiver(testUploadRequestReceiver, filter);
-
-            Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
-            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
-            EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
-            currentUuid = articleIdEditText.getText().toString();
-            msgIntent.putExtra("articleId", currentUuid);
-            msgIntent.putExtra("ImagePath", imagePath);
-            ((MainActivity)getActivity()).startService(msgIntent);
-        }
-    }
-*/
-    public void chooseImageFile(View view) {
-        //Select file
-        Intent intentChooser = new Intent();
-        intentChooser.setType("image/*");
-        intentChooser.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intentChooser, "Choose Picture"), 1);
-    }
-
-    public void testUpload(View view) {
-        Intent intent = new Intent(getActivity(), NewTagFragment.class);
-        intent.putExtra("message", "Test Upload Activity Test");
-        startActivity(intent);
-    }
-
-
     public class TestUploadRequestReceiver extends BroadcastReceiver {
         public final String CLASSNAME = TestUploadRequestReceiver.class.getSimpleName();
         private String serviceUrl;
@@ -274,13 +198,6 @@ public class NewTagFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(testUploadRequestReceiver != null) {
-                try {
-                    context.unregisterReceiver(testUploadRequestReceiver);
-                } catch (IllegalArgumentException e){
-                    Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
-                }
-            }
             if(createArticleRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(createArticleRequestReceiver);
@@ -307,9 +224,6 @@ public class NewTagFragment extends Fragment {
             }
         }
     }
-
-
-
 
     /**
      * This interface must be implemented by activities that contain this

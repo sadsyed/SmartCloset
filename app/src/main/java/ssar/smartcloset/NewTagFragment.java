@@ -152,7 +152,11 @@ public class NewTagFragment extends Fragment {
                     requestJSON.put("articleType", String.valueOf(articleTypeSelector.getSelectedItem()));
                     requestJSON.put("articleTags", articleTagsEditText.getText().toString());
                     requestJSON.put("articlePrice", articlePriceEditText.getText().toString());
-                    requestJSON.put("articleOkToSell", articleOkToSellCheckbox.getText().toString());
+                    String okToSellTemp = "false";
+                    if(articleOkToSellCheckbox.isChecked()) {
+                        okToSellTemp = "true";
+                    }
+                    requestJSON.put("articleOkToSell", okToSellTemp);
                     requestJSON.put("articleOwner", articleOwnerEditText.getText().toString());
                 } catch (Exception e) {
                     Log.e(CLASSNAME, "Exception while creating an request JSON.");

@@ -59,6 +59,8 @@ public class SmartClosetIntentService extends IntentService {
         HttpPost post = new HttpPost(requestURL);
 
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Handling intent");
+        Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": WebRequestService Request URL: " + requestURL);
+        Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": WebRequestService Request JSON: " + requestJSON);
 
         try {
             StringEntity stringEntity;
@@ -122,7 +124,7 @@ public class SmartClosetIntentService extends IntentService {
 
             StatusLine statusLine = response.getStatusLine();
             if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-                 responseJSON = EntityUtils.toString(response.getEntity());
+                responseJSON = EntityUtils.toString(response.getEntity());
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Http Response: " + response.toString());
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Response JSON: " + responseJSON.toString());
             } else {

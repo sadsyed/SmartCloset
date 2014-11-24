@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -21,6 +23,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 
@@ -39,6 +44,7 @@ public class MainActivity extends Activity implements
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
+    public SmartClosetRequestReceiver useArticleRequestReceiver;
 
     public boolean writeMode = false;
     public String articleUuid;
@@ -144,15 +150,27 @@ public class MainActivity extends Activity implements
             }
 
             String tagId = new String(ndefMessages[0].getRecords()[0].getType());
-            String body = new String(ndefMessages[0].getRecords()[0].getPayload());
+            String tagBody = new String(ndefMessages[0].getRecords()[0].getPayload());
 
             StringBuilder tagDataBuilder = new StringBuilder();
-            tagDataBuilder.append("Tag Data: ").append(body);
-
+            tagDataBuilder.append("Tag Data: ").append(tagBody);
             ToastMessage.displayLongToastMessage(this, tagDataBuilder.toString());
-            //EditText tagDataEditText = (EditText) findViewById(R.id.tagDataEditText);
-            //tagDataEditText.setText("test string");
-            //tagDataEditText.setText(tagDataBuilder.toString());
+
+            String articleId = tagBody;
+
+            //set the JSON request object
+            JSONObject requestJSON = new JSONObject();
+            try {
+                requestJSON.put("articleId", articleId);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+            }
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME  + ": Starting Use Article request");
+            Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+            this.startService(msgIntent);
+            Log.i(CLASSNAME, "Started intent service");
         }
     }
 
@@ -308,5 +326,28 @@ public class MainActivity extends Activity implements
         transaction.addToBackStack(null);
 
         transaction.commit();
+    }
+
+    public class SmartClosetRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public SmartClosetRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(useArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(useArticleRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+        }
     }
 }

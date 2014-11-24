@@ -38,7 +38,7 @@ public class SmartClosetIntentService extends IntentService {
      * <p>
      * TODO: Customize class - update intent actions and extra parameters.
      */
-private static final String CLASSNAME = SmartClosetIntentService.class.getSimpleName();
+    private static final String CLASSNAME = SmartClosetIntentService.class.getSimpleName();
 
     public static final String REQUEST_URL = "requestURL";
     public static final String REQUEST_JSON = "requestJSON";
@@ -58,14 +58,12 @@ private static final String CLASSNAME = SmartClosetIntentService.class.getSimple
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(requestURL);
 
-        Log.i(CLASSNAME, "Handling intent");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Handling intent");
 
         try {
             StringEntity stringEntity;
             //Set requestJSON for services which require request input
             switch(requestURL) {
-
-
                 case SmartClosetConstants.CREATE_ARTICLE:
                     stringEntity = new StringEntity(requestJSON);
                     stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -83,57 +81,63 @@ private static final String CLASSNAME = SmartClosetIntentService.class.getSimple
                     if(SmartClosetFileService.isExternalStorageReadable()) {
                         try {
                             //File dataDir = ConnexusFileService.getDataStorageDir("Connexus");
-                            Log.i(CLASSNAME, "Got data storage directory connexus");
+                            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Got data storage directory connexus");
                             imageFile = new File(imagePath);
                             if (!imageFile.exists()) {
                                 imageFile.createNewFile();
-                                Log.i(CLASSNAME, "Image test file did not exist.");
+                                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image test file did not exist.");
                             } else {
-                                Log.i(CLASSNAME, "Image test file exists.");
+                                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image test file exists.");
                             }
                         } catch (IOException e) {
-                            Log.d(CLASSNAME, "IO Exception writing to log file.");
+                            Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": IO Exception writing to log file.");
                         }
 
                         try {
                             FileNameMap fileNameMap = URLConnection.getFileNameMap();
                             String mimeType = fileNameMap.getContentTypeFor(imageFile.getName());
-                            Log.i(CLASSNAME, "The file MIME type is: " + mimeType);
+                            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": The file MIME type is: " + mimeType);
                             String boundary = "-------------" + System.currentTimeMillis();
                             post.setHeader("Content-type", "multipart/form-data; boundary="+boundary);
                             builder.setBoundary(boundary);
                             builder.addPart("imageFile", new FileBody(imageFile, ContentType.create(mimeType),"conpic.jpg"));
-                            Log.i(CLASSNAME, "Created multi-part request and added file data.");
+                            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Created multi-part request and added file data.");
                         } catch (Exception e) {
-                            Log.e(CLASSNAME, "Unsupported encoding for multipart entity.");
+                            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Unsupported encoding for multipart entity.");
                         }
                         post.setEntity(builder.build());
-                        Log.i(CLASSNAME, "Finished post.");
+                        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Finished post.");
                     }
+                    break;
+
+                case SmartClosetConstants.USE_ARTICLE:
+                    stringEntity = new StringEntity(requestJSON);
+                    stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    post.setEntity(stringEntity);
                     break;
             }
             //Execute the POST request
             HttpResponse response = client.execute(post);
-            Log.i(CLASSNAME,"Finished post.");
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Finished post.");
 
             StatusLine statusLine = response.getStatusLine();
             if(statusLine.getStatusCode() == HttpStatus.SC_OK){
                  responseJSON = EntityUtils.toString(response.getEntity());
-                Log.i(CLASSNAME, "Http Response: " + response.toString());
-                Log.i(CLASSNAME, "Response JSON: " + responseJSON.toString());
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Http Response: " + response.toString());
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Response JSON: " + responseJSON.toString());
             } else {
-                Log.w(CLASSNAME, statusLine.getReasonPhrase());
+                Log.w(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + statusLine.getReasonPhrase());
                 response.getEntity().getContent().close();
                 throw new IOException(statusLine.getReasonPhrase());
             }
         } catch (ClientProtocolException e) {
-            Log.w(CLASSNAME, e);
+            Log.w(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
             responseJSON = e.getMessage();
         } catch (IOException e) {
-            Log.w(CLASSNAME, e);
+            Log.w(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
             responseJSON = e.getMessage();
         } catch (Exception e) {
-            Log.w(CLASSNAME, e);
+            Log.w(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
             responseJSON = e.getMessage();
         }
 

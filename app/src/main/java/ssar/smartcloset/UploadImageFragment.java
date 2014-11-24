@@ -77,7 +77,7 @@ public class UploadImageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View thisView = inflater.inflate(R.layout.fragment_upload_image, container, false);
-        addListenerOnUpdateArticleButton(thisView);
+        //addListenerOnUpdateArticleButton(thisView);
         addListenerOnSelectFileForUploadButton(thisView);
 
         EditText editText = (EditText) thisView.findViewById(R.id.articleId);
@@ -85,7 +85,7 @@ public class UploadImageFragment extends Fragment {
         return thisView;
     }
 
-    public void addListenerOnUpdateArticleButton(View view) {
+    /*public void addListenerOnUpdateArticleButton(View view) {
         Button button = (Button) view.findViewById(R.id.updateArticleIdButton);
         button.setOnClickListener(new View.OnClickListener()
         {
@@ -95,7 +95,7 @@ public class UploadImageFragment extends Fragment {
                 updateArticleId(v);
             }
         });
-    }
+    }*/
 
     public void addListenerOnSelectFileForUploadButton(View view) {
         Button button = (Button) view.findViewById(R.id.selectFileButton);

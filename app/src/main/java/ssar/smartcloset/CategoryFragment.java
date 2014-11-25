@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.games.Players;
@@ -61,7 +62,8 @@ public class CategoryFragment extends Fragment {
     /**
      * The fragment's ListView/GridView.
      */
-    private GridView gridView;
+    //private GridView gridView;
+    private ListView listView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -122,8 +124,10 @@ public class CategoryFragment extends Fragment {
         //mListView = (AbsListView) view.findViewById(android.R.id.list);
         //((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
-        gridView = (GridView) view.findViewById(R.id.gridList);
-        gridView.setAdapter(customListAdapter);
+       // gridView = (GridView) view.findViewById(R.id.gridList);
+       // gridView.setAdapter(customListAdapter);
+        listView = (ListView) view.findViewById(R.id.listView);
+        listView.setAdapter(customListAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         //mListView.setOnItemClickListener(this);
@@ -232,7 +236,9 @@ public class CategoryFragment extends Fragment {
             //getActivity().setContentView(R.layout.fragment_views_grid);
            // gridView = (GridView) getActivity().findViewById(R.id.gridList);
             customListAdapter = new CustomListAdapter(getActivity(), categories);
-            gridView.setAdapter(customListAdapter);
+            //gridView.setAdapter(customListAdapter);
+
+            listView.setAdapter(customListAdapter);
             //mAdapter = new ArrayAdapter<String>(getActivity(),
             //        android.R.layout.simple_list_item_1, android.R.id.text1, catergoriesNameList);
         }

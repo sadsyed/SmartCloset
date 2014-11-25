@@ -28,7 +28,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
+import ssar.smartcloset.types.Category;
+import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
@@ -45,9 +49,12 @@ public class MainActivity extends Activity implements
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
     public SmartClosetRequestReceiver useArticleRequestReceiver;
+   // public SmartClosetRequestReceiver getCategoriesRequestReceiver;
 
     public boolean writeMode = false;
     public String articleUuid;
+
+    IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +70,6 @@ public class MainActivity extends Activity implements
             }
         }
 
-
         //display FragmentRouter
         FragmentManager fragmentManager = getFragmentManager();
         Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
@@ -74,6 +80,41 @@ public class MainActivity extends Activity implements
         }
 
     }
+
+    @Override
+    protected void onPause() {
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onPause.... ");
+        super.onPause();
+        disableForegroundMode();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": on Resume.... ");
+        super.onResume();
+        enableForegroundMode();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //--------------- NFC Processing Methods ---------------
 
     private void initializeNfcAdapter() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -223,38 +264,7 @@ public class MainActivity extends Activity implements
         return false;
     }
 
-    @Override
-    protected void onPause() {
-        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onPause.... ");
-        super.onPause();
-        disableForegroundMode();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": on Resume.... ");
-        super.onResume();
-        enableForegroundMode();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    //--------------- FragmentInteraction Methods ---------------
 
     public void onFragmentRouterInteraction(View view) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": On Menu Tag Button CLicked.");
@@ -263,8 +273,8 @@ public class MainActivity extends Activity implements
 
         switch (view.getId()) {
             case R.id.closetButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
-                //display Closet Fragment
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                //display Category Fragment
                 CategoryFragment categoryFragment = new CategoryFragment();
                 updateFragment(categoryFragment);
                 break;
@@ -328,6 +338,8 @@ public class MainActivity extends Activity implements
         transaction.commit();
     }
 
+    //--------------- RequestReceiver ---------------
+
     public class SmartClosetRequestReceiver extends BroadcastReceiver {
         public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
         private String serviceUrl;
@@ -341,13 +353,32 @@ public class MainActivity extends Activity implements
             if(useArticleRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(useArticleRequestReceiver);
+
+                    String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
                 } catch (IllegalArgumentException e){
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
 
-            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+            /*if(getCategoriesRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(getCategoriesRequestReceiver);
+                    String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+                    ArrayList<Category> categories = (ArrayList) JsonParserUtil.jsonToCategory(serviceUrl, responseJSON);
+
+                    CategoryFragment categoryFragment = new CategoryFragment();
+                    Bundle args = new Bundle();
+                    args.putParcelableArrayList(CategoryFragment.ARG_CATEGAORIES, categories);
+                    categoryFragment.setArguments(args);
+
+                    updateFragment(categoryFragment);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }*/
         }
     }
 }

@@ -14,6 +14,7 @@ public class SmartClosetConstants {
     public static final String CREATE_ARTICLE = APP_SPOT + "/CreateArticle";
     public static final String UPLOAD_ARTICLE_IMAGE = APP_SPOT + "/AndroidUploadHandler";
     public static final String USE_ARTICLE = APP_SPOT + "/UseArticle";
+    public static final String GET_CATEGORIES = APP_SPOT + "/GetCategories";
 
     public static final String PROCESS_RESPONSE = "ssar.intent.action";
 }

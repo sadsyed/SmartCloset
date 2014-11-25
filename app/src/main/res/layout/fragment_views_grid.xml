@@ -6,15 +6,9 @@
     tools:context="ssar.smartcloset.CategoryFragment">
 
     <GridView
-        android:id="@android:id/list"
+        android:id="@+id/gridList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="2" />
-
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" />
+        android:numColumns="1" />
 
 </FrameLayout>

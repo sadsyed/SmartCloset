@@ -49,12 +49,10 @@ public class MainActivity extends Activity implements
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
     public SmartClosetRequestReceiver useArticleRequestReceiver;
-   // public SmartClosetRequestReceiver getCategoriesRequestReceiver;
 
     public boolean writeMode = false;
     public String articleUuid;
 
-    IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

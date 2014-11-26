@@ -360,25 +360,6 @@ public class MainActivity extends Activity implements
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
-
-            /*if(getCategoriesRequestReceiver != null) {
-                try {
-                    context.unregisterReceiver(getCategoriesRequestReceiver);
-                    String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
-
-                    ArrayList<Category> categories = (ArrayList) JsonParserUtil.jsonToCategory(serviceUrl, responseJSON);
-
-                    CategoryFragment categoryFragment = new CategoryFragment();
-                    Bundle args = new Bundle();
-                    args.putParcelableArrayList(CategoryFragment.ARG_CATEGAORIES, categories);
-                    categoryFragment.setArguments(args);
-
-                    updateFragment(categoryFragment);
-                } catch (IllegalArgumentException e){
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
-                }
-            }*/
         }
     }
 }

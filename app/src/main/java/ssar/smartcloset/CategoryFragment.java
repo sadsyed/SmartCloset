@@ -62,8 +62,8 @@ public class CategoryFragment extends Fragment {
     /**
      * The fragment's ListView/GridView.
      */
-    //private GridView gridView;
-    private ListView listView;
+    private GridView gridView;
+    //private ListView listView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -95,7 +95,6 @@ public class CategoryFragment extends Fragment {
             categories = getArguments().getParcelableArrayList(ARG_CATEGAORIES);
         }*/
 
-        // TODO: Change Adapter to display your content
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         getCategoriesRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORIES);
@@ -106,13 +105,6 @@ public class CategoryFragment extends Fragment {
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.GET_CATEGORIES);
         getActivity().startService(msgIntent);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
-
-        //TODO: Create Catogery and article image adapter
-
-        //mAdapter = new ArrayAdapter<String>(getActivity(),
-        //        android.R.layout.simple_list_item_1, android.R.id.text1, MainMenu.ViewTitles);
-
-        //customListAdapter = new CustomListAdapter(getActivity(), categories);
     }
 
     @Override
@@ -121,13 +113,8 @@ public class CategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_views_grid, container, false);
 
         // Set the adapter
-        //mListView = (AbsListView) view.findViewById(android.R.id.list);
-        //((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
-       // gridView = (GridView) view.findViewById(R.id.gridList);
-       // gridView.setAdapter(customListAdapter);
-        listView = (ListView) view.findViewById(R.id.listView);
-        listView.setAdapter(customListAdapter);
+        gridView = (GridView) view.findViewById(R.id.gridView);
+        gridView.setAdapter(customListAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         //mListView.setOnItemClickListener(this);
@@ -225,22 +212,8 @@ public class CategoryFragment extends Fragment {
 
             categories = JsonParserUtil.jsonToCategory(serviceUrl, responseJSON);
 
-            String[] catergoriesNameList = new String[15];
-
-            int i=0;
-            for (Category category : categories) {
-                catergoriesNameList[i] = category.getName();
-                i++;
-            }
-
-            //getActivity().setContentView(R.layout.fragment_views_grid);
-           // gridView = (GridView) getActivity().findViewById(R.id.gridList);
             customListAdapter = new CustomListAdapter(getActivity(), categories);
-            //gridView.setAdapter(customListAdapter);
-
-            listView.setAdapter(customListAdapter);
-            //mAdapter = new ArrayAdapter<String>(getActivity(),
-            //        android.R.layout.simple_list_item_1, android.R.id.text1, catergoriesNameList);
+            gridView.setAdapter(customListAdapter);
         }
     }
 }

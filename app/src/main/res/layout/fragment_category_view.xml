@@ -4,25 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="ssar.smartcloset.CategoryFragment">
+    tools:context="ssar.smartcloset.CategoryFragment"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/articleImage"
         android:layout_gravity="center"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:src="@drawable/ic_launcher" />
+        android:background="#D3D3D3"
+        android:src="@drawable/ic_launcher"
+        android:layout_weight="0.24" />
 
     <TextView
         android:id="@+id/categoryName"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:text="TextView" />
+        android:textSize="18dp"
+        android:text="TextView"
+        android:background="#ff007777"
+        android:textColor="#D3D3D3" />
 
 </LinearLayout>

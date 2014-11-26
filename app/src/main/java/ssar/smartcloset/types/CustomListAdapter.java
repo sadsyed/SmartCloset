@@ -70,8 +70,8 @@ public class CustomListAdapter extends BaseAdapter{
 
             //load image using cover url
             LoadImage loadImage = new LoadImage(holder.imageView);
-            Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Loading Url: " + categories.get(position).getLastestUsedArticleImageUrl());
-            loadImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, categories.get(position).getLastestUsedArticleImageUrl());
+            Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Loading Url: " + categories.get(position).getLastUsedArticleImageUrl());
+            loadImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, categories.get(position).getLastUsedArticleImageUrl());
 
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override

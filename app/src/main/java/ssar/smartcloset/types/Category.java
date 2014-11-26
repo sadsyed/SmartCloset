@@ -8,7 +8,7 @@ import android.os.Parcelable;
  */
 public class Category implements Parcelable{
     private String name;
-    private String lastestUsedArticleImageUrl;
+    private String lastUsedArticleImageUrl;
 
 
     public String getName() {
@@ -18,12 +18,12 @@ public class Category implements Parcelable{
         this.name = name;
     }
 
-    public String getLastestUsedArticleImageUrl() {
-        return lastestUsedArticleImageUrl;
+    public String getLastUsedArticleImageUrl() {
+        return lastUsedArticleImageUrl;
     }
 
-    public void setLastestUsedArticleImageUrl(String lastestUsedArticleImageUrl) {
-        this.lastestUsedArticleImageUrl = lastestUsedArticleImageUrl;
+    public void setLastUsedArticleImageUrl(String lastUsedArticleImageUrl) {
+        this.lastUsedArticleImageUrl = lastUsedArticleImageUrl;
     }
 
     @Override

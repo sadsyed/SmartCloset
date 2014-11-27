@@ -18,4 +18,10 @@ public class SmartClosetConstants {
     public static final String GET_CATEGORIES = APP_SPOT + "/GetCategories";
 
     public static final String PROCESS_RESPONSE = "ssar.intent.action";
+
+    //SlideMenu Constants
+    public static final int SLIDEMENU_HOME_ITEM = 0;
+    public static final int SLIDEMENU_CLOSET_ITEM = 1;
+    public static final int SLIDEMENU_SEARCH_ITEM = 2;
+    public static final int SLIDEMENU_NEWTAG_ITEM = 3;
 }

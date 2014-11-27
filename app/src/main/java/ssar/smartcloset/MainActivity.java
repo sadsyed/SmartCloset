@@ -204,11 +204,9 @@ public class MainActivity extends Activity implements
     }
 
     private void displayView(int position) {
-        Fragment fragment = null;
-
         switch (position) {
             case 0:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
                 //display Category Fragment
                 FragmentRouter fragmentRouter = new FragmentRouter();
                 updateFragment(fragmentRouter, position);
@@ -427,22 +425,22 @@ public class MainActivity extends Activity implements
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
                 //display Category Fragment
                 CategoryFragment categoryFragment = new CategoryFragment();
-                updateFragment(categoryFragment, 1);
-                setFragmentTitle(1);
+                updateFragment(categoryFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 break;
             case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchFragment searchFragment = new SearchFragment();
-                updateFragment(searchFragment, 2);
-                setFragmentTitle(2);
+                updateFragment(searchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
                 break;
             case R.id.newTagButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
                 //display New Tag Fragment
                 NewTagFragment newTagFragment = new NewTagFragment();
-                updateFragment(newTagFragment, 3);
-                setFragmentTitle(3);
+                updateFragment(newTagFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
                 break;
         }
     }
@@ -452,7 +450,7 @@ public class MainActivity extends Activity implements
 
         //launch UploadImageFragment for the given articleId
         UploadImageFragment uploadImageFragment = UploadImageFragment.newInstance(articleId);
-        updateFragment(uploadImageFragment, 3);
+        updateFragment(uploadImageFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
     }
 
     public void onSearchFragmentInteraction(Uri uri) {
@@ -467,14 +465,14 @@ public class MainActivity extends Activity implements
         args.putInt(ViewFragment.ARG_POSITION, position);
         viewFragment.setArguments(args);
 
-        updateFragment(viewFragment, 1);
+        updateFragment(viewFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUploadImageFragmentInteraction.......");
 
         WriteTagFragment writeTagFragment = WriteTagFragment.newInstance(currentUuid);
-        updateFragment(writeTagFragment, 3);
+        updateFragment(writeTagFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
     }
 
     public void onWriteTagFragmentInteraction(String articleId){

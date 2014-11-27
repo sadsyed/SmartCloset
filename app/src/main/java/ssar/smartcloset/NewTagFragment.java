@@ -139,6 +139,7 @@ public class NewTagFragment extends Fragment {
                 EditText articlePriceEditText = (EditText) getView().findViewById(R.id.articlePriceEditText);
                 EditText articleOwnerEditText = (EditText) getView().findViewById(R.id.articleOwnerEditText);
                 CheckBox articleOkToSellCheckbox = (CheckBox) getView().findViewById(R.id.articleOkToSellCheckbox);
+                CheckBox articlePrivateCheckbox = (CheckBox) getView().findViewById(R.id.articlePrivateCheckbox);
                 filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
                 filter.addCategory(Intent.CATEGORY_DEFAULT);
                 createArticleRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
@@ -157,6 +158,11 @@ public class NewTagFragment extends Fragment {
                         okToSellTemp = "true";
                     }
                     requestJSON.put("articleOkToSell", okToSellTemp);
+                    String privateTemp = "false";
+                    if(articlePrivateCheckbox.isChecked()) {
+                        privateTemp = "true";
+                    }
+                    requestJSON.put("articlePrivate", privateTemp);
                     requestJSON.put("articleOwner", articleOwnerEditText.getText().toString());
                 } catch (Exception e) {
                     Log.e(CLASSNAME, "Exception while creating an request JSON.");

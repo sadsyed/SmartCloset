@@ -23,6 +23,7 @@
     <string name="newtag_select_file_button">Select File For Upload</string>
     <string name="newtag_create_article_button">Create Article</string>
     <string name="newtag_ok_sell_checkbox">This item OK to sell.</string>
+    <string name="newtag_private_checkbox">This item is private.</string>
 
     <string-array name="newtag_article_type_array">
         <item>Select an article type...</item>

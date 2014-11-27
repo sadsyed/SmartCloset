@@ -67,12 +67,21 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/newtag_private_checkbox"
+        android:id="@+id/articlePrivateCheckbox"
+        android:layout_below="@+id/articleOkToSellCheckbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
         android:id="@+id/createArticleButton"
-        android:layout_below="@+id/articleOkToSellCheckbox"
+        android:layout_below="@+id/articlePrivateCheckbox"
         android:onClick="addListenerOnSpinnerItemSelection"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

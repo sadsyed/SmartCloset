@@ -2,13 +2,13 @@ package ssar.smartcloset;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -18,21 +18,22 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Spinner;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
-import ssar.smartcloset.types.Category;
-import ssar.smartcloset.util.JsonParserUtil;
+import ssar.smartcloset.types.NavDrawerListAdapter;
+import ssar.smartcloset.types.NavDrawerItem;
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
@@ -53,16 +54,67 @@ public class MainActivity extends Activity implements
     public boolean writeMode = false;
     public String articleUuid;
 
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private CharSequence drawerTitle;
+    private CharSequence title;
+    private String[] navMenuTitles;
+    private ArrayList<NavDrawerItem> navDrawerItems;
+    private NavDrawerListAdapter navDrawerListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //initialize NfcAdapter to start tag detection
         initializeNfcAdapter();
         handleNfcIntent(getIntent());
 
-        if (findViewById(R.id.main_fragment_container) != null) {
+        //load slider menu items
+        title = drawerTitle = getTitle();
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.list_slidermenu);
+
+        navDrawerItems = new ArrayList<NavDrawerItem>();
+
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3]));
+
+        drawerList.setOnItemClickListener(new SlideMenuClickListener());
+
+        navDrawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+        drawerList.setAdapter(navDrawerListAdapter);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.drawable.ic_launcher,
+                R.string.app_name,
+                R.string.app_name
+        ) {
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(title);
+                invalidateOptionsMenu();
+            }
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(drawerTitle);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        if(savedInstanceState == null) {
+            displayView(0);
+        }
+
+ /*       if (findViewById(R.id.main_fragment_container) != null) {
             if (savedInstanceState != null) {
                 return;
             }
@@ -76,7 +128,14 @@ public class MainActivity extends Activity implements
             menuFragment = new FragmentRouter();
             fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
         }
+*/
+    }
 
+    private class SlideMenuClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            displayView(position);
+        }
     }
 
     @Override
@@ -105,11 +164,105 @@ public class MainActivity extends Activity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        /*int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);*/
+        if(actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        int t = getFragmentManager().getBackStackEntryCount();
+
+        if(t==1) {
+            finish();
+        }
+
+        if(t>1) {
+            int tr = Integer.parseInt(getFragmentManager().getBackStackEntryAt(t-2).getName());
+            setTitle(navMenuTitles[tr]);
+            super.onBackPressed();
+       }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void displayView(int position) {
+        Fragment fragment = null;
+
+        switch (position) {
+            case 0:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                //display Category Fragment
+                FragmentRouter fragmentRouter = new FragmentRouter();
+                updateFragment(fragmentRouter, position);
+                setFragmentTitle(position);
+                break;
+            case 1:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                //display Category Fragment
+                CategoryFragment categoryFragment = new CategoryFragment();
+                updateFragment(categoryFragment, position);
+                setFragmentTitle(position);
+                break;
+            case 2:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
+                //display Search Fragment
+                SearchFragment searchFragment = new SearchFragment();
+                updateFragment(searchFragment, position);
+                setFragmentTitle(position);
+                break;
+            case 3:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
+                //display New Tag Fragment
+                NewTagFragment newTagFragment = new NewTagFragment();
+                updateFragment(newTagFragment, position);
+                setFragmentTitle(position);
+                break;
+            default:
+                break;
+        }
+
+        drawerLayout.closeDrawer(drawerList);
+    }
+
+    private void setFragmentTitle(int position) {
+        drawerList.setItemChecked(position, true);
+        drawerList.setSelection(position);
+        setTitle(navMenuTitles[position]);
+    }
+    @Override
+    public void setTitle(CharSequence title) {
+        this.title = title;
+        getActionBar().setTitle(title);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle saveInstanceState) {
+        super.onPostCreate(saveInstanceState);
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        actionBarDrawerToggle.onConfigurationChanged(configuration);
     }
 
     //--------------- NFC Processing Methods ---------------
@@ -274,19 +427,22 @@ public class MainActivity extends Activity implements
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
                 //display Category Fragment
                 CategoryFragment categoryFragment = new CategoryFragment();
-                updateFragment(categoryFragment);
+                updateFragment(categoryFragment, 1);
+                setFragmentTitle(1);
                 break;
             case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchFragment searchFragment = new SearchFragment();
-                updateFragment(searchFragment);
+                updateFragment(searchFragment, 2);
+                setFragmentTitle(2);
                 break;
             case R.id.newTagButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
                 //display New Tag Fragment
                 NewTagFragment newTagFragment = new NewTagFragment();
-                updateFragment(newTagFragment);
+                updateFragment(newTagFragment, 3);
+                setFragmentTitle(3);
                 break;
         }
     }
@@ -296,7 +452,7 @@ public class MainActivity extends Activity implements
 
         //launch UploadImageFragment for the given articleId
         UploadImageFragment uploadImageFragment = UploadImageFragment.newInstance(articleId);
-        updateFragment(uploadImageFragment);
+        updateFragment(uploadImageFragment, 3);
     }
 
     public void onSearchFragmentInteraction(Uri uri) {
@@ -311,14 +467,14 @@ public class MainActivity extends Activity implements
         args.putInt(ViewFragment.ARG_POSITION, position);
         viewFragment.setArguments(args);
 
-        updateFragment(viewFragment);
+        updateFragment(viewFragment, 1);
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUploadImageFragmentInteraction.......");
 
         WriteTagFragment writeTagFragment = WriteTagFragment.newInstance(currentUuid);
-        updateFragment(writeTagFragment);
+        updateFragment(writeTagFragment, 3);
     }
 
     public void onWriteTagFragmentInteraction(String articleId){
@@ -327,11 +483,11 @@ public class MainActivity extends Activity implements
         //beginWrite();
     }
 
-    private void updateFragment(Fragment fragment) {
+    private void updateFragment(Fragment fragment, Integer position) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, fragment);
-        transaction.addToBackStack(null);
+        transaction.addToBackStack(position.toString());
 
         transaction.commit();
     }

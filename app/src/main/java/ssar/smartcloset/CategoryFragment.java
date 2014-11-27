@@ -1,5 +1,6 @@
 package ssar.smartcloset;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
@@ -170,6 +171,10 @@ public class CategoryFragment extends Fragment {
         if (emptyText instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
         }*/
+    }
+
+    private ActionBar getActionBar() {
+        return ((MainActivity) getActivity()).getActionBar();
     }
 
     /**

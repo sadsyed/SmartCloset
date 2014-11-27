@@ -42,4 +42,12 @@
 
     <string name="title_activity_write_tag">WriteTagActivity</string>
 
+    <!-- Nav Drawer Menu Itemes-->
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Closet</item>
+        <item>Search</item>
+        <item>New Tag</item>
+    </string-array>
+
 </resources>

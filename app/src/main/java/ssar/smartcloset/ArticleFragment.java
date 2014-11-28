@@ -1,15 +1,35 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.hardware.input.InputManager;
+import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import ssar.smartcloset.types.Article;
+import ssar.smartcloset.types.CustomListAdapter;
+import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 
 
@@ -25,27 +45,31 @@ public class ArticleFragment extends Fragment {
     private static final String CLASSNAME = ArticleFragment.class.getSimpleName();
 
     // the fragment initialization parameters
+    public static final String ARG_ARTICLE_SELECTED = "article";
     public static final String ARG_ARTICLE_ID = "articleId";
     public static final String ARG_ARTICLE_NAME = "articleName";
     private String articleId;
     private String articleName;
+    private Article article;
 
     private OnArticleFragmentInteractionListener onArticleFragmentInteractionListener;
+//    private SmartClosetRequestReceiver getArticleRequestReceiver;
+    private IntentFilter filter;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param articleId Parameter 1.
-     * @param articleName Parameter 2.
+     * @param article Parameter 1.
      * @return A new instance of fragment ArticleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArticleFragment newInstance(String articleName, String articleId) {
+    public static ArticleFragment newInstance(Article article) {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ARTICLE_ID, articleId);
-        args.putString(ARG_ARTICLE_NAME, articleName);
+        //args.putString(ARG_ARTICLE_ID, articleId);
+        //args.putString(ARG_ARTICLE_NAME, articleName);
+        args.putParcelable(ARG_ARTICLE_SELECTED, article);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,12 +78,43 @@ public class ArticleFragment extends Fragment {
         // Required empty public constructor
     }
 
+/*    @Override
+    public void onStart() {
+        super.onStart();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            getArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORY);
+            getActivity().registerReceiver(getArticleRequestReceiver, filter);
+
+            //set the JSON request object
+            JSONObject requestJSON = new JSONObject();
+            try {
+                requestJSON.put("category", args.getString(ARG_CATEGORY_SELECTED));
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+            }
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategory request");
+            Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.GET_CATEGORY);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+            getActivity().startService(msgIntent);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
+        } else if (currentCatergory != null) {
+            updateMenuView(currentCatergory);
+        }
+    }
+*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            articleId = getArguments().getString(ARG_ARTICLE_ID);
-            articleName = getArguments().getString(ARG_ARTICLE_NAME);
+            //articleId = getArguments().getString(ARG_ARTICLE_ID);
+            //articleName = getArguments().getString(ARG_ARTICLE_NAME);
+            article = getArguments().getParcelable(ARG_ARTICLE_SELECTED);
         }
     }
 
@@ -69,8 +124,19 @@ public class ArticleFragment extends Fragment {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Launching Article Fragment" );
         View view = inflater.inflate(R.layout.fragment_article, container, false);
 
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Article: " + article.toString());
         TextView title = (TextView) view.findViewById(R.id.articleName);
-        title.setText(articleName);
+        title.setText(article.getArticleName());
+
+        new DownloadImageTask((ImageView)view.findViewById(R.id.articleImage)).execute(article.getItemImageURL());
+
+        TextView lastUsedDateTextView = (TextView) view.findViewById(R.id.articleLastUsedDate);
+        String[] lastUsedDate = article.getArticleLastUsed();
+        if(lastUsedDate == null || lastUsedDate.length == 0) {
+            lastUsedDateTextView.setText("Never Used");
+        } else {
+            lastUsedDateTextView.setText(lastUsedDate[lastUsedDate.length - 1]);
+        }
 
         // Inflate the layout for this fragment
         return view;
@@ -115,4 +181,60 @@ public class ArticleFragment extends Fragment {
         public void onArticleFragmentInteraction(Uri uri);
     }
 
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+
+        public DownloadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap bitmap = null;
+
+            try {
+                InputStream inputStream = new java.net.URL(urldisplay).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
+            }
+
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
+    }
+
+/*    //--------------- RequestReceiver ---------------
+
+    public class SmartClosetRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public SmartClosetRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(getArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(getArticleRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+            // get list of articles in the selected category
+            article = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+
+
+        }
+    }
+*/
 }

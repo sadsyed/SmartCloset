@@ -15,7 +15,7 @@ public class Article implements CustomListItem, Parcelable{
     private String articleOwner;
     private String articleType;
     private String articleImageUrl;
-    private List<String> articleLastUsed;
+    private String[] articleLastUsed;
     private int articleTimesUsed;
     private List<String> articleTags;
     private Float articlePrice;
@@ -63,11 +63,11 @@ public class Article implements CustomListItem, Parcelable{
         this.articleImageUrl = imageUrl;
     }
 
-    public List<String> getArticleLastUsed() {
+    public String[] getArticleLastUsed() {
         return articleLastUsed;
     }
 
-    public void setArticleLastUsed(List<String> articleLastUsed) {
+    public void setArticleLastUsed(String[] articleLastUsed) {
         this.articleLastUsed = articleLastUsed;
     }
 
@@ -109,6 +109,23 @@ public class Article implements CustomListItem, Parcelable{
 
     public void setArticleOkToSell(Boolean oktosell) {
         this.articleOkToSell = oktosell;
+    }
+
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append("Article Name: ").append(articleName)
+                .append(", Article Id: ").append(articleId)
+                .append(", Article Owner: ").append(articleName)
+                .append(", Article Type: ").append(articleType);
+
+        StringBuilder lastUsedDateBuilder = new StringBuilder();
+        lastUsedDateBuilder.append(", Article LastUsedDate: ");
+        for (String str : articleLastUsed) {
+            lastUsedDateBuilder.append("[").append(str).append("]");
+        }
+
+        return toStringBuilder.append(lastUsedDateBuilder).toString();
     }
 
     public String getItemName() {

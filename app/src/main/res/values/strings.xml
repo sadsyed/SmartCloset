@@ -49,6 +49,7 @@
         <item>Search</item>
         <item>New Tag</item>
         <item>Profile</item>
+        <item>Article</item>
     </string-array>
 
 </resources>

@@ -463,9 +463,9 @@ public class MainActivity extends Activity implements
     public void onCategoryFragmentInteraction(Article articleSelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategoryFragmentInteraction..... ");
 
-        ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected.getArticleName(), articleSelected.getArticleId());
+        ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
 
-        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
         setTitle(articleSelected.getArticleType());
     }
 

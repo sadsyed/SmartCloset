@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ViewSwitcher;
 
 import org.json.JSONObject;
 
@@ -40,7 +39,7 @@ import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
-        CategoryFragment.OnCategorySelectedListener,
+        ClosetFragment.OnCategorySelectedListener,
         ViewFragment.OnViewFragmentInteractionListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
@@ -217,8 +216,8 @@ public class MainActivity extends Activity implements
             case 1:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
                 //display Category Fragment
-                CategoryFragment categoryFragment = new CategoryFragment();
-                updateFragment(categoryFragment, position);
+                ClosetFragment closetFragment = new ClosetFragment();
+                updateFragment(closetFragment, position);
                 setFragmentTitle(position);
                 break;
             case 2:
@@ -426,8 +425,8 @@ public class MainActivity extends Activity implements
             case R.id.closetButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
                 //display Category Fragment
-                CategoryFragment categoryFragment = new CategoryFragment();
-                updateFragment(categoryFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+                ClosetFragment closetFragment = new ClosetFragment();
+                updateFragment(closetFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 break;
             case R.id.searchButton:
@@ -468,6 +467,7 @@ public class MainActivity extends Activity implements
         viewFragment.setArguments(args);
 
         updateFragment(viewFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+        setTitle(categorySelected);
     }
 
     public void onViewFragmentInteraction(Uri uri) {

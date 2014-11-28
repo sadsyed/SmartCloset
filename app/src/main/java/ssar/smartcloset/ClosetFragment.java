@@ -1,43 +1,24 @@
 package ssar.smartcloset;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.app.ListFragment;
-import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.gms.games.Players;
-import com.google.gson.JsonParser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
-import ssar.smartcloset.types.MainMenu;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 
@@ -50,8 +31,8 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * Activities containing this fragment MUST implement the {@link }
  * interface.
  */
-public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener{
-    private String CLASSNAME = CategoryFragment.class.getSimpleName();
+public class ClosetFragment extends Fragment implements AdapterView.OnItemClickListener{
+    private String CLASSNAME = ClosetFragment.class.getSimpleName();
     private SmartClosetRequestReceiver getCategoriesRequestReceiver;
     IntentFilter filter;
 
@@ -70,8 +51,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
      */
     private CustomListAdapter customListAdapter;
 
-/*    public static CategoryFragment newInstance(int position) {
-        CategoryFragment fragment = new CategoryFragment();
+/*    public static ClosetFragment newInstance(int position) {
+        ClosetFragment fragment = new ClosetFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_POSITION, position);
         //args.putString(ARG_PARAM2, param2);
@@ -83,7 +64,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CategoryFragment() {
+    public ClosetFragment() {
     }
 
     @Override

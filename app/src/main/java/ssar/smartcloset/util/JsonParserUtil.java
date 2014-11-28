@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import ssar.smartcloset.CategoryFragment;
 import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListItem;

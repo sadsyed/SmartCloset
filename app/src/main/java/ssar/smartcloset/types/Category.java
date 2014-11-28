@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by ssyed on 11/24/14.
  */
-public class Category implements Parcelable{
+public class Category implements CustomListItem, Parcelable{
     private String name;
     private String lastUsedArticleImageUrl;
 
@@ -24,6 +24,14 @@ public class Category implements Parcelable{
 
     public void setLastUsedArticleImageUrl(String lastUsedArticleImageUrl) {
         this.lastUsedArticleImageUrl = lastUsedArticleImageUrl;
+    }
+
+    public String getItemName() {
+        return getName();
+    }
+
+    public String getItemImageURL() {
+        return getLastUsedArticleImageUrl();
     }
 
     @Override

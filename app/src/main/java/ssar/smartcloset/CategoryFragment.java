@@ -36,6 +36,7 @@ import java.util.List;
 
 import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListAdapter;
+import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.types.MainMenu;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
@@ -49,16 +50,13 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * Activities containing this fragment MUST implement the {@link }
  * interface.
  */
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener{
     private String CLASSNAME = CategoryFragment.class.getSimpleName();
     private SmartClosetRequestReceiver getCategoriesRequestReceiver;
     IntentFilter filter;
 
-    // the fragment initialization parameters
-    public static final String ARG_CATEGAORIES = "categories";
-
     private OnCategorySelectedListener categorySelectedListener;
-    private List<Category> categories;
+    private List<CustomListItem> categories;
 
     /**
      * The fragment's ListView/GridView.
@@ -92,10 +90,6 @@ public class CategoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*if (getArguments() != null) {
-            categories = getArguments().getParcelableArrayList(ARG_CATEGAORIES);
-        }*/
-
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         getCategoriesRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORIES);
@@ -118,7 +112,7 @@ public class CategoryFragment extends Fragment {
         gridView.setAdapter(customListAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        //mListView.setOnItemClickListener(this);
+        gridView.setOnItemClickListener(this);
 
         return view;
     }
@@ -145,7 +139,7 @@ public class CategoryFragment extends Fragment {
     }
 
 
-    /*@Override
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         /*(if (null != viewSelectedListener) {
             // Notify the active callbacks interface (the activity, if the
@@ -155,10 +149,11 @@ public class CategoryFragment extends Fragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-    /*    if (null != categorySelectedListener) {
-            categorySelectedListener.onCategorySelected(position);
+        if (null != categorySelectedListener) {
+            Category categorySelected = (Category) categories.get(position);
+            categorySelectedListener.onCategorySelected(categorySelected.getName());
         }
-    }*/
+    }
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -173,10 +168,6 @@ public class CategoryFragment extends Fragment {
         }*/
     }
 
-    private ActionBar getActionBar() {
-        return ((MainActivity) getActivity()).getActionBar();
-    }
-
     /**
     * This interface must be implemented by activities that contain this
     * fragment to allow an interaction in this fragment to be communicated
@@ -189,7 +180,7 @@ public class CategoryFragment extends Fragment {
     */
     public interface OnCategorySelectedListener {
         // TODO: Update argument type and name
-        public void onCategorySelected(int id);
+        public void onCategorySelected(String categorySelected);
     }
 
     //--------------- RequestReceiver ---------------

@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ViewSwitcher;
 
 import org.json.JSONObject;
 
@@ -40,6 +41,7 @@ import ssar.smartcloset.util.ToastMessage;
 
 public class MainActivity extends Activity implements
         CategoryFragment.OnCategorySelectedListener,
+        ViewFragment.OnViewFragmentInteractionListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
@@ -457,15 +459,19 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
     }
 
-    public void onCategorySelected(int position) {
+    public void onCategorySelected(String categorySelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategorySelected.......");
 
         ViewFragment viewFragment = new ViewFragment();
         Bundle args = new Bundle();
-        args.putInt(ViewFragment.ARG_POSITION, position);
+        args.putString(ViewFragment.ARG_POSITION, categorySelected);
         viewFragment.setArguments(args);
 
         updateFragment(viewFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+    }
+
+    public void onViewFragmentInteraction(Uri uri) {
+
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {

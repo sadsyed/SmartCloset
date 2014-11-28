@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import ssar.smartcloset.types.Article;
+import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.util.JsonParserUtil;
@@ -34,12 +37,12 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * create an instance of this fragment.
  *
  */
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener{
     public final static String CLASSNAME = CategoryFragment.class.getSimpleName();
 
     public final static String ARG_CATEGORY_SELECTED = "categorySelected";
 
-    private OnViewFragmentInteractionListener onViewFragmentInteractionListener;
+    private OnCategoryFragmentInteractionListener onCategoryFragmentInteractionListener;
     private SmartClosetRequestReceiver getCategoryArticlesRequestReceiver;
     IntentFilter filter;
 
@@ -97,8 +100,8 @@ public class CategoryFragment extends Fragment {
         gridView = (GridView) view.findViewById(R.id.articleGridView);
         gridView.setAdapter(customListAdapter);
 
-        // Set OnItemClickListener so we can be notified on item clicks
-        //gridView.setOnItemClickListener(this);
+        //get OnItemClickListener so we can be notified on item clicks
+        gridView.setOnItemClickListener(this);
 
         // Inflate the layout for this fragment
         return view;
@@ -161,10 +164,10 @@ public class CategoryFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            onViewFragmentInteractionListener = (OnViewFragmentInteractionListener) activity;
+            onCategoryFragmentInteractionListener = (OnCategoryFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
 
         if(getCategoryArticlesRequestReceiver != null) {
@@ -177,6 +180,16 @@ public class CategoryFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+*/
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+        if (null != onCategoryFragmentInteractionListener) {
+            Article articleSelected = (Article) articles.get(position);
+            onCategoryFragmentInteractionListener.onCategoryFragmentInteraction(articleSelected);
+        }
+}
 
     /**
      * This interface must be implemented by activities that contain this
@@ -188,9 +201,9 @@ public class CategoryFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-        public interface OnViewFragmentInteractionListener {
+    public interface OnCategoryFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onViewFragmentInteraction(Uri uri);
+        public void onCategoryFragmentInteraction(Article articleSelected);
     }
 
     //--------------- RequestReceiver ---------------

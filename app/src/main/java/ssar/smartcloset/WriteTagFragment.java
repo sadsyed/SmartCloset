@@ -94,7 +94,7 @@ public class WriteTagFragment extends Fragment {
             onWriteTagFragmentInteractionListener = (OnWriteTagFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
     }
 

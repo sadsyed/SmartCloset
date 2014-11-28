@@ -1,12 +1,15 @@
 package ssar.smartcloset.types;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ssyed on 11/9/14.
  */
-public class Article implements CustomListItem{
+public class Article implements CustomListItem, Parcelable{
     private String articleName;
     private String articleId;
     private String articleOwner;
@@ -114,5 +117,15 @@ public class Article implements CustomListItem{
 
     public String getItemImageURL() {
         return getArticleImageUrl();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

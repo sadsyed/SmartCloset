@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.NavDrawerListAdapter;
 import ssar.smartcloset.types.NavDrawerItem;
 import ssar.smartcloset.util.SmartClosetConstants;
@@ -39,9 +40,10 @@ import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
-        ClosetFragment.OnCategorySelectedListener,
-        CategoryFragment.OnViewFragmentInteractionListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
+        ClosetFragment.OnCategorySelectedListener,
+        CategoryFragment.OnCategoryFragmentInteractionListener,
+        ArticleFragment.OnArticleFragmentInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
         UploadImageFragment.OnUploadImageFragmentInteractionListener,
@@ -74,6 +76,10 @@ public class MainActivity extends Activity implements
         handleNfcIntent(getIntent());
 
         //load slider menu items
+        loadSliderMenu(savedInstanceState);
+    }
+
+    private void loadSliderMenu(Bundle savedInstanceState) {
         title = drawerTitle = getTitle();
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
@@ -112,24 +118,8 @@ public class MainActivity extends Activity implements
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         if(savedInstanceState == null) {
-            displayView(0);
+            displayView(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         }
-
- /*       if (findViewById(R.id.main_fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-        }
-
-        //display FragmentRouter
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment menuFragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
-
-        if (menuFragment == null) {
-            menuFragment = new FragmentRouter();
-            fragmentManager.beginTransaction().add(R.id.main_fragment_container, menuFragment).commit();
-        }
-*/
     }
 
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
@@ -470,8 +460,17 @@ public class MainActivity extends Activity implements
         setTitle(categorySelected);
     }
 
-    public void onViewFragmentInteraction(Uri uri) {
+    public void onCategoryFragmentInteraction(Article articleSelected) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategoryFragmentInteraction..... ");
 
+        ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected.getArticleName(), articleSelected.getArticleId());
+
+        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+        setTitle(articleSelected.getArticleType());
+    }
+
+    public void onArticleFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onArticleFragment..... ");
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {
@@ -491,7 +490,9 @@ public class MainActivity extends Activity implements
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, fragment);
-        transaction.addToBackStack(position.toString());
+
+        if(position != null)
+            transaction.addToBackStack(position.toString());
 
         transaction.commit();
     }

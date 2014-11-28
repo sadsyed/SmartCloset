@@ -105,7 +105,7 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
             categorySelectedListener = (OnCategorySelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                + " must implement OnFragmentInteractionListener");
+                + " must implement OnArticleFragmentInteractionListener");
         }
 
         if(getCategoriesRequestReceiver != null) {

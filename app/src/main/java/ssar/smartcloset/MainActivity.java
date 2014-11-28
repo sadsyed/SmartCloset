@@ -40,7 +40,7 @@ import ssar.smartcloset.util.ToastMessage;
 
 public class MainActivity extends Activity implements
         ClosetFragment.OnCategorySelectedListener,
-        ViewFragment.OnViewFragmentInteractionListener,
+        CategoryFragment.OnViewFragmentInteractionListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
@@ -423,7 +423,7 @@ public class MainActivity extends Activity implements
 
         switch (view.getId()) {
             case R.id.closetButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                 //display Category Fragment
                 ClosetFragment closetFragment = new ClosetFragment();
                 updateFragment(closetFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
@@ -461,12 +461,12 @@ public class MainActivity extends Activity implements
     public void onCategorySelected(String categorySelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategorySelected.......");
 
-        ViewFragment viewFragment = new ViewFragment();
+        CategoryFragment categoryFragment = new CategoryFragment();
         Bundle args = new Bundle();
-        args.putString(ViewFragment.ARG_POSITION, categorySelected);
-        viewFragment.setArguments(args);
+        args.putString(CategoryFragment.ARG_CATEGORY_SELECTED, categorySelected);
+        categoryFragment.setArguments(args);
 
-        updateFragment(viewFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+        updateFragment(categoryFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
         setTitle(categorySelected);
     }
 

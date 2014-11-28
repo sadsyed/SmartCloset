@@ -19,10 +19,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
-import ssar.smartcloset.types.MainMenu;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 
@@ -32,14 +30,14 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * Activities that contain this fragment must implement the
  * {@link} interface
  * to handle interaction events.
- * Use the {@link ViewFragment#newInstance} factory method to
+ * Use the {@link CategoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class ViewFragment extends Fragment {
-    public final static String CLASSNAME = ViewFragment.class.getSimpleName();
+public class CategoryFragment extends Fragment {
+    public final static String CLASSNAME = CategoryFragment.class.getSimpleName();
 
-    public final static String ARG_POSITION = "position";
+    public final static String ARG_CATEGORY_SELECTED = "categorySelected";
 
     private OnViewFragmentInteractionListener onViewFragmentInteractionListener;
     private SmartClosetRequestReceiver getCategoryArticlesRequestReceiver;
@@ -65,16 +63,16 @@ public class ViewFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param categorySelected Parameter 1.
-     * @return A new instance of fragment ViewFragment.
+     * @return A new instance of fragment CategoryFragment.
      */
-    public static ViewFragment newInstance(String categorySelected) {
-        ViewFragment fragment = new ViewFragment();
+    public static CategoryFragment newInstance(String categorySelected) {
+        CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_POSITION, categorySelected);
+        args.putString(ARG_CATEGORY_SELECTED, categorySelected);
         fragment.setArguments(args);
         return fragment;
     }
-    public ViewFragment() {
+    public CategoryFragment() {
         // Required empty public constructor
     }
 
@@ -82,7 +80,7 @@ public class ViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            categorySelected = getArguments().getString(ARG_POSITION);
+            categorySelected = getArguments().getString(ARG_CATEGORY_SELECTED);
         }
     }
 
@@ -90,7 +88,7 @@ public class ViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            currentCatergory = savedInstanceState.getString(ARG_POSITION);
+            currentCatergory = savedInstanceState.getString(ARG_CATEGORY_SELECTED);
         }
 
         View view = inflater.inflate(R.layout.fragment_view, container, false);
@@ -113,7 +111,7 @@ public class ViewFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             //set article based on argument passed in
-            updateMenuView(args.getString(ARG_POSITION));
+            updateMenuView(args.getString(ARG_CATEGORY_SELECTED));
 
             filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
             filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -123,7 +121,7 @@ public class ViewFragment extends Fragment {
             //set the JSON request object
             JSONObject requestJSON = new JSONObject();
             try {
-                requestJSON.put("category", args.getString(ARG_POSITION));
+                requestJSON.put("category", args.getString(ARG_CATEGORY_SELECTED));
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }
@@ -149,7 +147,7 @@ public class ViewFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         //Save the current article selection in case we need to recreate the fragment
-        outState.putString(ARG_POSITION, currentCatergory);
+        outState.putString(ARG_CATEGORY_SELECTED, currentCatergory);
     }
 
 /*    // TODO: Rename method, update argument and hook method into UI event

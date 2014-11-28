@@ -54,7 +54,7 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
 /*    public static ClosetFragment newInstance(int position) {
         ClosetFragment fragment = new ClosetFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_POSITION, position);
+        args.putInt(ARG_CATEGORY_SELECTED, position);
         //args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;

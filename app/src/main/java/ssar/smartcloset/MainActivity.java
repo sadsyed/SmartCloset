@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -47,7 +48,8 @@ public class MainActivity extends Activity implements
         NewTagFragment.OnNewTagFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
         UploadImageFragment.OnUploadImageFragmentInteractionListener,
-        WriteTagFragment.OnWriteTagFragmentInteractionListener {
+        WriteTagFragment.OnWriteTagFragmentInteractionListener,
+        ProfileFragment.OnProfileFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -65,6 +67,8 @@ public class MainActivity extends Activity implements
     private String[] navMenuTitles;
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter navDrawerListAdapter;
+
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,7 @@ public class MainActivity extends Activity implements
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4]));
 
         drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -222,6 +227,13 @@ public class MainActivity extends Activity implements
                 //display New Tag Fragment
                 NewTagFragment newTagFragment = new NewTagFragment();
                 updateFragment(newTagFragment, position);
+                setFragmentTitle(position);
+                break;
+            case 4:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Profile Fragment..... ");
+                //display Profile Fragment
+                ProfileFragment profileFragmenet = new ProfileFragment();
+                updateFragment(profileFragmenet, position);
                 setFragmentTitle(position);
                 break;
             default:
@@ -484,6 +496,15 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onWriteTagFragmentInteraction.......");
         //articleUuid = articleId;
         //beginWrite();
+    }
+
+    public void onProfileFragmentInteraction() {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onProfileFragmentInteraction......");
+
+        //launch profile fragment
+        ProfileFragment profileFragment = new ProfileFragment();
+        updateFragment(profileFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
     }
 
     private void updateFragment(Fragment fragment, Integer position) {

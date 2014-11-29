@@ -25,5 +25,6 @@ public class SmartClosetConstants {
     public static final int SLIDEMENU_CLOSET_ITEM = 1;
     public static final int SLIDEMENU_SEARCH_ITEM = 2;
     public static final int SLIDEMENU_NEWTAG_ITEM = 3;
-    public static final int SLIDEMENU_ARTICLE_ITEM = 4;
+    public static final int SLIDEMENU_PROFILE_ITEM = 4;
+    public static final int SLIDEMENU_ARTICLE_ITEM = 5;
 }

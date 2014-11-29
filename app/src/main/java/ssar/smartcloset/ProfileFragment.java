@@ -1,7 +1,10 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +17,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.SmartClosetConstants;
 
 
@@ -37,8 +44,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private String profileFragment;
     private String mParam2;
 
+    public SmartClosetRequestReceiver smartClosetRequestReceiver;
     private OnProfileFragmentInteractionListener onProfileFragmentInteractionListener;
     private SharedPreferences sharedPreferences;
+    IntentFilter filter;
 
     private EditText userNameEditText;
     private EditText firstNameEditText;
@@ -47,11 +56,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private EditText passwordEditText;
     private Button onSubmitButton;
 
-    private String userName;
+    private User existingUser;
+    /*private String userName;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
+    private String password;*/
 
     /**
      * Use this factory method to create a new instance of
@@ -84,18 +94,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }*/
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, 0);
 
-        userName = sharedPreferences.getString("UserName", null);
-        firstName = sharedPreferences.getString("FirstName", null);
-        lastName = sharedPreferences.getString("LastName", null);
-        email = sharedPreferences.getString("Email", null);
-        password = sharedPreferences.getString("Password", null);
+        existingUser = new User();
+        existingUser.setUserName(sharedPreferences.getString("UserName", null));
+        existingUser.setFirstName(sharedPreferences.getString("FirstName", null));
+        existingUser.setLastName(sharedPreferences.getString("LastName", null));
+        existingUser.setUserEmail(sharedPreferences.getString("Email", null));
+        existingUser.setUserPin(sharedPreferences.getString("Password", null));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view;
-        if(password != null) {
+        if(existingUser.getUserPin() != null) {
             // Inflate the layout for this fragment
             view = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -105,14 +116,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
 
             userNameEditText.setEnabled(false);
-            userNameEditText.setText(userName);
+            userNameEditText.setText(existingUser.getUserName());
             firstNameEditText.setEnabled(false);
-            firstNameEditText.setText(firstName);
+            firstNameEditText.setText(existingUser.getFirstName());
             lastNameEditText.setEnabled(false);
-            lastNameEditText.setText(lastName);
+            lastNameEditText.setText(existingUser.getLastName());
             emailEditText.setEnabled(false);
-            emailEditText.setText(email);
-            //passwordEditText.setText(password);
+            emailEditText.setText(existingUser.getUserEmail());
         } else {
             // Inflate create profile fragment
             view = inflater.inflate(R.layout.fragment_create_profile, container, false);
@@ -129,13 +139,42 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
-    private void updateProfileUI() {
-
-    }
-
     @Override
     public void onClick (View view) {
-        //create profile
+        //send create profile request to the server
+        User newUser = new User();
+        newUser.setUserName(userNameEditText.getText().toString());
+        newUser.setFirstName(firstNameEditText.getText().toString());
+        newUser.setLastName(lastNameEditText.getText().toString());
+        newUser.setUserEmail(emailEditText.getText().toString());
+        newUser.setUserPin(passwordEditText.getText().toString());
+
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        smartClosetRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
+        getActivity().registerReceiver(smartClosetRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("username", newUser.getUserName());
+            requestJSON.put("name", newUser.getFirstName());
+            requestJSON.put("lastname", newUser.getLastName());
+            requestJSON.put("email", newUser.getUserEmail());
+            requestJSON.put("password", newUser.getUserPin());
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Exception while creating an request JSON.");
+        }
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Starting Create Profile request");
+        Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.CREATE_PROFILE);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Finished Creating intent");
+        ((MainActivity)getActivity()).startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Started intent service");
+
+        //TODO: move to the boradcast receiever
+        //add profile to apps preference
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
 
@@ -172,6 +211,45 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onDetach() {
         super.onDetach();
         onProfileFragmentInteractionListener = null;
+    }
+
+    public class SmartClosetRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public SmartClosetRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(smartClosetRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(smartClosetRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    Integer errorcode = (Integer) json.get("errorcode");
+                    if(errorcode == 0)  {
+                        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User created successfully");
+                    }
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("errorcode");
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Failed to create user profile");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
+        }
     }
 
     /**

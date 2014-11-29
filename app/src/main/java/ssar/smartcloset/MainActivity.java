@@ -505,6 +505,7 @@ public class MainActivity extends Activity implements
         ProfileFragment profileFragment = new ProfileFragment();
         updateFragment(profileFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
+        ToastMessage.displayShortToastMessage(this, "Profile created successfully.");
     }
 
     private void updateFragment(Fragment fragment, Integer position) {

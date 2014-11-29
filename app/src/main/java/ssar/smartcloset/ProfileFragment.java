@@ -40,12 +40,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private OnProfileFragmentInteractionListener onProfileFragmentInteractionListener;
     private SharedPreferences sharedPreferences;
 
+    private EditText userNameEditText;
     private EditText firstNameEditText;
     private EditText lastNameEditText;
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button onSubmitButton;
 
+    private String userName;
     private String firstName;
     private String lastName;
     private String email;
@@ -82,6 +84,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }*/
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, 0);
 
+        userName = sharedPreferences.getString("UserName", null);
         firstName = sharedPreferences.getString("FirstName", null);
         lastName = sharedPreferences.getString("LastName", null);
         email = sharedPreferences.getString("Email", null);
@@ -96,18 +99,25 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             // Inflate the layout for this fragment
             view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+            userNameEditText = (EditText) view.findViewById(R.id.userNameEditText);
             firstNameEditText = (EditText) view.findViewById(R.id.firstNameEditText);
             lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
 
+            userNameEditText.setEnabled(false);
+            userNameEditText.setText(userName);
+            firstNameEditText.setEnabled(false);
             firstNameEditText.setText(firstName);
+            lastNameEditText.setEnabled(false);
             lastNameEditText.setText(lastName);
+            emailEditText.setEnabled(false);
             emailEditText.setText(email);
             //passwordEditText.setText(password);
         } else {
             // Inflate create profile fragment
             view = inflater.inflate(R.layout.fragment_create_profile, container, false);
 
+            userNameEditText = (EditText) view.findViewById(R.id.userNameEditText);
             firstNameEditText = (EditText) view.findViewById(R.id.firstNameEditText);
             lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
@@ -129,6 +139,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
 
+        e.putString("UserName", userNameEditText.getText().toString());
         e.putString("FirstName", firstNameEditText.getText().toString());
         e.putString("LastName", lastNameEditText.getText().toString());
         e.putString("Email", emailEditText.getText().toString());
@@ -137,10 +148,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         //launch profile fragment
         onProfileFragmentInteractionListener.onProfileFragmentInteraction();
-    }
-
-    public void onSubmitProfile(View view) {
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

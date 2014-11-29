@@ -27,17 +27,17 @@
 
     <string-array name="newtag_article_type_array">
         <item>Select an article type...</item>
-        <item>Coat</item>
-        <item>Dress</item>
+        <item>Coats</item>
+        <item>Dresses</item>
         <item>Gloves</item>
-        <item>Hat</item>
+        <item>Hats</item>
         <item>Pants</item>
-        <item>Scarf</item>
-        <item>Shirt</item>
+        <item>Scarves</item>
+        <item>Shirts</item>
         <item>Shoes</item>
         <item>Shorts</item>
-        <item>Skirt</item>
-        <item>Sweater</item>
+        <item>Skirts</item>
+        <item>Sweaters</item>
     </string-array>
 
     <string name="title_activity_write_tag">WriteTagActivity</string>

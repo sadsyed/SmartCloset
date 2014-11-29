@@ -1,5 +1,6 @@
 package ssar.smartcloset;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -163,7 +164,7 @@ public class UploadImageFragment extends Fragment {
             onUploadImageFragmentInteractionListener = (OnUploadImageFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
     }
 

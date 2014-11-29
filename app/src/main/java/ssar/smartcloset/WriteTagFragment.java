@@ -1,5 +1,6 @@
 package ssar.smartcloset;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -93,7 +94,7 @@ public class WriteTagFragment extends Fragment {
             onWriteTagFragmentInteractionListener = (OnWriteTagFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
     }
 

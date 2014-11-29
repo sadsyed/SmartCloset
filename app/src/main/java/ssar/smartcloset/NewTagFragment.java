@@ -1,5 +1,6 @@
 package ssar.smartcloset;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -108,7 +109,7 @@ public class NewTagFragment extends Fragment {
             onNewTagFragmentInteractionListener = (OnNewTagFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
         if(testUploadRequestReceiver != null) {
             ((MainActivity)getActivity()).registerReceiver(testUploadRequestReceiver, filter);

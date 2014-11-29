@@ -110,7 +110,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
             fragmentRouterInteractionListener = (OnFragmentRouterInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
     }
 

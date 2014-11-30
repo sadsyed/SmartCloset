@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ssar.smartcloset.ViewFragment">
+    tools:context="ssar.smartcloset.CategoryFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -10,5 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment"/>
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleGridView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 
 </FrameLayout>

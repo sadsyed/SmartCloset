@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="ssar.smartcloset.ArticleFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleName"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:id="@+id/articleImage"
+        android:layout_below="@+id/articleName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleLastUsedDateLabel"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:text="Last Used On: "
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/articleName"
+        android:layout_toStartOf="@+id/articleName" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/articleLastUsedDate"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_toRightOf="@+id/articleLastUsedDateLabel"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

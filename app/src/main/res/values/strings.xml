@@ -23,22 +23,33 @@
     <string name="newtag_select_file_button">Select File For Upload</string>
     <string name="newtag_create_article_button">Create Article</string>
     <string name="newtag_ok_sell_checkbox">This item OK to sell.</string>
+    <string name="newtag_private_checkbox">This item is private.</string>
 
     <string-array name="newtag_article_type_array">
         <item>Select an article type...</item>
-        <item>Coat</item>
-        <item>Dress</item>
+        <item>Coats</item>
+        <item>Dresses</item>
         <item>Gloves</item>
-        <item>Hat</item>
+        <item>Hats</item>
         <item>Pants</item>
-        <item>Scarf</item>
-        <item>Shirt</item>
+        <item>Scarves</item>
+        <item>Shirts</item>
         <item>Shoes</item>
         <item>Shorts</item>
-        <item>Skirt</item>
-        <item>Sweater</item>
+        <item>Skirts</item>
+        <item>Sweaters</item>
     </string-array>
 
     <string name="title_activity_write_tag">WriteTagActivity</string>
+
+    <!-- Nav Drawer Menu Itemes-->
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Closet</item>
+        <item>Search</item>
+        <item>New Tag</item>
+        <item>Profile</item>
+        <item>Article</item>
+    </string-array>
 
 </resources>

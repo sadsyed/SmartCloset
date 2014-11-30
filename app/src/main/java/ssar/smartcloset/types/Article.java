@@ -1,19 +1,22 @@
 package ssar.smartcloset.types;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ssyed on 11/9/14.
  */
-public class Article {
+public class Article implements CustomListItem, Parcelable{
     private String articleName;
     private String articleId;
     private String articleOwner;
     private String articleType;
     private String articleImageUrl;
-    private Date articleLastUsed;
-    private List<Date> articleTimesUsed;
+    private String[] articleLastUsed;
+    private int articleTimesUsed;
     private List<String> articleTags;
     private Float articlePrice;
     private String articleDescription;
@@ -60,12 +63,12 @@ public class Article {
         this.articleImageUrl = imageUrl;
     }
 
-    public Date getArticleLastUsed() {
+    public String[] getArticleLastUsed() {
         return articleLastUsed;
     }
 
-    public void setArticleLastUsed(Date lastUsed) {
-        this.articleLastUsed = lastUsed;
+    public void setArticleLastUsed(String[] articleLastUsed) {
+        this.articleLastUsed = articleLastUsed;
     }
 
     public Float getArticlePrice() {
@@ -84,11 +87,11 @@ public class Article {
         this.articleTags = tags;
     }
 
-    public List<Date> getArticleTimesUsed() {
+    public int getArticleTimesUsed() {
         return articleTimesUsed;
     }
 
-    public void setArticleTimesUsed(List<Date> timeUsed) {
+    public void setArticleTimesUsed(int timeUsed) {
         this.articleTimesUsed = timeUsed;
     }
 
@@ -106,5 +109,40 @@ public class Article {
 
     public void setArticleOkToSell(Boolean oktosell) {
         this.articleOkToSell = oktosell;
+    }
+
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+
+        toStringBuilder.append("Article Name: ").append(articleName)
+                .append(", Article Id: ").append(articleId)
+                .append(", Article Owner: ").append(articleName)
+                .append(", Article Type: ").append(articleType);
+
+        StringBuilder lastUsedDateBuilder = new StringBuilder();
+        lastUsedDateBuilder.append(", Article LastUsedDate: ");
+        for (String str : articleLastUsed) {
+            lastUsedDateBuilder.append("[").append(str).append("]");
+        }
+
+        return toStringBuilder.append(lastUsedDateBuilder).toString();
+    }
+
+    public String getItemName() {
+        return getArticleName();
+    }
+
+    public String getItemImageURL() {
+        return getArticleImageUrl();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

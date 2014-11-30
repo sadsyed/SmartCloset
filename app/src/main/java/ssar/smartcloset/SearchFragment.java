@@ -1,5 +1,6 @@
 package ssar.smartcloset;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActionBar().setTitle("Search");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -84,7 +86,7 @@ public class SearchFragment extends Fragment {
             onSearchFragmentInteractionListener = (OnSearchFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleFragmentInteractionListener");
         }
     }
 
@@ -92,6 +94,10 @@ public class SearchFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         onSearchFragmentInteractionListener = null;
+    }
+
+    private ActionBar getActionBar() {
+        return ((MainActivity) getActivity()).getActionBar();
     }
 
     /**

@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:text="Tap and hold the tag against the back of the phone to write."
+        android:text="@string/newtag_write_msg"
         android:id="@+id/textView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"

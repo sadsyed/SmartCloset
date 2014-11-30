@@ -2,13 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Sign Up"
+        android:id="@+id/createProfileTitleTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:id="@+id/userNameLinearLayout">
+        android:id="@+id/userNameLinearLayout"
+        android:layout_below="@+id/createProfileTitleTextView"
+        android:layout_marginTop="10dp">
 
         <TextView
             style="@style/InputLabelTextView"
-            android:text="User Name"
+            android:text="@string/profile_user_name_label"
             android:id="@+id/userNameTextViewLabel" />
 
         <EditText
@@ -24,7 +37,7 @@
 
         <TextView
             style="@style/InputLabelTextView"
-            android:text="First Name"
+            android:text="@string/profile_first_name_label"
             android:id="@+id/firstNameTextViewLabel" />
 
         <EditText
@@ -40,7 +53,7 @@
 
         <TextView
             style="@style/InputLabelTextView"
-            android:text="Last Name"
+            android:text="@string/profile_last_name_label"
             android:id="@+id/lastNameTextViewLabel" />
 
         <EditText
@@ -56,7 +69,7 @@
 
         <TextView
             style="@style/InputLabelTextView"
-            android:text="Email"
+            android:text="@string/profile_email_label"
             android:id="@+id/emailTextViewLabel" />
 
         <EditText
@@ -72,7 +85,7 @@
 
         <TextView
             style="@style/InputLabelTextView"
-            android:text="Pin"
+            android:text="@string/profile_user_pin_label"
             android:id="@+id/pinTextViewLabel" />
 
         <EditText
@@ -86,7 +99,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/profile_submit_button_label"
         android:id="@+id/submitProfileButton"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"

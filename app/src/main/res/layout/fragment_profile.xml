@@ -4,142 +4,65 @@
     android:textAlignment="center">
 
     <LinearLayout
-        android:id="@+id/userNameLinearLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:weightSum="1"
-        android:background="#D3D3D3">
-
+        style="@style/InputLinearLayout"
+        android:id="@+id/userNameLinearLayout">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            style="@style/InputLabelTextView"
             android:text="User Name"
-            android:id="@+id/userNameTextViewLabel"
-            android:layout_weight="0.23"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:textStyle="bold" />
+            android:id="@+id/userNameTextViewLabel" />
 
         <EditText
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/userNameEditText"
-            android:layout_weight="0.64"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="1dp"
-            android:background="#fffffbff" />
+            style="@style/InputEditTextView"
+            android:id="@+id/userNameEditText" />
 
     </LinearLayout>
 
     <LinearLayout
+        style="@style/InputLinearLayout"
         android:id="@+id/firstNameLinearLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@id/userNameLinearLayout"
-        android:weightSum="1"
-        android:background="#D3D3D3">
-
+        android:layout_below="@id/userNameLinearLayout">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            style="@style/InputLabelTextView"
             android:text="First Name"
-            android:id="@+id/firstNameTextViewLabel"
-            android:layout_weight="0.23"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:textStyle="bold" />
+            android:id="@+id/firstNameTextViewLabel" />
 
         <EditText
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/firstNameEditText"
-            android:layout_weight="0.64"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="1dp"
-            android:background="#fffffbff" />
+            style="@style/InputEditTextView"
+            android:id="@+id/firstNameEditText" />
 
     </LinearLayout>
 
-
     <LinearLayout
+        style="@style/InputLinearLayout"
         android:id="@+id/lastNameLinearLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@id/firstNameLinearLayout"
-        android:weightSum="1"
-        android:background="#D3D3D3">
-
+        android:layout_below="@id/firstNameLinearLayout">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            style="@style/InputLabelTextView"
             android:text="Last Name"
-            android:id="@+id/lastNameTextViewLabel"
-            android:layout_weight="0.23"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:textStyle="bold" />
+            android:id="@+id/lastNameTextViewLabel" />
 
         <EditText
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/lastNameEditText"
-            android:layout_weight="0.64"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="1dp"
-            android:background="#fffffbff" />
+            style="@style/InputEditTextView"
+            android:id="@+id/lastNameEditText" />
 
     </LinearLayout>
 
     <LinearLayout
+        style="@style/InputLinearLayout"
         android:id="@+id/emailLinearLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@id/lastNameLinearLayout"
-        android:weightSum="1"
-        android:background="#D3D3D3">
-
+        android:layout_below="@id/lastNameLinearLayout">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            style="@style/InputLabelTextView"
             android:text="Email"
-            android:id="@+id/emailTextViewLabel"
-            android:layout_weight="0.23"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:textStyle="bold" />
+            android:id="@+id/emailTextViewLabel" />
 
         <EditText
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/emailEditText"
-            android:layout_weight="0.64"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="1dp"
-            android:background="#fffffbff" />
+            style="@style/InputEditTextView"
+            android:id="@+id/emailEditText" />
 
     </LinearLayout>
 

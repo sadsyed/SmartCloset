@@ -4,114 +4,152 @@
     android:layout_height="match_parent"
     tools:context="ssar.smartcloset.NewTagFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleNameLinearLayout">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleNameEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_name"/>
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Name"
+            android:id="@+id/articleNameTextViewLabel" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleDescriptionEditText"
-        android:layout_below="@+id/articleNameEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_description"/>
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleNameEditText"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleTagsEditText"
-        android:layout_below="@+id/articleDescriptionEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_tags"/>
+    </LinearLayout>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articlePriceEditText"
-        android:layout_below="@+id/articleTagsEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_price"/>
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleDescLinearLayout"
+        android:layout_below="@+id/articleNameLinearLayout">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleOwnerEditText"
-        android:layout_below="@+id/articlePriceEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_owner"/>
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Description"
+            android:id="@+id/articleDescTextViewLabel" />
 
-    <Spinner
-        android:id="@+id/articleTypeSelector"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/articleOwnerEditText"
-        android:entries="@array/newtag_article_type_array"
-        android:prompt="@string/newtag_article_type_prompt" />
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleDescriptionEditText" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/newtag_ok_sell_checkbox"
-        android:id="@+id/articleOkToSellCheckbox"
-        android:layout_below="@+id/articleTypeSelector"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    </LinearLayout>
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/newtag_private_checkbox"
-        android:id="@+id/articlePrivateCheckbox"
-        android:layout_below="@+id/articleOkToSellCheckbox"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleTagsLinearLayout"
+        android:layout_below="@+id/articleDescLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Tags"
+            android:id="@+id/articleTagsTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleTagsEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articlePriceLinearLayout"
+        android:layout_below="@+id/articleTagsLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Price"
+            android:id="@+id/articlePriceTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articlePriceEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleOwnerLinearLayout"
+        android:layout_below="@+id/articlePriceLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Owner"
+            android:id="@+id/articleOwnerTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleOwnerEditText" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleCategoryLinearLayout"
+        android:layout_below="@+id/articleOwnerLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Category"
+            android:id="@+id/articleCategoryTextViewLabel" />
+
+        <Spinner
+            android:id="@+id/articleTypeSelector"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:background="#fffffbff"
+            android:entries="@array/newtag_article_type_array"
+            android:prompt="@string/newtag_article_type_prompt" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleOkToSellLinearLayout"
+        android:layout_below="@+id/articleCategoryLinearLayout">
+
+        <CheckBox
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="80dp"
+            android:text="@string/newtag_ok_sell_checkbox"
+            android:id="@+id/articleOkToSellCheckbox" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articlePrivateLinearLayout"
+        android:layout_below="@+id/articleOkToSellLinearLayout">
+
+        <CheckBox
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="80dp"
+            android:text="@string/newtag_private_checkbox"
+            android:id="@+id/articlePrivateCheckbox" />
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
         android:id="@+id/createArticleButton"
-        android:layout_below="@+id/articlePrivateCheckbox"
+        android:layout_below="@+id/articlePrivateLinearLayout"
         android:onClick="addListenerOnSpinnerItemSelection"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="9dp"/>
 
-   <!-- <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleId"
-        android:layout_below="@+id/createArticleButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/newtag_article_id"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/newtag_id_button"
-        android:id="@+id/updateArticleIdButton"
-        android:layout_below="@+id/articleId"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/newtag_select_file_button"
-        android:id="@+id/selectFileButton"
-        android:layout_below="@+id/updateArticleIdButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    -->
 
 </RelativeLayout>

@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +42,7 @@ import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
-public class MainActivity extends Activity implements
+public class MainActivity extends FragmentActivity implements
         FragmentRouter.OnFragmentRouterInteractionListener,
         ClosetFragment.OnCategorySelectedListener,
         CategoryFragment.OnCategoryFragmentInteractionListener,
@@ -49,7 +51,9 @@ public class MainActivity extends Activity implements
         SearchFragment.OnSearchFragmentInteractionListener,
         UploadImageFragment.OnUploadImageFragmentInteractionListener,
         WriteTagFragment.OnWriteTagFragmentInteractionListener,
-        ProfileFragment.OnProfileFragmentInteractionListener {
+        ProfileFragment.OnProfileFragmentInteractionListener,
+        StringSearchFragment.OnStringSearchFragmentInteractionListener,
+        TagSearchFragment.OnTagSearchFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -219,7 +223,15 @@ public class MainActivity extends Activity implements
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchFragment searchFragment = new SearchFragment();
-                updateFragment(searchFragment, position);
+                android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.main_fragment_container, searchFragment);
+
+                //if(position != null)
+                //    transaction.addToBackStack(position.toString());
+
+                transaction.commit();
+
                 setFragmentTitle(position);
                 break;
             case 3:
@@ -435,7 +447,16 @@ public class MainActivity extends Activity implements
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchFragment searchFragment = new SearchFragment();
-                updateFragment(searchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
+                android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.main_fragment_container, searchFragment);
+
+                //if(position != null)
+                //    transaction.addToBackStack(position.toString());
+
+                transaction.commit();
+
+                //setFragmentTitle(position);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
                 break;
             case R.id.newTagButton:
@@ -506,6 +527,14 @@ public class MainActivity extends Activity implements
         updateFragment(profileFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
         ToastMessage.displayShortToastMessage(this, "Profile created successfully.");
+    }
+
+    public void onStringSearchFragmentInteraction (Uri uri){
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": OnStringSearchFragmentInteraction......");
+    }
+
+    public void onTagSearchFragmentInteraction(Uri uri){
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onTagSearchFragmentInteraction......");
     }
 
     private void updateFragment(Fragment fragment, Integer position) {

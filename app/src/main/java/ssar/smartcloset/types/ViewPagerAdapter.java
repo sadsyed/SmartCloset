@@ -1,11 +1,12 @@
 package ssar.smartcloset.types;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
 
 import ssar.smartcloset.BaseSearchFragment;
 import ssar.smartcloset.TagSearchFragment;
+import ssar.smartcloset.UsageFilterFragment;
 
 /**
  * Created by ssyed on 11/30/14.
@@ -13,8 +14,9 @@ import ssar.smartcloset.TagSearchFragment;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     //number of ViewPager pages
-    final int PAGE_COUNT = 5;
-    private String tabTitles[] = new String[] {"Base Search", "Scan Tag", "Usage Filter", "Never Used", "Available for Selling"};
+    final int PAGE_COUNT = 3;
+    //private String tabTitles[] = new String[] {"Base Search", "Scan Tag", "Usage Filter", "Never Used", "Available for Selling"};
+    private String tabTitles[] = new String[] {"Base Search", "Usage Filter", "Scan Tag"};
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -29,8 +31,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 return baseSearchFragment;
 
             case 1:
+                UsageFilterFragment usageFilterFragment = new UsageFilterFragment();
+                return usageFilterFragment;
+
+            case 2:
                 TagSearchFragment tagSearchFrgament = new TagSearchFragment();
                 return tagSearchFrgament;
+
+            //TODO case 2-4
+
         }
         return null;
     }

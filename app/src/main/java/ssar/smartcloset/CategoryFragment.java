@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-//import android.app.Fragment;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+//import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -183,7 +183,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             Article articleSelected = (Article) articles.get(position);
             onCategoryFragmentInteractionListener.onCategoryFragmentInteraction(articleSelected);
         }
-}
+    }
 
     /**
      * This interface must be implemented by activities that contain this

@@ -8,15 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ssar.smartcloset.TagSearchFragment.OnTagSearchFragmentInteractionListener} interface
+ * {@link ssar.smartcloset.UsageFilterFragment.OnUsageFilterFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TagSearchFragment#newInstance} factory method to
+ * Use the {@link UsageFilterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TagSearchFragment extends Fragment {
+public class UsageFilterFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,7 +27,7 @@ public class TagSearchFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnTagSearchFragmentInteractionListener mListener;
+    private OnUsageFilterFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -34,11 +35,11 @@ public class TagSearchFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TagSearchFragment.
+     * @return A new instance of fragment UsageFilterFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TagSearchFragment newInstance(String param1, String param2) {
-        TagSearchFragment fragment = new TagSearchFragment();
+    public static UsageFilterFragment newInstance(String param1, String param2) {
+        UsageFilterFragment fragment = new UsageFilterFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -46,7 +47,7 @@ public class TagSearchFragment extends Fragment {
         return fragment;
     }
 
-    public TagSearchFragment() {
+    public UsageFilterFragment() {
         // Required empty public constructor
     }
 
@@ -63,13 +64,13 @@ public class TagSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tag_search, container, false);
+        return inflater.inflate(R.layout.fragment_usage_filter, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onTagSearchFragmentInteraction(uri);
+            mListener.onUsageFilterFragmentInteraction(uri);
         }
     }
 
@@ -77,10 +78,10 @@ public class TagSearchFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnTagSearchFragmentInteractionListener) activity;
+            mListener = (OnUsageFilterFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnBaseSearchFragmentInteractionListener");
+                    + " must implement OnUsageFilterFragmentInteractionListener");
         }
     }
 
@@ -100,9 +101,9 @@ public class TagSearchFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnTagSearchFragmentInteractionListener {
+    public interface OnUsageFilterFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onTagSearchFragmentInteraction(Uri uri);
+        public void onUsageFilterFragmentInteraction(Uri uri);
     }
 
 }

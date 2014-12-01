@@ -1,6 +1,8 @@
 package ssar.smartcloset;
 
-import android.support.v4.app.Fragment;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,7 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.FragmentActivity;
+//import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,25 +36,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ssar.smartcloset.types.Article;
-import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.NavDrawerListAdapter;
 import ssar.smartcloset.types.NavDrawerItem;
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends Activity implements
         FragmentRouter.OnFragmentRouterInteractionListener,
         ClosetFragment.OnCategorySelectedListener,
         CategoryFragment.OnCategoryFragmentInteractionListener,
         ArticleFragment.OnArticleFragmentInteractionListener,
         NewTagFragment.OnNewTagFragmentInteractionListener,
-        SearchFragment.OnSearchFragmentInteractionListener,
+        SearchTabFragment.OnSearchTabFragmentInteractionListener,
         UploadImageFragment.OnUploadImageFragmentInteractionListener,
         WriteTagFragment.OnWriteTagFragmentInteractionListener,
         ProfileFragment.OnProfileFragmentInteractionListener,
         BaseSearchFragment.OnBaseSearchFragmentInteractionListener,
-        TagSearchFragment.OnTagSearchFragmentInteractionListener {
+        TagSearchFragment.OnTagSearchFragmentInteractionListener,
+        SearchFragment.OnSearchFragmentInteractionListener,
+        UsageFilterFragment.OnUsageFilterFragmentInteractionListener{
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -221,16 +225,8 @@ public class MainActivity extends FragmentActivity implements
             case 2:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
-                SearchFragment searchFragment = new SearchFragment();
-                android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.main_fragment_container, searchFragment);
-
-                //if(position != null)
-                //    transaction.addToBackStack(position.toString());
-
-                transaction.commit();
-
+                SearchTabFragment searchTabFragment = new SearchTabFragment();
+                updateFragment(searchTabFragment, position);
                 setFragmentTitle(position);
                 break;
             case 3:
@@ -445,17 +441,8 @@ public class MainActivity extends FragmentActivity implements
             case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
-                SearchFragment searchFragment = new SearchFragment();
-                android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.main_fragment_container, searchFragment);
-
-                //if(position != null)
-                //    transaction.addToBackStack(position.toString());
-
-                transaction.commit();
-
-                //setFragmentTitle(position);
+                SearchTabFragment searchTabFragment = new SearchTabFragment();
+                updateFragment(searchTabFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
                 break;
             case R.id.newTagButton:
@@ -476,8 +463,8 @@ public class MainActivity extends FragmentActivity implements
         updateFragment(uploadImageFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
     }
 
-    public void onSearchFragmentInteraction(Uri uri) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
+    public void onSearchTagFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchTagFragmentInteraction......");
     }
 
     public void onCategorySelected(String categorySelected) {
@@ -528,16 +515,29 @@ public class MainActivity extends FragmentActivity implements
         ToastMessage.displayShortToastMessage(this, "Profile created successfully.");
     }
 
-    public void onBaseSearchFragmentInteraction(List<Category> categories){
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": OnStringSearchFragmentInteraction......");
+    public void onBaseSearchFragmentInteraction(String searchType, String searchValue, String email){
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": OnBaseSearchFragmentInteraction......");
+
+        //launch search fragment to invoke search and get results
+        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
+        updateFragment(searchFragment, null);
+        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }
 
     public void onTagSearchFragmentInteraction(Uri uri){
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onTagSearchFragmentInteraction......");
     }
 
+    public void onSearchFragmentInteraction(Uri uri){
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
+    }
+
+    public void onUsageFilterFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUsageFilterFragmentInteraction......");
+    }
+
     private void updateFragment(Fragment fragment, Integer position) {
-        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+       FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, fragment);
 
@@ -545,6 +545,20 @@ public class MainActivity extends FragmentActivity implements
             transaction.addToBackStack(position.toString());
 
         transaction.commit();
+    }
+
+    //--------------- Helper Methods --------------
+    public User getExistingUser() {
+        sharedPreferences = getSharedPreferences(SmartClosetConstants.PREF_NAME, 0);
+
+        User existingUser = new User();
+        existingUser.setUserName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, null));
+        existingUser.setFirstName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, null));
+        existingUser.setLastName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, null));
+        existingUser.setUserEmail(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, null));
+        existingUser.setUserPin(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, null));
+
+        return existingUser;
     }
 
     //--------------- RequestReceiver ---------------

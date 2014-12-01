@@ -18,6 +18,7 @@ public class SmartClosetConstants {
     public static final String GET_CATEGORIES = APP_SPOT + "/GetCategories";
     public static final String GET_CATEGORY = APP_SPOT + "/GetCategory";
     public static final String CREATE_PROFILE = APP_SPOT + "/signup2";
+    public static final String SEARCH_ARTICLES = APP_SPOT + "/SearchArticles";
 
     public static final String PROCESS_RESPONSE = "ssar.intent.action";
 
@@ -30,6 +31,7 @@ public class SmartClosetConstants {
     public static final int SLIDEMENU_ARTICLE_ITEM = 5;
 
     //Profile Shared Preference
+    public static final String PREF_NAME = "smartProfilePreference";
     public static final String SHAREDPREFERENCE_USER_NAME = "UserName";
     public static final String SHAREDPREFERENCE_FIRST_NAME = "FirstName";
     public static final String SHAREDPREFERENCE_LAST_NAME = "LastName";

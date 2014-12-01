@@ -1,0 +1,82 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ssar.smartcloset.UsageFilterFragment"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/usageFilterRadioGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <RadioButton
+            android:id="@+id/last30DaysRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 30 days"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/last6MonthsRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 6 months"/>
+
+        <RadioButton
+            android:id="@+id/lastOneYearRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last year"/>
+
+        <RadioButton
+            android:id="@+id/lastTwoYearsRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 2 years"/>
+
+        <RadioButton
+            android:id="@+id/lastThreeYearsRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 3 years"/>
+
+        <RadioButton
+            android:id="@+id/lastFourYearsRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 4 years"/>
+
+        <RadioButton
+            android:id="@+id/lastFiveYearsRadioButton"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/radiogroup_item_divider"
+            android:text="Last 5 years"/>
+    </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:id="@+id/usageSearchButton"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal"/>
+
+
+</LinearLayout>

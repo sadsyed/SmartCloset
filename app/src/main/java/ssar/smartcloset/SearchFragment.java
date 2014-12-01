@@ -1,18 +1,29 @@
 package ssar.smartcloset;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.graphics.Color;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
+import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
-import ssar.smartcloset.types.ViewPagerAdapter;
+import org.json.JSONObject;
+
+import java.util.List;
+
+import ssar.smartcloset.types.Article;
+import ssar.smartcloset.types.CustomGridAdapter;
+import ssar.smartcloset.types.CustomListItem;
+import ssar.smartcloset.util.JsonParserUtil;
+import ssar.smartcloset.util.SmartClosetConstants;
 
 
 /**
@@ -20,38 +31,55 @@ import ssar.smartcloset.types.ViewPagerAdapter;
  * Activities that contain this fragment must implement the
  * {@link ssar.smartcloset.SearchFragment.OnSearchFragmentInteractionListener} interface
  * to handle interaction events.
- *
+ * Use the {@link SearchFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class SearchFragment extends Fragment {
-/*    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener{
+    private static final String CLASSNAME = SearchFragment.class.getSimpleName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-*/
+    private static final String ARG_SEARCH_TYPE = "searchType";
+    private static final String ARG_SEARCH_VALUE = "searchValue";
+    private static final String ARG_EMAIL = "email";
+
+    private String searchType;
+    private String searchValue;
+    private String loggedInUseremail;
+    private List<CustomListItem> articles;
+
     private OnSearchFragmentInteractionListener onSearchFragmentInteractionListener;
+    private SmartClosetRequestReceiver searchRequestReceiver;
+    IntentFilter filter;
 
-/*    /**
+    /**
+     * The fragment's ListView/GridView.
+     */
+    private GridView gridView;
+
+    /**
+     * The Adapter which will be used to populate the ListView/GridView with
+     * Views.
+     */
+    private CustomGridAdapter customListAdapter;
+
+    /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
+     * @param searchType Parameter 1.
+     * @param searchValue Parameter 2.
+     * @param loggedInUseremail Parameter 3
+     * @return A new instance of fragment BaseSearchFragment.
      */
-    // TODO: Rename and change types and number of parameters
-/*    public static SearchFragment newInstance(String param1, String param2) {
+    public static SearchFragment newInstance(String searchType, String searchValue, String loggedInUseremail) {
         SearchFragment fragment = new SearchFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_SEARCH_TYPE, searchType);
+        args.putString(ARG_SEARCH_VALUE, searchValue);
+        args.putString(ARG_EMAIL, loggedInUseremail);
         fragment.setArguments(args);
         return fragment;
     }
-*/
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -59,37 +87,57 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-/*        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if (getArguments() != null) {
+            searchType = getArguments().getString(ARG_SEARCH_TYPE);
+            searchValue = getArguments().getString(ARG_SEARCH_VALUE);
+            loggedInUseremail = getArguments().getString(ARG_EMAIL);
         }
-*/
+
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        searchRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.SEARCH_ARTICLES);
+        getActivity().registerReceiver(searchRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("filterType", searchType);
+            requestJSON.put("filterString", searchValue);
+            requestJSON.put("email", loggedInUseremail);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+        }
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategory request");
+        Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.SEARCH_ARTICLES);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        getActivity().startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActionBar().setTitle("Search");
+        View view = inflater.inflate(R.layout.fragment_category, container, false);
+
+        // Set the adapter
+        gridView = (GridView) view.findViewById(R.id.articleGridView);
+        gridView.setAdapter(customListAdapter);
+
+        //get OnItemClickListener so we can be notified on item clicks
+        gridView.setOnItemClickListener(this);
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.viewpager_main, container, false);
-
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        viewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
-
-        PagerTabStrip pagerTabStrip = (PagerTabStrip) view.findViewById(R.id.pagerTabStrip);
-        pagerTabStrip.setTextColor(Color.GRAY);
-        pagerTabStrip.setTabIndicatorColor(Color.parseColor("#ff007777"));
-
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    /*public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(Uri uri) {
         if (onSearchFragmentInteractionListener != null) {
-            onSearchFragmentInteractionListener.onSearchFragmentInteraction(view);
+            onSearchFragmentInteractionListener.onSearchFragmentInteraction(uri);
         }
-    }*/
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -98,7 +146,7 @@ public class SearchFragment extends Fragment {
             onSearchFragmentInteractionListener = (OnSearchFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnArticleFragmentInteractionListener");
+                    + " must implement OnSearchFragmentInteractionListener");
         }
     }
 
@@ -108,8 +156,14 @@ public class SearchFragment extends Fragment {
         onSearchFragmentInteractionListener = null;
     }
 
-    private ActionBar getActionBar() {
-        return (getActivity()).getActionBar();
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+       /* if (null != onCategoryFragmentInteractionListener) {
+            Article articleSelected = (Article) articles.get(position);
+            onCategoryFragmentInteractionListener.onCategoryFragmentInteraction(articleSelected);
+        }*/
     }
 
     /**
@@ -117,7 +171,7 @@ public class SearchFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
@@ -125,6 +179,37 @@ public class SearchFragment extends Fragment {
     public interface OnSearchFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onSearchFragmentInteraction(Uri uri);
+    }
+
+    //--------------- RequestReceiver ---------------
+
+    public class SmartClosetRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public SmartClosetRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(searchRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(searchRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+            // get list of articles in the selected category
+            articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+
+            customListAdapter = new CustomGridAdapter(getActivity(), articles);
+            gridView.setAdapter(customListAdapter);
+        }
     }
 
 }

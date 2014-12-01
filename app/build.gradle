@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "ssar.smartcloset"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -36,4 +36,5 @@ dependencies {
     compile files('libs/gson-2.3.jar')
     compile files('libs/httpmime-4.3.5.jar')
     compile files('libs/httpcore-4.3.2.jar')
+    compile 'com.android.support:support-v13:21.0.0'
 }

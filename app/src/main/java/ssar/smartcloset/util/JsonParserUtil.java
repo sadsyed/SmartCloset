@@ -76,6 +76,10 @@ public class JsonParserUtil {
                 case SmartClosetConstants.GET_CATEGORY:
                     jsonArray = json.getJSONArray("category");
                     break;
+
+                case SmartClosetConstants.SEARCH_ARTICLES:
+                    jsonArray = json.getJSONArray("articleList");
+                    break;
             }
 
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Parse article JSON to Java article object: " + jsonArray.toString());

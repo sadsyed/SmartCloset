@@ -1,11 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ssar.smartcloset.StringSearchFragment">
+    android:orientation="vertical"
+    tools:context="ssar.smartcloset.BaseSearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="StringSearchFragment" />
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="#D3D3D3"
+        android:hint="Search in All Names, Tags, and Categories"
+        android:textSize="14dp"
+        android:layout_gravity="top"/>
 
-</FrameLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:id="@+id/baseSearchButton"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

@@ -2,9 +2,11 @@ package ssar.smartcloset;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,15 +77,19 @@ public class SearchFragment extends Fragment {
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
 
+        PagerTabStrip pagerTabStrip = (PagerTabStrip) view.findViewById(R.id.pagerTabStrip);
+        pagerTabStrip.setTextColor(Color.GRAY);
+        pagerTabStrip.setTabIndicatorColor(Color.parseColor("#ff007777"));
+
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    /*public void onButtonPressed(Uri uri) {
         if (onSearchFragmentInteractionListener != null) {
-            onSearchFragmentInteractionListener.onSearchFragmentInteraction(uri);
+            onSearchFragmentInteractionListener.onSearchFragmentInteraction(view);
         }
-    }
+    }*/
 
     @Override
     public void onAttach(Activity activity) {

@@ -80,7 +80,7 @@ public class TagSearchFragment extends Fragment {
             mListener = (OnTagSearchFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnStringSearchFragmentInteractionListener");
+                    + " must implement OnBaseSearchFragmentInteractionListener");
         }
     }
 

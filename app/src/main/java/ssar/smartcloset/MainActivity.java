@@ -1,8 +1,6 @@
 package ssar.smartcloset;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,7 +19,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -34,8 +31,10 @@ import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import ssar.smartcloset.types.Article;
+import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.NavDrawerListAdapter;
 import ssar.smartcloset.types.NavDrawerItem;
 import ssar.smartcloset.util.SmartClosetConstants;
@@ -52,7 +51,7 @@ public class MainActivity extends FragmentActivity implements
         UploadImageFragment.OnUploadImageFragmentInteractionListener,
         WriteTagFragment.OnWriteTagFragmentInteractionListener,
         ProfileFragment.OnProfileFragmentInteractionListener,
-        StringSearchFragment.OnStringSearchFragmentInteractionListener,
+        BaseSearchFragment.OnBaseSearchFragmentInteractionListener,
         TagSearchFragment.OnTagSearchFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
@@ -529,7 +528,7 @@ public class MainActivity extends FragmentActivity implements
         ToastMessage.displayShortToastMessage(this, "Profile created successfully.");
     }
 
-    public void onStringSearchFragmentInteraction (Uri uri){
+    public void onBaseSearchFragmentInteraction(List<Category> categories){
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": OnStringSearchFragmentInteraction......");
     }
 
@@ -538,7 +537,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     private void updateFragment(Fragment fragment, Integer position) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_fragment_container, fragment);
 

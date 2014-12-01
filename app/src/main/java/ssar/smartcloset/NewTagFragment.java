@@ -8,7 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+//import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,6 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * Activities that contain this fragment must implement the
  * {@link ssar.smartcloset.NewTagFragment.OnNewTagFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewTagFragment#newInstance} factory method to
- * create an instance of this fragment.
  *
  */
 public class NewTagFragment extends Fragment {

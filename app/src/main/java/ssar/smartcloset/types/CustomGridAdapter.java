@@ -2,7 +2,6 @@ package ssar.smartcloset.types;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,10 +22,10 @@ import ssar.smartcloset.R;
 import ssar.smartcloset.util.SmartClosetConstants;
 
 /**
- * Created by ssyed on 11/24/14.
+ * Created by ssyed on 11/29/14.
  */
-public class CustomListAdapter extends BaseAdapter{
-    public final static String CLASSNAME = CustomListAdapter.class.getSimpleName();
+public class CustomGridAdapter extends BaseAdapter {
+    public final static String CLASSNAME = CustomGridAdapter.class.getSimpleName();
     public final static String EXTRA_MESSAGE = "ssar.smartcloset.MESSAGE";
 
     Context context;
@@ -37,7 +36,7 @@ public class CustomListAdapter extends BaseAdapter{
 
     private static LayoutInflater layoutInflater = null;
 
-    public CustomListAdapter(Context context, List<CustomListItem> items) {
+    public CustomGridAdapter(Context context, List<CustomListItem> items) {
         this.context = context;
         this.items = items;
         //this.categories = categories;
@@ -60,23 +59,11 @@ public class CustomListAdapter extends BaseAdapter{
         View rowView = null;
 
         try {
-            rowView = layoutInflater.inflate(R.layout.fragment_closet_item_view, null);
+            rowView = layoutInflater.inflate(R.layout.fragment_category_item_view, null);
             holder.textView = (TextView) rowView.findViewById(R.id.categoryName);
             holder.imageView = (ImageView) rowView.findViewById(R.id.articleImage);
 
             //load the category
-            if(position % 2 == 0) {
-                //set color to teal
-                holder.textView.setBackgroundColor(Color.parseColor("#ff007777"));
-                holder.textView.setTextColor(Color.parseColor("#D3D3D3"));
-                holder.imageView.setBackgroundColor(Color.parseColor("#D3D3D3"));
-            }
-            else {
-                //set color to yellow
-                holder.textView.setBackgroundColor((Color.parseColor("#ffd7d219")));
-                holder.textView.setTextColor(Color.parseColor("#ff707070"));
-                holder.imageView.setBackgroundColor(Color.parseColor("#ff707070"));
-            }
             holder.textView.setText(items.get(position).getItemName());
 
             String imageUrl = items.get(position).getItemImageURL();

@@ -3,12 +3,13 @@
     android:layout_height="match_parent" tools:context="ssar.smartcloset.WriteTagFragment">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tap and hold the tag against the back of the phone to write."
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="@string/newtag_write_msg"
         android:id="@+id/textView"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp" />
 
     <Button
         android:layout_width="wrap_content"

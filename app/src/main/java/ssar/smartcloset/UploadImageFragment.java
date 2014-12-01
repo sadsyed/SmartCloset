@@ -82,8 +82,8 @@ public class UploadImageFragment extends Fragment {
         //addListenerOnUpdateArticleButton(thisView);
         addListenerOnSelectFileForUploadButton(thisView);
 
-        EditText editText = (EditText) thisView.findViewById(R.id.articleId);
-        editText.setText(articleId);
+        //EditText editText = (EditText) thisView.findViewById(R.id.articleId);
+        //editText.setText(articleId);
         return thisView;
     }
 
@@ -136,11 +136,11 @@ public class UploadImageFragment extends Fragment {
     }
 
     public void updateArticleId(View view) {
-        EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
+        //EditText articleIdEditText = (EditText) getView().findViewById(R.id.articleId);
         Log.i(CLASSNAME, "Article ID: " + currentUuid);
-        if(articleIdEditText != null) {
+        /*if(articleIdEditText != null) {
             articleIdEditText.setText(currentUuid);
-        }
+        }*/
     }
 
     public void chooseImageFile(View view) {

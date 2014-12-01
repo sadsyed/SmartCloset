@@ -44,7 +44,6 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
      * The fragment's ListView/GridView.
      */
     private GridView gridView;
-    //private ListView listView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -87,7 +86,7 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_views_grid, container, false);
+        View view = inflater.inflate(R.layout.fragment_closet, container, false);
 
         // Set the adapter
         gridView = (GridView) view.findViewById(R.id.gridView);

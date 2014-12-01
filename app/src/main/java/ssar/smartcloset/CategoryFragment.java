@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
@@ -15,14 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import org.json.JSONObject;
 
 import java.util.List;
 
 import ssar.smartcloset.types.Article;
-import ssar.smartcloset.types.Category;
+import ssar.smartcloset.types.CustomGridAdapter;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.util.JsonParserUtil;
@@ -60,7 +58,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private CustomListAdapter customListAdapter;
+    private CustomGridAdapter customListAdapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -95,7 +93,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             currentCatergory = savedInstanceState.getString(ARG_CATEGORY_SELECTED);
         }
 
-        View view = inflater.inflate(R.layout.fragment_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_category, container, false);
 
         // Set the adapter
         gridView = (GridView) view.findViewById(R.id.articleGridView);
@@ -115,7 +113,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         Bundle args = getArguments();
         if (args != null) {
             //set article based on argument passed in
-            updateMenuView(args.getString(ARG_CATEGORY_SELECTED));
+            //updateMenuView(args.getString(ARG_CATEGORY_SELECTED));
 
             filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
             filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -137,13 +135,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             getActivity().startService(msgIntent);
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
         } else if (currentCatergory != null) {
-            updateMenuView(currentCatergory);
+            //updateMenuView(currentCatergory);
         }
-    }
-
-    public void updateMenuView(String categorySelected) {
-        TextView viewTitle = (TextView) getActivity().findViewById(R.id.viewTitle);
-        viewTitle.setText(categorySelected);
     }
 
     @Override
@@ -233,7 +226,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             // get list of articles in the selected category
             articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
 
-            customListAdapter = new CustomListAdapter(getActivity(), articles);
+            customListAdapter = new CustomGridAdapter(getActivity(), articles);
             gridView.setAdapter(customListAdapter);
         }
     }

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,11 +59,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private Button onSubmitButton;
 
     private User existingUser;
-    /*private String userName;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;*/
 
     /**
      * Use this factory method to create a new instance of
@@ -96,11 +92,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, 0);
 
         existingUser = new User();
-        existingUser.setUserName(sharedPreferences.getString("UserName", null));
-        existingUser.setFirstName(sharedPreferences.getString("FirstName", null));
-        existingUser.setLastName(sharedPreferences.getString("LastName", null));
-        existingUser.setUserEmail(sharedPreferences.getString("Email", null));
-        existingUser.setUserPin(sharedPreferences.getString("Password", null));
+        existingUser.setUserName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, null));
+        existingUser.setFirstName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, null));
+        existingUser.setLastName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, null));
+        existingUser.setUserEmail(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, null));
+        existingUser.setUserPin(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, null));
     }
 
     @Override
@@ -116,6 +112,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
 
+            TextView profileTitleTextView = (TextView) view.findViewById(R.id.profileTitleTextView);
+            profileTitleTextView.setText("Welcome " + existingUser.getFirstName());
             userNameEditText.setEnabled(false);
             userNameEditText.setText(existingUser.getUserName());
             firstNameEditText.setEnabled(false);
@@ -179,11 +177,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
 
-        e.putString("UserName", userNameEditText.getText().toString());
-        e.putString("FirstName", firstNameEditText.getText().toString());
-        e.putString("LastName", lastNameEditText.getText().toString());
-        e.putString("Email", emailEditText.getText().toString());
-        e.putString("Password", passwordEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userNameEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, firstNameEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, lastNameEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, emailEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, passwordEditText.getText().toString());
         e.commit();
 
         //launch profile fragment

@@ -10,6 +10,7 @@
     <string name="closet_button_label">Closet</string>
     <string name="newtag_button_label">New Tag</string>
     <string name="search_fragment_title">Search Fragment</string>
+
     <string name="newtag_title">New Tag Fragment</string>
     <string name="newtag_article_id">No current article.</string>
     <string name="newtag_article_description">Enter article description.</string>
@@ -24,6 +25,14 @@
     <string name="newtag_create_article_button">Create Article</string>
     <string name="newtag_ok_sell_checkbox">This item OK to sell.</string>
     <string name="newtag_private_checkbox">This item is private.</string>
+    <string name="newtag_write_msg">Tap and hold the tag against the back of the phone to write.</string>
+
+    <string name="profile_user_name_label">User Name</string>
+    <string name="profile_first_name_label">First Name</string>
+    <string name="profile_last_name_label">Last Name</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_user_pin_label">Pin</string>
+    <string name="profile_submit_button_label">Submit</string>
 
     <string-array name="newtag_article_type_array">
         <item>Select an article type...</item>

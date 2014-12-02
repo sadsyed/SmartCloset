@@ -116,14 +116,13 @@ public class UsageFilterFragment extends Fragment {
 
                 //invoke SearchArticles API to get articles
                 String searchType = "usagefilter";
-                //TODO activate date filter
-                //String searchValue = usageFilterValue;
+                String searchValue = usageFilterValue;
 
                 //test with today's date
-                Calendar calendar = Calendar.getInstance();
+                /*Calendar calendar = Calendar.getInstance();
                 calendar.setTimeZone(TimeZone.getDefault());
                 calendar.add(Calendar.DATE, 0);
-                String searchValue = getDate(calendar);
+                String searchValue = getDate(calendar);*/
 
                 User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
 

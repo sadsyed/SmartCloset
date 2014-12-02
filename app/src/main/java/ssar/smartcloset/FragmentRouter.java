@@ -1,6 +1,11 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.app.Fragment;
 //import android.support.v4.app.Fragment;
@@ -14,8 +19,6 @@ import android.widget.Button;
  * Activities that contain this fragment must implement the
  * {@link ssar.smartcloset.FragmentRouter.OnFragmentRouterInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FragmentRouter#newInstance} factory method to
- * create an instance of this fragment.
  *
  */
 public class FragmentRouter extends Fragment implements View.OnClickListener{
@@ -78,13 +81,21 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_router, container, false);
 
+        Drawable drawable = getResources().getDrawable(R.drawable.app_background);
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+        int nh  = (int) (bitmap.getHeight() * (512.0 /bitmap.getWidth()));
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+
+        view.setBackground(new BitmapDrawable(getResources(), scaled));
+
         closetButton = (Button) view.findViewById(R.id.closetButton);
-        searchButton = (Button) view.findViewById(R.id.searchButton);
-        newTagButton = (Button) view.findViewById(R.id.newTagButton);
+        //searchButton = (Button) view.findViewById(R.id.searchButton);
+        //newTagButton = (Button) view.findViewById(R.id.newTagButton);
 
         closetButton.setOnClickListener(this);
-        searchButton.setOnClickListener(this);
-        newTagButton.setOnClickListener(this);
+        //searchButton.setOnClickListener(this);
+        //newTagButton.setOnClickListener(this);
 
         return view;
     }

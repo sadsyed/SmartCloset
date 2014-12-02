@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements
     protected PendingIntent pendingIntent;
     public SmartClosetRequestReceiver useArticleRequestReceiver;
     public SmartClosetRequestReceiver readArticleRequestReceiver;
+    IntentFilter filter;
 
     public boolean writeMode = false;
     public boolean searchMode = false;
@@ -386,6 +387,11 @@ public class MainActivity extends Activity implements
             //search details for tagged item
             else {
                 searchMode = false;
+                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                readArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.READ_ARTICLE);
+                this.registerReceiver(readArticleRequestReceiver, filter);
+
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Read Article request");
                 Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
@@ -460,7 +466,7 @@ public class MainActivity extends Activity implements
                 updateFragment(closetFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 break;
-            case R.id.searchButton:
+           /* case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchTabFragment searchTabFragment = new SearchTabFragment();
@@ -473,7 +479,7 @@ public class MainActivity extends Activity implements
                 NewTagFragment newTagFragment = new NewTagFragment();
                 updateFragment(newTagFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
-                break;
+                break;*/
         }
     }
 
@@ -504,6 +510,7 @@ public class MainActivity extends Activity implements
     public void onCategoryFragmentInteraction(Article articleSelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onCategoryFragmentInteraction..... ");
 
+        //launch article view for the selected article
         ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
 
         updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
@@ -541,44 +548,47 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": OnBaseSearchFragmentInteraction......");
 
         //launch search fragment to invoke search and get results
-        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
-        updateFragment(searchFragment, null);
-        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+        launhSearchFragment(searchType, searchValue, email);
     }
 
     public void onTagSearchFragmentInteraction(Uri uri){
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onTagSearchFragmentInteraction......");
     }
 
-    public void onSearchFragmentInteraction(Uri uri){
+    public void onSearchFragmentInteraction(Article articleSelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
+
+        //launch article view for the selected article
+        ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
+
+        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+        setTitle(articleSelected.getArticleType());
     }
 
     public void onUsageFilterFragmentInteraction(String searchType, String searchValue, String email) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUsageFilterFragmentInteraction......");
 
         //launch search fragment to invoke search and get results
-        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
-        updateFragment(searchFragment, null);
-        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+        launhSearchFragment(searchType, searchValue, email);
     }
 
     public void onNeverUsedFragmentInteraction(String searchType, String searchValue, String email) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNeverUsedFragmentInteraction......");
 
         //launch search fragment to invoke search and get results
-        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
-        updateFragment(searchFragment, null);
-        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+        launhSearchFragment(searchType, searchValue, email);
     }
 
     public void onSellFilterFragmentInteraction(String searchType, String searchValue, String email) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSellFilterFragmentInteraction......");
+        launhSearchFragment(searchType, searchValue, email);
+    }
 
+    private void launhSearchFragment(String searchType, String searchValue, String email) {
         //launch search fragment to invoke search and get results
         SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
-        updateFragment(searchFragment, null);
-        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+        updateFragment(searchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
+        //ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }
 
     private void updateFragment(Fragment fragment, Integer position) {

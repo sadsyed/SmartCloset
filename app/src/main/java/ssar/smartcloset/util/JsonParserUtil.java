@@ -75,27 +75,40 @@ public class JsonParserUtil {
             switch(serviceURL) {
                 case SmartClosetConstants.GET_CATEGORY:
                     jsonArray = json.getJSONArray("category");
+                    articles = parseJsonArraytoArticle(gson, articles, jsonArray);
                     break;
 
                 case SmartClosetConstants.SEARCH_ARTICLES:
                     jsonArray = json.getJSONArray("articleList");
+                    articles = parseJsonArraytoArticle(gson, articles, jsonArray);
                     break;
+
+                case SmartClosetConstants.READ_ARTICLE:
+                    CustomListItem customListItem = gson.fromJson(json.toString(), Article.class);
+                    articles.add(customListItem);
             }
 
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Parse article JSON to Java article object: " + jsonArray.toString());
-            if(jsonArray.length() > 0) {
-                for(int i=0; i<jsonArray.length(); i++) {
-                    CustomListItem customListItem = gson.fromJson(jsonArray.getJSONObject(i).toString(), Article.class);
-                    articles.add(customListItem);
-                }
-            } else {
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "jsonArray empty");
-            }
         } catch (JSONException e){
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
         } catch (Exception e) {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
         }
         return articles;
+    }
+
+    private static List<CustomListItem> parseJsonArraytoArticle(Gson gson, List<CustomListItem> articles, JSONArray jsonArray) throws JSONException {
+        List<CustomListItem> customList = new ArrayList<CustomListItem>();
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Parse article JSON to Java article object: " + jsonArray.toString());
+        if(jsonArray.length() > 0) {
+            for(int i=0; i<jsonArray.length(); i++) {
+                CustomListItem customListItem = gson.fromJson(jsonArray.getJSONObject(i).toString(), Article.class);
+                customList.add(customListItem);
+            }
+        } else {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " jsonArray empty");
+            return null;
+        }
+        return customList;
     }
 }

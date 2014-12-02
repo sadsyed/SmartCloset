@@ -24,6 +24,7 @@ import ssar.smartcloset.types.CustomGridAdapter;
 import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
+import ssar.smartcloset.util.ToastMessage;
 
 
 /**
@@ -132,13 +133,6 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (onSearchFragmentInteractionListener != null) {
-            onSearchFragmentInteractionListener.onSearchFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -160,10 +154,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-       /* if (null != onCategoryFragmentInteractionListener) {
+        if (null != onSearchFragmentInteractionListener) {
             Article articleSelected = (Article) articles.get(position);
-            onCategoryFragmentInteractionListener.onCategoryFragmentInteraction(articleSelected);
-        }*/
+            onSearchFragmentInteractionListener.onSearchFragmentInteraction(articleSelected);
+        }
     }
 
     /**
@@ -178,7 +172,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
      */
     public interface OnSearchFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onSearchFragmentInteraction(Uri uri);
+        public void onSearchFragmentInteraction(Article articleSelected);
     }
 
     //--------------- RequestReceiver ---------------
@@ -207,8 +201,12 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             // get list of articles in the selected category
             articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
 
-            customListAdapter = new CustomGridAdapter(getActivity(), articles);
-            gridView.setAdapter(customListAdapter);
+            if (articles != null || articles.size() == 0) {
+                customListAdapter = new CustomGridAdapter(getActivity(), articles);
+                gridView.setAdapter(customListAdapter);
+            } else {
+                ToastMessage.displayShortToastMessage(getActivity(), "Your search did not match any articles.");
+            }
         }
     }
 

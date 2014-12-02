@@ -31,6 +31,8 @@ public class SmartClosetConstants {
     public static final int SLIDEMENU_PROFILE_ITEM = 4;
     public static final int SLIDEMENU_ARTICLE_ITEM = 5;
 
+
+
     //Profile Shared Preference
     public static final String PREF_NAME = "smartProfilePreference";
     public static final String SHAREDPREFERENCE_USER_NAME = "UserName";

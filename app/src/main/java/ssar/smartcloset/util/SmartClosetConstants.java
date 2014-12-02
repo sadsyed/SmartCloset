@@ -31,8 +31,6 @@ public class SmartClosetConstants {
     public static final int SLIDEMENU_PROFILE_ITEM = 4;
     public static final int SLIDEMENU_ARTICLE_ITEM = 5;
 
-
-
     //Profile Shared Preference
     public static final String PREF_NAME = "smartProfilePreference";
     public static final String SHAREDPREFERENCE_USER_NAME = "UserName";
@@ -40,4 +38,10 @@ public class SmartClosetConstants {
     public static final String SHAREDPREFERENCE_LAST_NAME = "LastName";
     public static final String SHAREDPREFERENCE_EMAIL = "Email";
     public static final String SHAREDPREFERENCE_PASSWORD = "Password";
+
+    public static final String SEARCHTAB_BASE_SEARCH = "Base Search";
+    public static final String SEARCHTAB_USAGE_FILTER = "Usage Filter";
+    public static final String SEARCHTAB_TAG_FILTER = "Tag Filter";
+    public static final String SEARCHTAB_NEVER_USED_FILTER = "Never Used Filter";
+    public static final String SEARCHTAB_OK_TO_SELL = "Selling Filter";
 }

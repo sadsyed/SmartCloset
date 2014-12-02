@@ -69,25 +69,8 @@
 
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:id="@+id/articleOwnerLinearLayout"
-        android:layout_below="@+id/articlePriceLinearLayout">
-
-        <TextView
-            style="@style/InputLabelTextView"
-            android:text="Owner"
-            android:id="@+id/articleOwnerTextViewLabel" />
-
-        <EditText
-            style="@style/InputEditTextView"
-            android:id="@+id/articleOwnerEditText" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        style="@style/InputLinearLayout"
         android:id="@+id/articleCategoryLinearLayout"
-        android:layout_below="@+id/articleOwnerLinearLayout">
+        android:layout_below="@+id/articlePriceLinearLayout">
 
         <TextView
             style="@style/InputLabelTextView"

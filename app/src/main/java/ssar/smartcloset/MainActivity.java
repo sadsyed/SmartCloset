@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -28,8 +31,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -128,11 +133,13 @@ public class MainActivity extends Activity implements
                 R.string.app_name
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(title);
+                setTitle(title);
+                //getActionBar().setTitle(title);
                 invalidateOptionsMenu();
             }
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(drawerTitle);
+                setTitle(drawerTitle);
+                //getActionBar().setTitle(drawerTitle);
                 invalidateOptionsMenu();
             }
         };
@@ -558,11 +565,21 @@ public class MainActivity extends Activity implements
     public void onSearchFragmentInteraction(Article articleSelected) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
 
-        //launch article view for the selected article
-        ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
+        //re-launch SearchTabFragment
+        if(articleSelected == null) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
+            //display Search Fragment
+            SearchTabFragment searchTabFragment = new SearchTabFragment();
+            updateFragment(searchTabFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
+            setFragmentTitle(SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
 
-        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
-        setTitle(articleSelected.getArticleType());
+        } else {
+            //launch article view for the selected article
+            ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
+
+            updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+            setTitle(articleSelected.getArticleType());
+        }
     }
 
     public void onUsageFilterFragmentInteraction(String searchType, String searchValue, String email) {

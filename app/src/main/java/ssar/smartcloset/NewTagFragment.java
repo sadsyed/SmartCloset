@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.SmartClosetConstants;
 
 
@@ -137,9 +138,13 @@ public class NewTagFragment extends Fragment {
                 EditText articleDescriptionEditText = (EditText) getView().findViewById(R.id.articleDescriptionEditText);
                 EditText articleTagsEditText = (EditText) getView().findViewById(R.id.articleTagsEditText);
                 EditText articlePriceEditText = (EditText) getView().findViewById(R.id.articlePriceEditText);
-                EditText articleOwnerEditText = (EditText) getView().findViewById(R.id.articleOwnerEditText);
+                //EditText articleOwnerEditText = (EditText) getView().findViewById(R.id.articleOwnerEditText);
                 CheckBox articleOkToSellCheckbox = (CheckBox) getView().findViewById(R.id.articleOkToSellCheckbox);
                 CheckBox articlePrivateCheckbox = (CheckBox) getView().findViewById(R.id.articlePrivateCheckbox);
+
+                //get current user
+                User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
+
                 filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
                 filter.addCategory(Intent.CATEGORY_DEFAULT);
                 createArticleRequestReceiver = new TestUploadRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
@@ -163,7 +168,7 @@ public class NewTagFragment extends Fragment {
                         privateTemp = "true";
                     }
                     requestJSON.put("articlePrivate", privateTemp);
-                    requestJSON.put("articleOwner", articleOwnerEditText.getText().toString());
+                    requestJSON.put("articleOwner", loggedInUser.getUserEmail());
                 } catch (Exception e) {
                     Log.e(CLASSNAME, "Exception while creating an request JSON.");
                 }

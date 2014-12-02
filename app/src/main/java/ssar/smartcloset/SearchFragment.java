@@ -201,11 +201,16 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             // get list of articles in the selected category
             articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
 
-            if (articles != null || articles.size() == 0) {
+            if (articles == null || articles.size() == 0) {
+                ToastMessage.displayShortToastMessage(getActivity(), "Your search did not match any articles.");
+
+                //load the searchTab again
+                onSearchFragmentInteractionListener.onSearchFragmentInteraction(null);
+
+            } else {
+                //Display search results
                 customListAdapter = new CustomGridAdapter(getActivity(), articles);
                 gridView.setAdapter(customListAdapter);
-            } else {
-                ToastMessage.displayShortToastMessage(getActivity(), "Your search did not match any articles.");
             }
         }
     }

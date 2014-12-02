@@ -1,5 +1,6 @@
 package ssar.smartcloset.types;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -9,6 +10,7 @@ import ssar.smartcloset.NeverUsedFragment;
 import ssar.smartcloset.SellFilterFragment;
 import ssar.smartcloset.TagSearchFragment;
 import ssar.smartcloset.UsageFilterFragment;
+import ssar.smartcloset.util.SmartClosetConstants;
 
 /**
  * Created by ssyed on 11/30/14.
@@ -17,11 +19,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     //number of ViewPager pages
     final int PAGE_COUNT = 5;
-    //private String tabTitles[] = new String[] {"Base Search", "Scan Tag", "Usage Filter", "Never Used", "Available for Selling"};
-    private String tabTitles[] = new String[] {"Base Search", "Usage Filter", "Scan Tag", "Never Used", "Available for Selling"};
+    private String tabTitles[] =
+            new String[] {SmartClosetConstants.SEARCHTAB_BASE_SEARCH,
+            SmartClosetConstants.SEARCHTAB_USAGE_FILTER,
+            SmartClosetConstants.SEARCHTAB_TAG_FILTER,
+            SmartClosetConstants.SEARCHTAB_NEVER_USED_FILTER,
+            SmartClosetConstants.SEARCHTAB_OK_TO_SELL};
 
-    public ViewPagerAdapter(FragmentManager fm) {
-        super(fm);
+    public ViewPagerAdapter (FragmentManager fragmentManager) {
+        super (fragmentManager);
     }
 
     @Override

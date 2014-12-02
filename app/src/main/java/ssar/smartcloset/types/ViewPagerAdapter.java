@@ -5,6 +5,8 @@ import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import ssar.smartcloset.BaseSearchFragment;
+import ssar.smartcloset.NeverUsedFragment;
+import ssar.smartcloset.SellFilterFragment;
 import ssar.smartcloset.TagSearchFragment;
 import ssar.smartcloset.UsageFilterFragment;
 
@@ -14,9 +16,9 @@ import ssar.smartcloset.UsageFilterFragment;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     //number of ViewPager pages
-    final int PAGE_COUNT = 3;
+    final int PAGE_COUNT = 5;
     //private String tabTitles[] = new String[] {"Base Search", "Scan Tag", "Usage Filter", "Never Used", "Available for Selling"};
-    private String tabTitles[] = new String[] {"Base Search", "Usage Filter", "Scan Tag"};
+    private String tabTitles[] = new String[] {"Base Search", "Usage Filter", "Scan Tag", "Never Used", "Available for Selling"};
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -38,8 +40,13 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 TagSearchFragment tagSearchFrgament = new TagSearchFragment();
                 return tagSearchFrgament;
 
-            //TODO case 2-4
+            case 3:
+                NeverUsedFragment neverUsedFragment = new NeverUsedFragment();
+                return neverUsedFragment;
 
+            case 4:
+                SellFilterFragment sellFilterFragment = new SellFilterFragment();
+                return sellFilterFragment;
         }
         return null;
     }

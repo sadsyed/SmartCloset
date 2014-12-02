@@ -19,6 +19,7 @@ public class SmartClosetConstants {
     public static final String GET_CATEGORY = APP_SPOT + "/GetCategory";
     public static final String CREATE_PROFILE = APP_SPOT + "/signup2";
     public static final String SEARCH_ARTICLES = APP_SPOT + "/SearchArticles";
+    public static final String READ_ARTICLE = APP_SPOT + "/ReadArticle";
 
     public static final String PROCESS_RESPONSE = "ssar.intent.action";
 

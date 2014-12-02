@@ -36,9 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ssar.smartcloset.types.Article;
+import ssar.smartcloset.types.CustomGridAdapter;
+import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.types.NavDrawerListAdapter;
 import ssar.smartcloset.types.NavDrawerItem;
 import ssar.smartcloset.types.User;
+import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
@@ -56,15 +59,20 @@ public class MainActivity extends Activity implements
         BaseSearchFragment.OnBaseSearchFragmentInteractionListener,
         TagSearchFragment.OnTagSearchFragmentInteractionListener,
         SearchFragment.OnSearchFragmentInteractionListener,
-        UsageFilterFragment.OnUsageFilterFragmentInteractionListener{
+        UsageFilterFragment.OnUsageFilterFragmentInteractionListener,
+        NeverUsedFragment.OnNeverUsedFragmentInteractionListener,
+        SellFilterFragment.OnSellFilterFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
     public SmartClosetRequestReceiver useArticleRequestReceiver;
+    public SmartClosetRequestReceiver readArticleRequestReceiver;
 
     public boolean writeMode = false;
+    public boolean searchMode = false;
     public String articleUuid;
+    private List<CustomListItem> articles;
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
@@ -338,10 +346,10 @@ public class MainActivity extends Activity implements
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Parcelable[] parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
-            NdefMessage[] ndefMessages =null;
+            NdefMessage[] ndefMessages = null;
             if (parcelables != null) {
                 ndefMessages = new NdefMessage[parcelables.length];
-                for (int i=0; i<parcelables.length; i++) {
+                for (int i = 0; i < parcelables.length; i++) {
                     ndefMessages[i] = (NdefMessage) parcelables[i];
                 }
             }
@@ -365,12 +373,26 @@ public class MainActivity extends Activity implements
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME  + ": Starting Use Article request");
-            Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
-            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
-            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
-            this.startService(msgIntent);
-            Log.i(CLASSNAME, "Started intent service");
+
+            //if searchMode is not active, mark the usage
+            if (!searchMode) {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Use Article request");
+                Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+                this.startService(msgIntent);
+                Log.i(CLASSNAME, "Started intent service");
+            }
+            //search details for tagged item
+            else {
+                searchMode = false;
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Read Article request");
+                Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+                this.startService(msgIntent);
+                Log.i(CLASSNAME, "Started intent service");
+            }
         }
     }
 
@@ -532,8 +554,31 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSearchFragmentInteraction......");
     }
 
-    public void onUsageFilterFragmentInteraction(Uri uri) {
+    public void onUsageFilterFragmentInteraction(String searchType, String searchValue, String email) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUsageFilterFragmentInteraction......");
+
+        //launch search fragment to invoke search and get results
+        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
+        updateFragment(searchFragment, null);
+        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+    }
+
+    public void onNeverUsedFragmentInteraction(String searchType, String searchValue, String email) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onNeverUsedFragmentInteraction......");
+
+        //launch search fragment to invoke search and get results
+        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
+        updateFragment(searchFragment, null);
+        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
+    }
+
+    public void onSellFilterFragmentInteraction(String searchType, String searchValue, String email) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSellFilterFragmentInteraction......");
+
+        //launch search fragment to invoke search and get results
+        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
+        updateFragment(searchFragment, null);
+        ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }
 
     private void updateFragment(Fragment fragment, Integer position) {
@@ -580,6 +625,27 @@ public class MainActivity extends Activity implements
                     String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
                 } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+            else if(readArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(readArticleRequestReceiver);
+
+                    String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+                    // get list of articles in the selected category
+                    articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+
+                    //launch article fragment for searched article
+                    Article article = (Article) articles.get(0);
+                    ArticleFragment articleFragment = new ArticleFragment().newInstance(article);
+
+                    updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+                    setTitle(article.getArticleType());
+                }
+                catch (IllegalArgumentException e){
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }

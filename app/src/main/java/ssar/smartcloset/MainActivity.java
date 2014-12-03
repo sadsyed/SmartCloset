@@ -140,7 +140,21 @@ public class MainActivity extends Activity implements
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         if(savedInstanceState == null) {
-            displayView(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            if(getExistingUser().getUserName() != null) {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                //display read tag message
+                FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+                updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                setFragmentTitle( SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            } else {
+                //launch LogIn/Create Account page
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                //display Category Fragment
+                FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
+                updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            }
+
         }
     }
 
@@ -486,14 +500,23 @@ public class MainActivity extends Activity implements
         //ToastMessage.displayShortToastMessage(this, "Wheeeee...");
 
         switch (view.getId()) {
-            case R.id.closetButton:
+            case R.id.createAccountButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Profile Fragment..... ");
+                //launch profile fragment
+                ProfileFragment profileFragment = new ProfileFragment();
+                updateFragment(profileFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
+                break;
+            case R.id.logInButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": LogIn Fragment.....");
+            /*case R.id.closetButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                 //display Category Fragment
                 ClosetFragment closetFragment = new ClosetFragment();
                 updateFragment(closetFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
                 break;
-           /* case R.id.searchButton:
+            case R.id.searchButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
                 //display Search Fragment
                 SearchTabFragment searchTabFragment = new SearchTabFragment();

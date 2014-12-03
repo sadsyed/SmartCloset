@@ -21,7 +21,9 @@
         android:textColor="#D3D3D3"
         android:id="@+id/selectFileButton"
         android:layout_below="@+id/selectedImageView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:drawableLeft="@drawable/sc_browse"
+        android:drawablePadding="8dp"/>
 
     <Button
         android:layout_width="350dp"
@@ -32,7 +34,8 @@
         android:id="@+id/takeAPicture"
         android:layout_below="@+id/selectFileButton"
         android:layout_marginTop="5dp"
-        android:layout_alignStart="@+id/selectFileButton" />
+        android:layout_alignStart="@+id/selectFileButton"
+        android:drawableLeft="@drawable/sc_camera"/>
 
     <Button
         android:layout_width="wrap_content"

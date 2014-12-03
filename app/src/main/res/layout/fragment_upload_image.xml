@@ -2,12 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="ssar.smartcloset.UploadImageFragment">
 
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:id="@+id/selectedImageView"
+        android:src="@drawable/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/newtag_select_file_button"
         android:id="@+id/selectFileButton"
-        android:layout_marginBottom="82dp"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/takeAPicture"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take a Picture"
+        android:id="@+id/takeAPicture"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/selectFileButton" />
+
+
 </RelativeLayout>

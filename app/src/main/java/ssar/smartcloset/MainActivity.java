@@ -60,7 +60,8 @@ public class MainActivity extends Activity implements
         UsageFilterFragment.OnUsageFilterFragmentInteractionListener,
         NeverUsedFragment.OnNeverUsedFragmentInteractionListener,
         SellFilterFragment.OnSellFilterFragmentInteractionListener,
-        UpdateArticleFragment.OnUpdateArticleFragmentInteractionListener {
+        UpdateArticleFragment.OnUpdateArticleFragmentInteractionListener,
+        LoginFragment.OnLoginFragmentInteractionListener{
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -145,7 +146,7 @@ public class MainActivity extends Activity implements
                 //display read tag message
                 FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
                 updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-                setFragmentTitle( SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
             } else {
                 //launch LogIn/Create Account page
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
@@ -509,27 +510,11 @@ public class MainActivity extends Activity implements
                 break;
             case R.id.logInButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": LogIn Fragment.....");
-            /*case R.id.closetButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
-                //display Category Fragment
-                ClosetFragment closetFragment = new ClosetFragment();
-                updateFragment(closetFragment, SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
-                setFragmentTitle(SmartClosetConstants.SLIDEMENU_CLOSET_ITEM);
+                //launch login fragment
+                LoginFragment loginFragment = new LoginFragment();
+                updateFragment(loginFragment, SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
+                setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
                 break;
-            case R.id.searchButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Search Fragment..... ");
-                //display Search Fragment
-                SearchTabFragment searchTabFragment = new SearchTabFragment();
-                updateFragment(searchTabFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
-                setFragmentTitle(SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
-                break;
-            case R.id.newTagButton:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
-                //display New Tag Fragment
-                NewTagFragment newTagFragment = new NewTagFragment();
-                updateFragment(newTagFragment, SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
-                setFragmentTitle(SmartClosetConstants.SLIDEMENU_NEWTAG_ITEM);
-                break;*/
         }
     }
 
@@ -651,6 +636,14 @@ public class MainActivity extends Activity implements
     public void onSellFilterFragmentInteraction(String searchType, String searchValue, String email) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSellFilterFragmentInteraction......");
         launhSearchFragment(searchType, searchValue, email);
+    }
+
+    public void onLoginFragmentInteraction() {
+        //launch profile fragment
+        ProfileFragment profileFragment = new ProfileFragment();
+        updateFragment(profileFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
+        ToastMessage.displayShortToastMessage(this, "User Logged in successfully.");
     }
 
     private void launhSearchFragment(String searchType, String searchValue, String email) {

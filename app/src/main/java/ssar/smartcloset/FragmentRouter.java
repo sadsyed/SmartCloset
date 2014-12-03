@@ -46,7 +46,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
     private Button newTagButton;
     private Button createAccountButton;
     private Button logInButton;
-    private TextView readTagEditText;
+    private TextView readTagTextView;
 
     private OnFragmentRouterInteractionListener fragmentRouterInteractionListener;
 
@@ -85,7 +85,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
 
         createAccountButton = (Button) view.findViewById(R.id.createAccountButton);
         logInButton = (Button) view.findViewById(R.id.logInButton);
-        readTagEditText = (EditText) view.findViewById(R.id.readTagEditText);
+        readTagTextView = (TextView) view.findViewById(R.id.readTagEditText);
 
         Drawable drawable = getResources().getDrawable(R.drawable.app_background);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -96,7 +96,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
         view.setBackground(new BitmapDrawable(getResources(), scaled));
 
         if(!isLoggedIn) {
-            readTagEditText.setVisibility(View.GONE);
+            readTagTextView.setVisibility(View.GONE);
             createAccountButton.setVisibility(View.VISIBLE);
             logInButton.setVisibility(View.VISIBLE);
 
@@ -106,7 +106,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
             createAccountButton.setVisibility(View.GONE);
             logInButton.setVisibility(View.GONE);
 
-            readTagEditText.setVisibility(View.VISIBLE);
+            readTagTextView.setVisibility(View.VISIBLE);
         }
 
         //closetButton = (Button) view.findViewById(R.id.closetButton);

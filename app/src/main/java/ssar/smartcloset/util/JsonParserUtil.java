@@ -15,6 +15,7 @@ import java.util.List;
 import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListItem;
+import ssar.smartcloset.types.User;
 
 /**
  * Created by ssyed on 11/24/14.
@@ -110,5 +111,33 @@ public class JsonParserUtil {
             return null;
         }
         return customList;
+    }
+
+    public static User jsonToUser(String serviceURL, String responseJSON) {
+        JSONObject json;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+
+        User user = new User();
+
+        try{
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Request URL: " + serviceURL);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Response JSON: " + responseJSON);
+
+            json = new JSONObject(responseJSON);
+            JSONArray jsonArray = new JSONArray();
+
+            switch(serviceURL) {
+                case SmartClosetConstants.GET_USER_ACCOUNT:
+                    user = gson.fromJson(json.toString(), User.class);
+                    break;
+            }
+
+        } catch (JSONException e){
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
+        }
+        return user;
     }
 }

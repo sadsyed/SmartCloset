@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ssar.smartcloset.LoginFragment"
+    android:textAlignment="center">
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/emailLinearLayout"
+        android:layout_below="@id/lastNameLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="@string/profile_email_label"
+            android:id="@+id/emailTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/emailEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:layout_below="@id/emailLinearLayout"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="@string/profile_user_pin_label"
+            android:id="@+id/pinTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:inputType="numberPassword"
+            android:ems="10"
+            android:id="@+id/passwordEditText"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log In"
+        android:id="@+id/logInButton"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+
+</RelativeLayout>

@@ -9,7 +9,7 @@
         android:layout_height="50dp"
         android:text="@string/newtag_write_msg"
         android:id="@+id/textView"
-        android:textColor="@color/sc_green"
+        android:textColor="@color/sc_teal"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:textSize="20dp" />

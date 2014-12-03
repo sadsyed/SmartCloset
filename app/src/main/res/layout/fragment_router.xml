@@ -31,16 +31,16 @@
         android:layout_margin="5dp"
         android:layout_alignParentTop="true" />
 
-    <EditText
-        android:id="@+id/readTagEditText"
+
+    <TextView
         android:layout_width="300dp"
-        android:layout_height="70dp"
-        android:text="@string/search_read_msg"
-        android:textColor="@color/sc_green"
+        android:layout_height="50dp"
+        android:text="@string/newtag_write_msg"
+        android:id="@+id/readTagEditText"
+        android:textColor="@color/sc_teal"
         android:textSize="20dp"
-        android:layout_marginTop="82dp"
+        android:textStyle="bold"
         android:layout_below="@+id/logInButton"
-        android:layout_alignEnd="@+id/logInButton" />
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/logInButton" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp" />
 </RelativeLayout>

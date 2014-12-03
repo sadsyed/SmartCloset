@@ -95,7 +95,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view;
-        if(existingUser.getUserPin() != null) {
+        if(existingUser.getUserEmail() != null) {
             // Inflate the layout for this fragment
             view = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -105,7 +105,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
 
             TextView profileTitleTextView = (TextView) view.findViewById(R.id.profileTitleTextView);
-            profileTitleTextView.setText("Welcome " + existingUser.getFirstName());
+
+            if(existingUser.getFirstName() == null) {
+                profileTitleTextView.setText("Welcome " + existingUser.getUserName());
+            } else {
+                profileTitleTextView.setText("Welcome " + existingUser.getFirstName());
+            }
             userNameEditText.setEnabled(false);
             userNameEditText.setText(existingUser.getUserName());
             firstNameEditText.setEnabled(false);

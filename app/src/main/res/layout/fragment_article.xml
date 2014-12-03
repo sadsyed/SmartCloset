@@ -26,6 +26,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_below="@+id/articleImage"
+        android:layout_marginTop="5dp"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:background="#D3D3D3"

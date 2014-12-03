@@ -55,7 +55,10 @@ public class UploadImageFragment extends Fragment {
 
     private OnUploadImageFragmentInteractionListener onUploadImageFragmentInteractionListener;
 
+    private Button selectFileButton;
     private Button takeAPicture;
+    private Button writeTagButton;
+
     private ImageView selectedImageView;
     Uri destination;
 
@@ -92,8 +95,12 @@ public class UploadImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload_image, container, false);
 
-        Button button = (Button) view.findViewById(R.id.selectFileButton);
+        selectFileButton = (Button) view.findViewById(R.id.selectFileButton);
         takeAPicture = (Button) view.findViewById(R.id.takeAPicture);
+
+        writeTagButton = (Button) view.findViewById(R.id.writeTagButton);
+        writeTagButton.setVisibility(View.GONE);
+
         selectedImageView = (ImageView) view.findViewById(R.id.selectedImageView);
 
         takeAPicture.setOnClickListener(new View.OnClickListener() {
@@ -103,16 +110,59 @@ public class UploadImageFragment extends Fragment {
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener()
-        {
+        selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 chooseImageFile(v);
             }
         });
 
+        writeTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchWriteTag();
+            }
+        });
+
         return view;
+    }
+
+    public void chooseImageFile(View view) {
+        //Select file
+        Intent intentChooser = new Intent();
+        intentChooser.setType("image/*");
+        intentChooser.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentChooser, "Choose Picture"), 1);
+    }
+
+    public void takeAPicture(View view) {
+        //launch camera to capture picture
+        try {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    destination = Uri.fromFile(photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(photoFile));
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE);
+                }
+            }
+        } catch (ActivityNotFoundException e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e.getMessage());
+        }
+    }
+
+    public void launchWriteTag() {
+        onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(articleId);
     }
 
     @Override
@@ -191,40 +241,6 @@ public class UploadImageFragment extends Fragment {
         getActivity().startService(msgIntent);
     }
 
-    public void chooseImageFile(View view) {
-        //Select file
-        Intent intentChooser = new Intent();
-        intentChooser.setType("image/*");
-        intentChooser.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intentChooser, "Choose Picture"), 1);
-    }
-
-    public void takeAPicture(View view) {
-        //launch camera to capture picture
-        try {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // ensure that there's a camera activity to handle the intent
-            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                // Create the File where the photo should go
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException ex) {
-
-                }
-                // Continue only if the File was successfully created
-                if (photoFile != null) {
-                    destination = Uri.fromFile(photoFile);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photoFile));
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE);
-                }
-            }
-        } catch (ActivityNotFoundException e) {
-            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e.getMessage());
-        }
-    }
-
     private File createImageFile() throws IOException {
         String mCurrentPhotoPath;
 
@@ -281,7 +297,12 @@ public class UploadImageFragment extends Fragment {
 
             //callback to launch UploadImageFragment upon the successful creation of new article
             ToastMessage.displayLongToastMessage(context, "Article successfully created");
-            onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(articleId);
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(articleId);
         }
     }
 

@@ -427,7 +427,10 @@ public class MainActivity extends Activity implements
                 }
 
                 ndef.writeNdefMessage(ndefMessage);
+                
                 ToastMessage.displayShortToastMessage(this, "Write successful.");
+                launchArticleFragment();
+
                 return true;
             } else {
                 NdefFormatable ndefFormatable = NdefFormatable.get(tag);
@@ -450,6 +453,29 @@ public class MainActivity extends Activity implements
             ToastMessage.displayShortToastMessage(this, "Write failed.");
         }
         return false;
+    }
+
+    private void launchArticleFragment() {
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("articleId", articleUuid);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+        }
+
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        readArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.READ_ARTICLE);
+        this.registerReceiver(readArticleRequestReceiver, filter);
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Read Article request");
+        Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        this.startService(msgIntent);
+        Log.i(CLASSNAME, "Started intent service");
     }
 
     //--------------- FragmentInteraction Methods ---------------

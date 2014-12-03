@@ -8,23 +8,41 @@
         android:id="@+id/selectedImageView"
         android:src="@drawable/ic_launcher"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/newtag_select_file_button"
+        android:background="@color/sc_teal"
+        android:textColor="#D3D3D3"
         android:id="@+id/selectFileButton"
-        android:layout_above="@+id/takeAPicture"
+        android:layout_below="@+id/selectedImageView"
+        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/sc_teal"
+        android:textColor="#D3D3D3"
         android:text="Take a Picture"
         android:id="@+id/takeAPicture"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/selectFileButton"
+        android:layout_marginTop="5dp"
         android:layout_alignStart="@+id/selectFileButton" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/sc_teal"
+        android:textColor="#D3D3D3"
+        android:text="Next"
+        android:id="@+id/writeTagButton"
+        android:layout_below="@+id/selectedImageView"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="9dp"/>
 
 </RelativeLayout>

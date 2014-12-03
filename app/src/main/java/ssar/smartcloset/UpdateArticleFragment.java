@@ -56,10 +56,10 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
     EditText articleDescriptionEditText;
     EditText articleTagsEditText;
     EditText articlePriceEditText;
-    EditText articleOwnerEditText;
     CheckBox articleOkToSellCheckbox;
     CheckBox articlePrivateCheckbox;
     private Spinner articleTypeSelector;
+
     Button submitChangesButton;
 
     /**
@@ -109,16 +109,6 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
 
         articleNameEditText.setText(article.getArticleName());
         articleDescriptionEditText.setText(article.getArticleDescription());
-
-        /*//get Tags
-        StringBuilder articleTagsStringBuilder = new StringBuilder();
-        for(String tag : article.getTags()) {
-            articleTagsStringBuilder.append(tag).append(" ,");
-        }
-        //remove the last common
-        articleTagsStringBuilder.deleteCharAt(articleTagsStringBuilder.length()-1);
-        articleTagsStringBuilder.deleteCharAt(articleTagsStringBuilder.length()-1);*/
-
         articleTagsEditText.setText(article.getTagsStringValue());
         articlePriceEditText.setText(article.getArticlePrice().toString());
         articleOkToSellCheckbox.setChecked(article.getArticleOkToSell());
@@ -132,23 +122,19 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         List<String> stringArrayList = new ArrayList<String> ();
         stringArrayList = Arrays.asList(stringArray);
 
-
         String currentSelection = article.getArticleType();
         articleTypeSelector.setSelection(stringArrayList.indexOf(currentSelection));
 
         submitChangesButton.setOnClickListener(this);
+
+        //disable Next button
+
 
         return view;
     }
 
     @Override
     public void onClick(View v) {
-        /*EditText articleDescriptionEditText = (EditText) getView().findViewById(R.id.articleDescriptionEditText);
-        EditText articleTagsEditText = (EditText) getView().findViewById(R.id.articleTagsEditText);
-        EditText articlePriceEditText = (EditText) getView().findViewById(R.id.articlePriceEditText);
-        CheckBox articleOkToSellCheckbox = (CheckBox) getView().findViewById(R.id.articleOkToSellCheckbox);
-        CheckBox articlePrivateCheckbox = (CheckBox) getView().findViewById(R.id.articlePrivateCheckbox);*/
-
         //get current user
         User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
 

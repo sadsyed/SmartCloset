@@ -9,6 +9,7 @@
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:text="@string/search_read_msg"
+        android:textColor="@color/sc_green"
         android:id="@+id/textView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"

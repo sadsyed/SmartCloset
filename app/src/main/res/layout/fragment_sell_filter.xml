@@ -18,6 +18,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/sc_teal"
+        android:textColor="@color/sc_gray"
         android:text="Search"
         android:id="@+id/sellFilterSearchButton"
         android:layout_marginTop="5dp"

@@ -122,7 +122,7 @@ public class MainActivity extends Activity implements
         getActionBar().setHomeButtonEnabled(true);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.drawable.ic_launcher,
+                R.drawable.sc_menu,
                 R.string.app_name,
                 R.string.app_name
         ) {
@@ -427,7 +427,7 @@ public class MainActivity extends Activity implements
                 }
 
                 ndef.writeNdefMessage(ndefMessage);
-                
+
                 ToastMessage.displayShortToastMessage(this, "Write successful.");
                 launchArticleFragment();
 

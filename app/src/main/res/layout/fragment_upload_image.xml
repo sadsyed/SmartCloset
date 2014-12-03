@@ -1,6 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="ssar.smartcloset.UploadImageFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ssar.smartcloset.UploadImageFragment">
 
     <ImageView
         android:layout_width="400dp"
@@ -12,19 +14,18 @@
         android:layout_marginTop="5dp"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
         android:text="@string/newtag_select_file_button"
         android:background="@color/sc_teal"
         android:textColor="#D3D3D3"
         android:id="@+id/selectFileButton"
         android:layout_below="@+id/selectedImageView"
-        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
         android:background="@color/sc_teal"
         android:textColor="#D3D3D3"
         android:text="Take a Picture"
@@ -37,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/sc_teal"
-        android:textColor="#D3D3D3"
+        android:textColor="@color/sc_gray"
         android:text="Next"
         android:id="@+id/writeTagButton"
         android:layout_below="@+id/selectedImageView"

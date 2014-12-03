@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -48,9 +49,23 @@ public class NavDrawerListAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.drawer_list_item, null);
         }
 
-        TextView titleTextView = (TextView) convertView.findViewById(R.id.title);
 
+        TextView titleTextView = (TextView) convertView.findViewById(R.id.title);
         titleTextView.setText(navDrawerItems.get(position).getTitle());
+
+        ImageView iconImageView = (ImageView) convertView.findViewById(R.id.icon);
+
+        if (position == 1) {
+            iconImageView.setImageResource(R.drawable.sc_closet);
+        } else if (position == 2) {
+          iconImageView.setImageResource(R.drawable.sc_search);
+        } else if (position == 3 ) {
+            iconImageView.setImageResource(R.drawable.sc_new);
+        } else if(position == 4) {
+            iconImageView.setImageResource(R.drawable.sc_profile);
+        } else {
+            iconImageView.setImageResource(R.drawable.sc_menu);
+        }
 
         return convertView;
     }

@@ -28,6 +28,7 @@ import java.util.List;
 import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.SmartClosetConstants;
+import ssar.smartcloset.util.ToastMessage;
 
 
 /**
@@ -98,6 +99,7 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         submitChangesButton = (Button) view.findViewById(R.id.submitChangesButton);
 
         articleNameEditText = (EditText) view.findViewById(R.id.articleNameEditText);
+        articleNameEditText.setEnabled(false);
         articleDescriptionEditText = (EditText) view.findViewById(R.id.articleDescriptionEditText);
         articleTagsEditText = (EditText) view.findViewById(R.id.articleTagsEditText);
         articlePriceEditText = (EditText) view.findViewById(R.id.articlePriceEditText);
@@ -108,23 +110,17 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         articleNameEditText.setText(article.getArticleName());
         articleDescriptionEditText.setText(article.getArticleDescription());
 
-        //get Tags
+        /*//get Tags
         StringBuilder articleTagsStringBuilder = new StringBuilder();
         for(String tag : article.getTags()) {
             articleTagsStringBuilder.append(tag).append(" ,");
         }
         //remove the last common
         articleTagsStringBuilder.deleteCharAt(articleTagsStringBuilder.length()-1);
-        articleTagsStringBuilder.deleteCharAt(articleTagsStringBuilder.length()-1);
+        articleTagsStringBuilder.deleteCharAt(articleTagsStringBuilder.length()-1);*/
 
-        articleTagsEditText.setText(articleTagsStringBuilder.toString());
-
+        articleTagsEditText.setText(article.getTagsStringValue());
         articlePriceEditText.setText(article.getArticlePrice().toString());
-
-        /*//get current user
-        User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
-        articleOwnerEditText.setText(loggedInUser.getUserEmail());*/
-
         articleOkToSellCheckbox.setChecked(article.getArticleOkToSell());
 
         if(article.getArticlePrivate() != null) {
@@ -145,23 +141,13 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         return view;
     }
 
-    /*// TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (onUpdateArticleFragmentInteractionListener != null) {
-            onUpdateArticleFragmentInteractionListener.onUpdateArticleFragmentInteraction(uri);
-        }
-    }*/
-
     @Override
     public void onClick(View v) {
-
-        EditText articleNameEditText = (EditText) getView().findViewById(R.id.articleNameEditText);
-        EditText articleDescriptionEditText = (EditText) getView().findViewById(R.id.articleDescriptionEditText);
+        /*EditText articleDescriptionEditText = (EditText) getView().findViewById(R.id.articleDescriptionEditText);
         EditText articleTagsEditText = (EditText) getView().findViewById(R.id.articleTagsEditText);
         EditText articlePriceEditText = (EditText) getView().findViewById(R.id.articlePriceEditText);
-        //EditText articleOwnerEditText = (EditText) getView().findViewById(R.id.articleOwnerEditText);
         CheckBox articleOkToSellCheckbox = (CheckBox) getView().findViewById(R.id.articleOkToSellCheckbox);
-        CheckBox articlePrivateCheckbox = (CheckBox) getView().findViewById(R.id.articlePrivateCheckbox);
+        CheckBox articlePrivateCheckbox = (CheckBox) getView().findViewById(R.id.articlePrivateCheckbox);*/
 
         //get current user
         User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
@@ -169,36 +155,62 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         createArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
-        ((MainActivity)getActivity()).registerReceiver(createArticleRequestReceiver, filter);
+        getActivity().registerReceiver(createArticleRequestReceiver, filter);
+
+        Article newArticle = new Article();
 
         //set the JSON request object
         JSONObject requestJSON = new JSONObject();
         try {
-            requestJSON.put("articleName", articleNameEditText.getText().toString());
-            requestJSON.put("articleDescription", articleDescriptionEditText.getText().toString());
-            requestJSON.put("articleType", String.valueOf(articleTypeSelector.getSelectedItem()));
-            requestJSON.put("articleTags", articleTagsEditText.getText().toString());
-            requestJSON.put("articlePrice", articlePriceEditText.getText().toString());
-            String okToSellTemp = "false";
-            if(articleOkToSellCheckbox.isChecked()) {
-                okToSellTemp = "true";
+            requestJSON.put("articleId", article.getArticleId());
+            //newArticle.setArticleId(article.getArticleId());
+
+            if(!article.getArticleDescription().equals(articleDescriptionEditText.getText().toString())){
+                requestJSON.put("articleDescription", articleDescriptionEditText.getText().toString());
+                //newArticle.setArticleDescription(articleDescriptionEditText.getText().toString());
             }
-            requestJSON.put("articleOkToSell", okToSellTemp);
-            String privateTemp = "false";
-            if(articlePrivateCheckbox.isChecked()) {
-                privateTemp = "true";
+
+            if(!article.getArticleType().equals(String.valueOf(articleTypeSelector.getSelectedItem()))) {
+                requestJSON.put("articleType", String.valueOf(articleTypeSelector.getSelectedItem()));
+                //newArticle.setArticleType(String.valueOf((articleTypeSelector.getSelectedItem())));
             }
-            requestJSON.put("articlePrivate", privateTemp);
-            requestJSON.put("articleOwner", loggedInUser.getUserEmail());
+
+            if(!article.getTags().toString().equals(articleTagsEditText.getText().toString())) {
+                requestJSON.put("articleTags", articleTagsEditText.getText().toString());
+                //Create a list of
+            }
+
+            if(!article.getArticlePrice().toString().equals(articlePriceEditText.getText().toString())) {
+                requestJSON.put("articlePrice", articlePriceEditText.getText().toString());
+            }
+
+            if(!(article.getArticleOkToSell() == articleOkToSellCheckbox.isChecked())){
+                String okToSellTemp = "false";
+                if(articleOkToSellCheckbox.isChecked()) {
+                    okToSellTemp = "true";
+                }
+                requestJSON.put("articleOkToSell", okToSellTemp);
+            }
+
+            if(!(article.getArticlePrivate() == articlePrivateCheckbox.isChecked())) {
+                String privateTemp = "false";
+                if(articlePrivateCheckbox.isChecked()) {
+                    privateTemp = "true";
+                }
+                requestJSON.put("articlePrivate", privateTemp);
+            }
+
+            //always replace the whole list
+            requestJSON.put("append", "false");
         } catch (Exception e) {
-            Log.e(CLASSNAME, "Exception while creating an request JSON.");
+            Log.e(CLASSNAME, "Exception while creating an request JSON : " + e.getMessage());
         }
         Log.i(CLASSNAME, "Starting Update Article request");
         Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPDATE_ARTICLE);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
         Log.i(CLASSNAME, "Finished Creating intent");
-        ((MainActivity)getActivity()).startService(msgIntent);
+        getActivity().startService(msgIntent);
         Log.i(CLASSNAME, "Started intent service");
     }
 
@@ -240,19 +252,22 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
             String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
             Log.i(CLASSNAME, "Service response JSON: " + responseJSON);
             JSONObject json = new JSONObject();
-            /*try {
+            try {
                 json = new JSONObject(responseJSON);
                 try {
-                    currentUuid = (String) json.get("returnval");
+                    int errorcode = (int)json.get("errorcode");
+                    if(errorcode == 0) {
+                        ToastMessage.displayShortToastMessage(getActivity(), "Article was updated successfully");
+                    }
                     //callback to launch UploadImageFragment upon the successful creation of new article
-                    onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+                    //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
                 } catch (Exception e) {
-                    Integer temp = (Integer)json.get("returnval");
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
                 }
             } catch (JSONException e)
             {
-                Log.i(CLASSNAME, "Exception creating json object: " + e.getMessage());
-            }*/
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
         }
     }
 

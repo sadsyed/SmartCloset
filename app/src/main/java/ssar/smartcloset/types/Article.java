@@ -88,6 +88,16 @@ public class Article implements CustomListItem, Parcelable{
         this.articleTags = tags;
     }
 
+    public String getTagsStringValue() {
+        StringBuilder tagsStringValue = new StringBuilder();
+        tagsStringValue.append(getTags().toString());
+
+        tagsStringValue.deleteCharAt(tagsStringValue.indexOf("]"));
+        tagsStringValue.deleteCharAt(tagsStringValue.indexOf("["));
+
+        return tagsStringValue.toString();
+    }
+
     public int getArticleTimesUsed() {
         return articleTimesUsed;
     }

@@ -10,9 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -24,24 +21,20 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-//import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import ssar.smartcloset.types.Article;
-import ssar.smartcloset.types.CustomGridAdapter;
 import ssar.smartcloset.types.CustomListItem;
 import ssar.smartcloset.types.NavDrawerListAdapter;
 import ssar.smartcloset.types.NavDrawerItem;
@@ -66,7 +59,8 @@ public class MainActivity extends Activity implements
         SearchFragment.OnSearchFragmentInteractionListener,
         UsageFilterFragment.OnUsageFilterFragmentInteractionListener,
         NeverUsedFragment.OnNeverUsedFragmentInteractionListener,
-        SellFilterFragment.OnSellFilterFragmentInteractionListener {
+        SellFilterFragment.OnSellFilterFragmentInteractionListener,
+        UpdateArticleFragment.OnUpdateArticleFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -524,8 +518,17 @@ public class MainActivity extends Activity implements
         setTitle(articleSelected.getArticleType());
     }
 
-    public void onArticleFragmentInteraction(Uri uri) {
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onArticleFragment..... ");
+    public void onArticleFragmentInteraction(Article article) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUpdateArticleFragment..... ");
+
+        //launch UpdateArticleFragment for the selected article
+        UpdateArticleFragment updateArticleFragment = UpdateArticleFragment.newInstance(article);
+
+        updateFragment(updateArticleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+        setTitle(article.getArticleName());
+    }
+
+    public void onUpdateArticleFragmentInteraction(Uri uri) {
     }
 
     public void onUploadImageFragmentInteraction(String currentUuid) {

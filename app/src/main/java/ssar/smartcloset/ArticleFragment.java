@@ -1,36 +1,24 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.input.InputManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
-//import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 
 import ssar.smartcloset.types.Article;
-import ssar.smartcloset.types.CustomListAdapter;
-import ssar.smartcloset.util.JsonParserUtil;
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.SmartClosetConstants;
 
 
@@ -42,20 +30,17 @@ import ssar.smartcloset.util.SmartClosetConstants;
  * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleFragment extends Fragment {
+public class ArticleFragment extends Fragment implements View.OnClickListener{
     private static final String CLASSNAME = ArticleFragment.class.getSimpleName();
 
     // the fragment initialization parameters
     public static final String ARG_ARTICLE_SELECTED = "article";
-    public static final String ARG_ARTICLE_ID = "articleId";
-    public static final String ARG_ARTICLE_NAME = "articleName";
-    private String articleId;
-    private String articleName;
+
     private Article article;
 
     private OnArticleFragmentInteractionListener onArticleFragmentInteractionListener;
-//    private SmartClosetRequestReceiver getArticleRequestReceiver;
-    private IntentFilter filter;
+
+    private Button updateButton;
 
     /**
      * Use this factory method to create a new instance of
@@ -68,8 +53,6 @@ public class ArticleFragment extends Fragment {
     public static ArticleFragment newInstance(Article article) {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
-        //args.putString(ARG_ARTICLE_ID, articleId);
-        //args.putString(ARG_ARTICLE_NAME, articleName);
         args.putParcelable(ARG_ARTICLE_SELECTED, article);
         fragment.setArguments(args);
         return fragment;
@@ -79,42 +62,10 @@ public class ArticleFragment extends Fragment {
         // Required empty public constructor
     }
 
-/*    @Override
-    public void onStart() {
-        super.onStart();
-
-        Bundle args = getArguments();
-        if (args != null) {
-            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
-            filter.addCategory(Intent.CATEGORY_DEFAULT);
-            getArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORY);
-            getActivity().registerReceiver(getArticleRequestReceiver, filter);
-
-            //set the JSON request object
-            JSONObject requestJSON = new JSONObject();
-            try {
-                requestJSON.put("category", args.getString(ARG_CATEGORY_SELECTED));
-            } catch (Exception e) {
-                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
-            }
-
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategory request");
-            Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
-            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.GET_CATEGORY);
-            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
-            getActivity().startService(msgIntent);
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
-        } else if (currentCatergory != null) {
-            updateMenuView(currentCatergory);
-        }
-    }
-*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //articleId = getArguments().getString(ARG_ARTICLE_ID);
-            //articleName = getArguments().getString(ARG_ARTICLE_NAME);
             article = getArguments().getParcelable(ARG_ARTICLE_SELECTED);
         }
     }
@@ -139,15 +90,11 @@ public class ArticleFragment extends Fragment {
             lastUsedDateTextView.setText(lastUsedDate[lastUsedDate.length - 1]);
         }
 
+        updateButton = (Button) view.findViewById(R.id.updateButton);
+        updateButton.setOnClickListener(this);
+
         // Inflate the layout for this fragment
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (onArticleFragmentInteractionListener != null) {
-            onArticleFragmentInteractionListener.onArticleFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -167,6 +114,12 @@ public class ArticleFragment extends Fragment {
         onArticleFragmentInteractionListener = null;
     }
 
+    @Override
+    public void onClick (View view) {
+        //callback the MainActivity to launch UpdateArticle fragment
+        onArticleFragmentInteractionListener.onArticleFragmentInteraction(article);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -179,7 +132,7 @@ public class ArticleFragment extends Fragment {
      */
     public interface OnArticleFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onArticleFragmentInteraction(Uri uri);
+        public void onArticleFragmentInteraction(Article article);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -207,35 +160,4 @@ public class ArticleFragment extends Fragment {
             imageView.setImageBitmap(result);
         }
     }
-
-/*    //--------------- RequestReceiver ---------------
-
-    public class SmartClosetRequestReceiver extends BroadcastReceiver {
-        public final String CLASSNAME = SmartClosetRequestReceiver.class.getSimpleName();
-        private String serviceUrl;
-
-        public SmartClosetRequestReceiver (String serviceUrl) {
-            this.serviceUrl = serviceUrl;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(getArticleRequestReceiver != null) {
-                try {
-                    context.unregisterReceiver(getArticleRequestReceiver);
-                } catch (IllegalArgumentException e){
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
-                }
-            }
-
-            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
-
-            // get list of articles in the selected category
-            article = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
-
-
-        }
-    }
-*/
 }

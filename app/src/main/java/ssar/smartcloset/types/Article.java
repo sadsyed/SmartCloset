@@ -21,6 +21,7 @@ public class Article implements CustomListItem, Parcelable{
     private Float articlePrice;
     private String articleDescription;
     private Boolean articleOkToSell;
+    private Boolean articlePrivate;
 
 
     public String getArticleName() {
@@ -109,6 +110,14 @@ public class Article implements CustomListItem, Parcelable{
 
     public void setArticleOkToSell(Boolean oktosell) {
         this.articleOkToSell = oktosell;
+    }
+
+    public Boolean getArticlePrivate() {
+        return articlePrivate;
+    }
+
+    public void setArticlePrivate(Boolean articlePrivate) {
+        this.articlePrivate = articlePrivate;
     }
 
     public String toString() {

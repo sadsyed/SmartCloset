@@ -1,8 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="ssar.smartcloset.ArticleFragment">
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    tools:context="ssar.smartcloset.ArticleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,24 +21,45 @@
         android:layout_below="@+id/articleName"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleLastUsedDateLabel"
-        android:textAppearance="?android:textAppearanceSmall"
-        android:text="Last Used On: "
+    
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/articleImage"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="#D3D3D3"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/articleName"
-        android:layout_toStartOf="@+id/articleName" />
+        android:layout_alignParentStart="true">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/articleLastUsedDate"
-        android:textAppearance="?android:textAppearanceSmall"
-        android:layout_toRightOf="@+id/articleLastUsedDateLabel"
-        android:layout_alignParentBottom="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="2dp"
+            android:text="Last Used Date: "
+            android:id="@+id/lastUsedDateLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/lastUsedDateLabel"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp"
+            android:id="@+id/articleLastUsedDate"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="@color/sc_teal"
+            android:textColor="#D3D3D3"
+            android:text="Update"
+            android:id="@+id/updateButton" />
+    </RelativeLayout>
 
 </RelativeLayout>

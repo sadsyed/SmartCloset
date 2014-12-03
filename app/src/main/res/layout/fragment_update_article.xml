@@ -1,0 +1,138 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="ssar.smartcloset.UpdateArticleFragment">
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleNameLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Name"
+            android:id="@+id/articleNameTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleNameEditText"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleDescLinearLayout"
+        android:layout_below="@+id/articleNameLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Description"
+            android:id="@+id/articleDescTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleDescriptionEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleTagsLinearLayout"
+        android:layout_below="@+id/articleDescLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Tags"
+            android:id="@+id/articleTagsTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleTagsEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articlePriceLinearLayout"
+        android:layout_below="@+id/articleTagsLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Price"
+            android:id="@+id/articlePriceTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articlePriceEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleCategoryLinearLayout"
+        android:layout_below="@+id/articlePriceLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Category"
+            android:id="@+id/articleCategoryTextViewLabel" />
+
+        <Spinner
+            android:id="@+id/articleTypeSelector"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:background="#fffffbff"
+            android:entries="@array/newtag_article_type_array"
+            android:prompt="@string/newtag_article_type_prompt" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articleOkToSellLinearLayout"
+        android:layout_below="@+id/articleCategoryLinearLayout">
+
+        <CheckBox
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="80dp"
+            android:text="@string/newtag_ok_sell_checkbox"
+            android:id="@+id/articleOkToSellCheckbox" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articlePrivateLinearLayout"
+        android:layout_below="@+id/articleOkToSellLinearLayout">
+
+        <CheckBox
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.64"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="80dp"
+            android:text="@string/newtag_private_checkbox"
+            android:id="@+id/articlePrivateCheckbox" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Submit"
+        android:id="@+id/submitChangesButton"
+        android:layout_below="@+id/articlePrivateLinearLayout"
+        android:onClick="addListenerOnSpinnerItemSelection"
+        android:background="@color/sc_teal"
+        android:textColor="#D3D3D3"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="9dp"/>
+
+</RelativeLayout>

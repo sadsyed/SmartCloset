@@ -51,7 +51,8 @@ public class JsonParserUtil {
                     categories.add(customListItem);
                 }
             } else {
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "jsonArray empty");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " jsonArray empty");
+                return null;
             }
         } catch (JSONException e){
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "e");

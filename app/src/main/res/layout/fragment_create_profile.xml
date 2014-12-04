@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Sign Up"
+        android:text="Create Account"
         android:id="@+id/createProfileTitleTextView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -81,8 +81,26 @@
 
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:layout_below="@id/emailLinearLayout"
-        android:id="@+id/linearLayout">
+        android:layout_below="@+id/emailLinearLayout"
+        android:id="@+id/passwordLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Password"
+            android:id="@+id/passwordTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/passwordEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:layout_below="@+id/passwordLinearLayout"
+        android:id="@+id/pinLinearLayout">
 
         <TextView
             style="@style/InputLabelTextView"
@@ -93,7 +111,7 @@
             style="@style/InputEditTextView"
             android:inputType="numberPassword"
             android:ems="10"
-            android:id="@+id/passwordEditText"/>
+            android:id="@+id/pinEditText"/>
 
     </LinearLayout>
 
@@ -102,7 +120,7 @@
         android:layout_height="wrap_content"
         android:text="@string/profile_submit_button_label"
         android:id="@+id/submitProfileButton"
-        android:layout_below="@+id/linearLayout"
+        android:layout_below="@+id/pinLinearLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"/>
 

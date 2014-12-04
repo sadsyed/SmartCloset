@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
      */
     private GridView gridView;
 
+    private TextView emptyClosetTextView;
+
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
@@ -73,7 +77,6 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -103,6 +106,9 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_closet, container, false);
+
+        emptyClosetTextView = (TextView) view.findViewById(R.id.emptyClosetTextView);
+        emptyClosetTextView.setVisibility(View.GONE);
 
         // Set the adapter
         gridView = (GridView) view.findViewById(R.id.gridView);
@@ -205,8 +211,15 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
 
             categories = JsonParserUtil.jsonToCategory(serviceUrl, responseJSON);
 
-            customListAdapter = new CustomListAdapter(getActivity(), categories);
-            gridView.setAdapter(customListAdapter);
+            if(categories != null) {
+                emptyClosetTextView.setVisibility(View.GONE);
+
+                customListAdapter = new CustomListAdapter(getActivity(), categories);
+                gridView.setAdapter(customListAdapter);
+            } else {
+                emptyClosetTextView.setVisibility(View.VISIBLE);
+                gridView.setVisibility(View.GONE);
+            }
         }
     }
 }

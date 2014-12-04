@@ -9,6 +9,7 @@ public class User {
     private String lastName;
     private String userEmail;
     private String userPin;
+    private String userPassword;
     private String userMarkdown;
 
     public String getUserName() {
@@ -49,6 +50,14 @@ public class User {
 
     public void setUserPin(String userPin) {
         this.userPin = userPin;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     public String getUserMarkdown() {

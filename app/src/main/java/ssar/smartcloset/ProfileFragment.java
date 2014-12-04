@@ -36,13 +36,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public static final String CLASSNAME = ProfileFragment.class.getSimpleName();
     public static final String PREF_NAME = "smartProfilePreference";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // the fragment initialization parameters
     private static final String ARG_PROFILE_FRAGMENT = "profileFragment";
 
-    // TODO: Rename and change types of parameters
     private String profileFragment;
-    private String mParam2;
 
     public SmartClosetRequestReceiver smartClosetRequestReceiver;
     private OnProfileFragmentInteractionListener onProfileFragmentInteractionListener;
@@ -53,6 +50,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private EditText firstNameEditText;
     private EditText lastNameEditText;
     private EditText emailEditText;
+    private EditText pinEditText;
     private EditText passwordEditText;
     private Button onSubmitButton;
 
@@ -89,6 +87,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         existingUser.setLastName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, null));
         existingUser.setUserEmail(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, null));
         existingUser.setUserPin(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, null));
+        existingUser.setUserPassword(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_PIN, null));
     }
 
     @Override
@@ -128,6 +127,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
             passwordEditText = (EditText) view.findViewById(R.id.passwordEditText);
+            pinEditText = (EditText) view.findViewById(R.id.pinEditText);
 
             onSubmitButton = (Button) view.findViewById(R.id.submitProfileButton);
             onSubmitButton.setOnClickListener(this);
@@ -143,7 +143,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         newUser.setFirstName(firstNameEditText.getText().toString());
         newUser.setLastName(lastNameEditText.getText().toString());
         newUser.setUserEmail(emailEditText.getText().toString());
-        newUser.setUserPin(passwordEditText.getText().toString());
+        newUser.setUserPassword(passwordEditText.getText().toString());
+        newUser.setUserPin(pinEditText.getText().toString());
 
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -158,6 +159,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             requestJSON.put("lastname", newUser.getLastName());
             requestJSON.put("email", newUser.getUserEmail());
             requestJSON.put("password", newUser.getUserPin());
+            requestJSON.put("pin", newUser.getUserPin());
         } catch (Exception e) {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Exception while creating an request JSON.");
         }
@@ -179,6 +181,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, lastNameEditText.getText().toString());
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, emailEditText.getText().toString());
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, passwordEditText.getText().toString());
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_PIN, pinEditText.getText().toString());
         e.commit();
 
         //launch profile fragment

@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
@@ -388,7 +389,7 @@ public class MainActivity extends Activity implements
 
             StringBuilder tagDataBuilder = new StringBuilder();
             tagDataBuilder.append("Tag Data: ").append(tagBody);
-            ToastMessage.displayLongToastMessage(this, tagDataBuilder.toString());
+            //ToastMessage.displayLongToastMessage(this, tagDataBuilder.toString());
 
             String articleId = tagBody;
 
@@ -402,6 +403,11 @@ public class MainActivity extends Activity implements
 
             //if searchMode is not active, mark the usage
             if (!searchMode) {
+                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                useArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.USE_ARTICLE);
+                this.registerReceiver(useArticleRequestReceiver, filter);
+
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Use Article request");
                 Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
@@ -705,6 +711,24 @@ public class MainActivity extends Activity implements
 
                     String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+                    JSONObject json = new JSONObject();
+                    try {
+                        json = new JSONObject(responseJSON);
+                        try {
+                            int errorcode = (int)json.get("errorcode");
+                            if(errorcode == 0) {
+                                ToastMessage.displayShortToastMessage(context, "Usage marked");
+                            }
+                            //callback to launch UploadImageFragment upon the successful creation of new article
+                            //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+                        } catch (Exception e) {
+                            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+                        }
+                    } catch (JSONException e)
+                    {
+                        Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+                    }
                 } catch (IllegalArgumentException e){
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }

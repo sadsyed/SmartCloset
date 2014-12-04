@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +63,7 @@ public class UploadImageFragment extends Fragment {
     private Button selectFileButton;
     private Button takeAPicture;
     private Button writeTagButton;
-
+    private TextView selectImageTextView;
     private ImageView selectedImageView;
     Uri destination;
 
@@ -101,26 +104,27 @@ public class UploadImageFragment extends Fragment {
 
         selectFileButton = (Button) view.findViewById(R.id.selectFileButton);
         takeAPicture = (Button) view.findViewById(R.id.takeAPicture);
+        selectedImageView = (ImageView) view.findViewById(R.id.selectedImageView);
+        selectImageTextView = (TextView) view.findViewById(R.id.selectImageTextView);
 
         writeTagButton = (Button) view.findViewById(R.id.writeTagButton);
         writeTagButton.setVisibility(View.GONE);
 
-        selectedImageView = (ImageView) view.findViewById(R.id.selectedImageView);
+        selectImageTextView.setVisibility(View.VISIBLE);
 
+        //add button action listeners
         takeAPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
                 takeAPicture(v);
             }
         });
-
         selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chooseImageFile(v);
             }
         });
-
         writeTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,6 +185,7 @@ public class UploadImageFragment extends Fragment {
             try {
                 imagePath = SmartClosetFileService.getRealPathFromURI(destination, getActivity());
 
+                selectImageTextView.setVisibility(View.GONE);
                 //display the image
                 displayImage(imagePath);
 
@@ -194,6 +199,7 @@ public class UploadImageFragment extends Fragment {
             selectedimg = data.getData();
             imagePath = SmartClosetFileService.getRealPathFromURI(selectedimg, getActivity());
 
+            selectImageTextView.setVisibility(View.GONE);
             //display the image
             displayImage(imagePath);
 

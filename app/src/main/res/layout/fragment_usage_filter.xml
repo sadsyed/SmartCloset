@@ -71,13 +71,18 @@
     </RadioGroup>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
         android:background="@color/sc_teal"
         android:textColor="@color/sc_gray"
-        android:text="Search"
         android:id="@+id/usageSearchButton"
         android:layout_marginTop="5dp"
-        android:layout_gravity="center_horizontal"/>
+        android:textStyle="bold"
+        android:textSize="14dp"
+        android:textAlignment="gravity"
+        android:text="Search"
+        android:gravity="center|left"
+        android:layout_gravity="center_horizontal"
+        android:drawableLeft="@drawable/sc_search"/>
 
 </LinearLayout>

@@ -3,12 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ssar.smartcloset.UploadImageFragment">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select an image for the new article"
+        android:id="@+id/selectImageTextView"
+        android:textColor="@color/sc_teal"
+        android:textSize="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
 
     <ImageView
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:id="@+id/selectedImageView"
-        android:src="@drawable/ic_launcher"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"/>

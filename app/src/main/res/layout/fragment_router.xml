@@ -37,10 +37,10 @@
         android:layout_height="50dp"
         android:text="Tap and hold the tag against the back of the phone to mark usage"
         android:id="@+id/readTagEditText"
-        android:textColor="@color/sc_teal"
+        android:textColor="#ff0f0f0f"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:layout_marginTop="35dp"
         android:layout_below="@+id/logInButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp" />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

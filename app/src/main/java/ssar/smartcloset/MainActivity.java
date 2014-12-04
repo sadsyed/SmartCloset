@@ -234,12 +234,21 @@ public class MainActivity extends Activity implements
     private void displayView(int position) {
         switch (position) {
             case 0:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-                //display Category Fragment
-                FragmentRouter fragmentRouter = new FragmentRouter();
-                updateFragment(fragmentRouter, position);
-                setFragmentTitle(position);
-                break;
+                if(getExistingUser().getUserName() != null) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                    //display Category Fragment
+                    FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+                    updateFragment(fragmentRouter, position);
+                    setFragmentTitle(position);
+                    break;
+                } else {
+                    //launch LogIn/Create Account page
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                    //display Category Fragment
+                    FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
+                    updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                    setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                }
             case 1:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
                 //display Category Fragment

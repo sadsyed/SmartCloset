@@ -38,15 +38,20 @@
         android:drawableLeft="@drawable/sc_camera"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/sc_teal"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="9dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/selectedImageView"
+        android:textStyle="bold"
+        android:textSize="14dp"
+        android:textAlignment="gravity"
         android:textColor="@color/sc_gray"
         android:text="Next"
+        android:gravity="center|right"
         android:id="@+id/writeTagButton"
-        android:layout_below="@+id/selectedImageView"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="9dp"/>
+        android:background="@color/sc_teal"
+        android:drawableRight="@drawable/sc_next"/>
 
 </RelativeLayout>

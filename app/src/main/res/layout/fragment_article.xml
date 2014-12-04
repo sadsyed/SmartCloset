@@ -52,13 +52,18 @@
             android:id="@+id/articleLastUsedDate"/>
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:background="@color/sc_teal"
             android:textColor="#D3D3D3"
+            android:drawableLeft="@drawable/sc_update"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:textAlignment="gravity"
+            android:gravity="center|left"
             android:text="Update"
             android:id="@+id/updateButton" />
     </RelativeLayout>

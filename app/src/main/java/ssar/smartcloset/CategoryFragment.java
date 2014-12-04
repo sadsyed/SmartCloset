@@ -23,6 +23,7 @@ import ssar.smartcloset.types.Article;
 import ssar.smartcloset.types.CustomGridAdapter;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 
@@ -120,10 +121,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             getCategoryArticlesRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORY);
             getActivity().registerReceiver(getCategoryArticlesRequestReceiver, filter);
 
+            //get current user
+            User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
+
             //set the JSON request object
             JSONObject requestJSON = new JSONObject();
             try {
                 requestJSON.put("category", args.getString(ARG_CATEGORY_SELECTED));
+                requestJSON.put("emailFilter", loggedInUser.getUserEmail());
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }

@@ -1,6 +1,7 @@
 package ssar.smartcloset;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -54,6 +55,7 @@ public class UploadImageFragment extends Fragment {
     String currentUuid="";
 
     private OnUploadImageFragmentInteractionListener onUploadImageFragmentInteractionListener;
+    private ProgressDialog progressDialog;
 
     private Button selectFileButton;
     private Button takeAPicture;
@@ -87,6 +89,8 @@ public class UploadImageFragment extends Fragment {
         if (getArguments() != null) {
             articleId = getArguments().getString(ARG_ARTICLE_ID);
         }
+
+        progressDialog = new ProgressDialog(getActivity());
     }
 
     @Override
@@ -239,6 +243,11 @@ public class UploadImageFragment extends Fragment {
         msgIntent.putExtra("articleId", articleId);
         msgIntent.putExtra("ImagePath", imagePath);
         getActivity().startService(msgIntent);
+
+        progressDialog.setMessage("Uploading article image...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //progressDialog.setIndeterminate(true);
+        progressDialog.show();
     }
 
     private File createImageFile() throws IOException {
@@ -294,6 +303,8 @@ public class UploadImageFragment extends Fragment {
                     Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
                 }
             }
+
+            progressDialog.dismiss();
 
             //callback to launch UploadImageFragment upon the successful creation of new article
             ToastMessage.displayLongToastMessage(context, "Article successfully created");

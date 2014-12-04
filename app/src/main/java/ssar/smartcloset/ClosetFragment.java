@@ -15,11 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import ssar.smartcloset.types.Category;
 import ssar.smartcloset.types.CustomListAdapter;
 import ssar.smartcloset.types.CustomListItem;
+import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 
@@ -71,14 +74,27 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         getCategoriesRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.GET_CATEGORIES);
         getActivity().registerReceiver(getCategoriesRequestReceiver, filter);
 
+        //get current user
+        User loggedInUser = ((MainActivity)getActivity()).getExistingUser();
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("emailFilter", loggedInUser.getUserEmail());
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+        }
+
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategories request");
         Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.GET_CATEGORIES);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
         getActivity().startService(msgIntent);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
     }

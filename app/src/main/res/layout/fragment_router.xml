@@ -4,6 +4,42 @@
     android:layout_height="match_parent"
     tools:context=".NewTagFragment">
 
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="Smart Closet"
+        android:id="@+id/titleTextView"
+        android:textColor="#ff0f0f0f"
+        android:textSize="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="gravity"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:typeface="monospace" />
+
+    <ImageView
+        android:id="@+id/separator"
+        android:layout_width="320dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
+        android:background="#aa3b3b3b"
+        android:layout_below="@+id/titleTextView"
+        android:layout_centerHorizontal="true" />
+
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:text="Tap and hold the tag against the back of the phone to mark usage"
+        android:id="@+id/readTagEditText"
+        android:textColor="#ff0f0f0f"
+        android:textSize="18dp"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/separator"
+        android:layout_alignStart="@+id/titleTextView" />
+
 
     <Button
         android:layout_width="150dp"
@@ -13,10 +49,23 @@
         android:text="Create Account"
         android:id="@+id/createAccountButton"
         android:layout_marginLeft="25dp"
-        android:layout_alignTop="@+id/logInButton"
         android:layout_alignParentStart="true"
+        android:layout_below="@+id/separator"
         android:textStyle="bold"
         android:textSize="15dp" />
+
+
+    <ImageView
+        android:id="@+id/verticalSeparator"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="20dp"
+        android:background="#aa3b3b3b"
+        android:layout_below="@+id/separator"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="150dp"
@@ -25,22 +74,10 @@
         android:textColor="@color/sc_teal"
         android:text="Log In"
         android:id="@+id/logInButton"
-        android:layout_toEndOf="@+id/createAccountButton"
         android:textStyle="bold"
         android:textSize="15dp"
-        android:layout_margin="5dp"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/separator"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="25dp"/>
 
-
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:text="Tap and hold the tag against the back of the phone to mark usage"
-        android:id="@+id/readTagEditText"
-        android:textColor="#ff0f0f0f"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:layout_marginTop="35dp"
-        android:layout_below="@+id/logInButton"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>

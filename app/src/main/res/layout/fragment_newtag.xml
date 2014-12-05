@@ -4,9 +4,21 @@
     android:layout_height="match_parent"
     tools:context="ssar.smartcloset.NewTagFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Article Info"
+        android:id="@+id/articleInfoTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:id="@+id/articleNameLinearLayout">
+        android:id="@+id/articleNameLinearLayout"
+        android:layout_below="@id/articleInfoTextView">
 
         <TextView
             style="@style/InputLabelTextView"

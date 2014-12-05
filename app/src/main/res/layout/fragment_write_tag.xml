@@ -5,6 +5,18 @@
     tools:context="ssar.smartcloset.WriteTagFragment">
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Article Tag"
+        android:id="@+id/articleTagTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
+
+    <TextView
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:text="@string/newtag_write_msg"

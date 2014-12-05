@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import ssar.smartcloset.util.SmartClosetConstants;
@@ -47,6 +48,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
     private Button createAccountButton;
     private Button logInButton;
     private TextView readTagTextView;
+    private ImageView verticalSeparator;
 
     private OnFragmentRouterInteractionListener fragmentRouterInteractionListener;
 
@@ -86,6 +88,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
         createAccountButton = (Button) view.findViewById(R.id.createAccountButton);
         logInButton = (Button) view.findViewById(R.id.logInButton);
         readTagTextView = (TextView) view.findViewById(R.id.readTagEditText);
+        verticalSeparator = (ImageView) view.findViewById(R.id.verticalSeparator);
 
         Drawable drawable = getResources().getDrawable(R.drawable.app_background);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -105,6 +108,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
         } else {
             createAccountButton.setVisibility(View.GONE);
             logInButton.setVisibility(View.GONE);
+            verticalSeparator.setVisibility(View.GONE);
 
             readTagTextView.setVisibility(View.VISIBLE);
         }

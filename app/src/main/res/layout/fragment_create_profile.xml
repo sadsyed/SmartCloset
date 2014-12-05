@@ -128,6 +128,7 @@
         android:text="@string/profile_submit_button_label"
         android:id="@+id/submitProfileButton"
         android:background="@color/sc_teal"
+        android:textColor="@color/sc_gray"
         android:drawableLeft="@drawable/sc_save"/>
 
 </RelativeLayout>

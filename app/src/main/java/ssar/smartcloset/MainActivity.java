@@ -705,7 +705,7 @@ public class MainActivity extends Activity implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(useArticleRequestReceiver != null) {
+            if(serviceUrl.equals(SmartClosetConstants.USE_ARTICLE) && useArticleRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(useArticleRequestReceiver);
 
@@ -733,7 +733,7 @@ public class MainActivity extends Activity implements
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
-            else if(readArticleRequestReceiver != null) {
+            else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && readArticleRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(readArticleRequestReceiver);
 

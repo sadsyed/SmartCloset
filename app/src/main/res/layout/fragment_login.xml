@@ -5,10 +5,21 @@
     tools:context="ssar.smartcloset.LoginFragment"
     android:textAlignment="center">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Log In"
+        android:id="@+id/logInTitleTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
     <LinearLayout
         style="@style/InputLinearLayout"
         android:id="@+id/emailLinearLayout"
-        android:layout_below="@id/lastNameLinearLayout">
+        android:layout_below="@id/logInTitleTextView">
 
         <TextView
             style="@style/InputLabelTextView"
@@ -46,6 +57,10 @@
         android:id="@+id/logInButton"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:background="@color/sc_teal"
+        android:textColor="@color/sc_gray"
+        android:textStyle="bold"
+        android:textSize="14dp"/>
 
 </RelativeLayout>

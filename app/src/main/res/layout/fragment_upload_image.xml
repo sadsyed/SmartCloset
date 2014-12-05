@@ -3,6 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ssar.smartcloset.UploadImageFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Article Picture"
+        android:id="@+id/articlePictureTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,8 +23,8 @@
         android:id="@+id/selectImageTextView"
         android:textColor="@color/sc_teal"
         android:textSize="20dp"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
         android:textStyle="bold" />
 
     <ImageView

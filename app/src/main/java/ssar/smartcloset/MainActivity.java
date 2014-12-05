@@ -124,7 +124,7 @@ public class MainActivity extends Activity implements
         getActionBar().setHomeButtonEnabled(true);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.drawable.sc_menu,
+                R.drawable.ic_launcher,
                 R.string.app_name,
                 R.string.app_name
         ) {

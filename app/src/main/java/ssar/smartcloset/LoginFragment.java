@@ -23,6 +23,7 @@ import ssar.smartcloset.types.CustomGridAdapter;
 import ssar.smartcloset.types.User;
 import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
+import ssar.smartcloset.util.ToastMessage;
 
 
 /**
@@ -166,24 +167,40 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
 
-            // get list of articles in the selected category
-            userAccount = JsonParserUtil.jsonToUser(serviceUrl, responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    String username = (String) json.get("userName");
 
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "User name: " + userAccount.getUserName());
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "User email: " + userAccount.getUserEmail());
+                    // get list of articles in the selected category
+                    userAccount = JsonParserUtil.jsonToUser(serviceUrl, responseJSON);
 
-            //add profile to apps preference
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SmartClosetConstants.PREF_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor e = sharedPreferences.edit();
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "User name: " + userAccount.getUserName());
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "User email: " + userAccount.getUserEmail());
 
-            e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userAccount.getUserName());
-            e.putString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, userAccount.getFirstName());
-            e.putString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, userAccount.getLastName());
-            e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userAccount.getUserEmail());
-            //e.putString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, userAccount.ge);
-            e.commit();
+                    //add profile to apps preference
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SmartClosetConstants.PREF_NAME, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor e = sharedPreferences.edit();
 
-            onLoginFragmentInteractionListener.onLoginFragmentInteraction();
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userAccount.getUserName());
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, userAccount.getFirstName());
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, userAccount.getLastName());
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userAccount.getUserEmail());
+                    //e.putString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, userAccount.ge);
+                    e.commit();
+
+                    onLoginFragmentInteractionListener.onLoginFragmentInteraction();
+                } catch (Exception e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+                    ToastMessage.displayShortToastMessage(context, "Login failed");
+                }
+            } catch (JSONException e)
+            {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
+
+
         }
     }
 

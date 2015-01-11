@@ -62,13 +62,16 @@ public class MainActivity extends Activity implements
         NeverUsedFragment.OnNeverUsedFragmentInteractionListener,
         SellFilterFragment.OnSellFilterFragmentInteractionListener,
         UpdateArticleFragment.OnUpdateArticleFragmentInteractionListener,
-        LoginFragment.OnLoginFragmentInteractionListener{
+        LoginFragment.OnLoginFragmentInteractionListener,
+        MatchFragment.OnMatchFragmentInteractionListener,
+        FindMatchFragment.OnFindMatchFragmentInteractionListener{
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
     protected PendingIntent pendingIntent;
     public SmartClosetRequestReceiver useArticleRequestReceiver;
     public SmartClosetRequestReceiver readArticleRequestReceiver;
+    public SmartClosetRequestReceiver matchArticleRequestReceiver;
     IntentFilter filter;
 
     public boolean writeMode = false;
@@ -86,6 +89,8 @@ public class MainActivity extends Activity implements
     private NavDrawerListAdapter navDrawerListAdapter;
 
     private SharedPreferences sharedPreferences;
+
+    public boolean matchMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +119,7 @@ public class MainActivity extends Activity implements
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5]));
 
         drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -279,6 +285,15 @@ public class MainActivity extends Activity implements
                     setFragmentTitle(position);
                 }
                 break;
+            case 5:
+                if(isUserLoggedIn()) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Match Fragment..... ");
+                    //display Match Fragment
+                    MatchFragment matchFragment = MatchFragment.newInstance(null, false);
+                    updateFragment(matchFragment, position);
+                    setFragmentTitle(position);
+                }
+                break;
             default:
                 break;
         }
@@ -418,22 +433,22 @@ public class MainActivity extends Activity implements
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }
 
-            //if searchMode is not active, mark the usage
-            if (!searchMode) {
+            if (matchMode) {
+                matchMode = false;
                 filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
                 filter.addCategory(Intent.CATEGORY_DEFAULT);
-                useArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.USE_ARTICLE);
-                this.registerReceiver(useArticleRequestReceiver, filter);
+                matchArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.READ_ARTICLE);
+                this.registerReceiver(matchArticleRequestReceiver, filter);
 
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Use Article request");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Match Article request");
                 Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
-                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
                 this.startService(msgIntent);
                 Log.i(CLASSNAME, "Started intent service");
             }
             //search details for tagged item
-            else {
+            else if (searchMode) {
                 searchMode = false;
                 filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
                 filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -443,6 +458,20 @@ public class MainActivity extends Activity implements
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Read Article request");
                 Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+                this.startService(msgIntent);
+                Log.i(CLASSNAME, "Started intent service");
+            }
+            //if searchMode is not active, mark the usage
+            else {
+                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                useArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.USE_ARTICLE);
+                this.registerReceiver(useArticleRequestReceiver, filter);
+
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Use Article request");
+                Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
                 this.startService(msgIntent);
                 Log.i(CLASSNAME, "Started intent service");
@@ -685,6 +714,32 @@ public class MainActivity extends Activity implements
         //ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }
 
+    public void onMatchFragmentInteraction(String articleId, String category) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onMatchFragmentInteraction......");
+        // launch findMatchFragment to find match for selected article
+        FindMatchFragment findMatchFragment = FindMatchFragment.newInstance(articleId, category);
+        updateFragment(findMatchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
+    }
+
+    public void onFindMatchFragmentInteraction(Article articleSelected) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onFindMatchFragmentInteraction......");
+
+        //re-launch SearchTabFragment
+        if(articleSelected == null) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Match Fragment..... ");
+            //display Match Fragment
+            MatchFragment matchFragment = MatchFragment.newInstance(null, false);
+            updateFragment(matchFragment, SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
+            setFragmentTitle(SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
+        } else {
+            //launch article view for the selected article
+            ArticleFragment articleFragment = new ArticleFragment().newInstance(articleSelected);
+
+            updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+            setTitle(articleSelected.getArticleType());
+        }
+    }
+
     private void updateFragment(Fragment fragment, Integer position) {
        FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -766,6 +821,27 @@ public class MainActivity extends Activity implements
 
                     updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
                     setTitle(article.getArticleType());
+                }
+                catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+            else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && matchArticleRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(matchArticleRequestReceiver);
+
+                    String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+
+                    // get list of articles in the selected category
+                    articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+
+                    //launch match filter fragment for searched article
+                    Article article = (Article) articles.get(0);
+
+                    MatchFragment matchFragment = MatchFragment.newInstance(article.getArticleId(), true);
+                    updateFragment(matchFragment, SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
+                    setTitle("Match");
                 }
                 catch (IllegalArgumentException e){
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());

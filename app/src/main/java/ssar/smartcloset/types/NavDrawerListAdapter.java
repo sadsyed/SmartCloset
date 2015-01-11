@@ -63,6 +63,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
             iconImageView.setImageResource(R.drawable.sc_new);
         } else if(position == 4) {
             iconImageView.setImageResource(R.drawable.sc_profile);
+        } else if(position == 5) {
+            iconImageView.setImageResource(R.drawable.sc_closet);
         } else {
             iconImageView.setImageResource(R.drawable.sc_menu);
         }

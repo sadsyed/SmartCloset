@@ -154,6 +154,11 @@ public class SmartClosetIntentService extends IntentService {
                     stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     post.setEntity(stringEntity);
                     break;
+                case SmartClosetConstants.FIND_MATCH:
+                    stringEntity = new StringEntity(requestJSON);
+                    stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    post.setEntity(stringEntity);
+                    break;
             }
             //Execute the POST request
             HttpResponse response = client.execute(post);

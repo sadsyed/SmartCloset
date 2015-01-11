@@ -80,6 +80,7 @@ public class JsonParserUtil {
                     articles = parseJsonArraytoArticle(gson, articles, jsonArray);
                     break;
 
+                case SmartClosetConstants.FIND_MATCH:
                 case SmartClosetConstants.SEARCH_ARTICLES:
                     jsonArray = json.getJSONArray("articleList");
                     articles = parseJsonArraytoArticle(gson, articles, jsonArray);

@@ -714,10 +714,10 @@ public class MainActivity extends Activity implements
         //ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }
 
-    public void onMatchFragmentInteraction(String articleId, String category) {
+    public void onMatchFragmentInteraction(Article article, String category) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onMatchFragmentInteraction......");
         // launch findMatchFragment to find match for selected article
-        FindMatchFragment findMatchFragment = FindMatchFragment.newInstance(articleId, category);
+        FindMatchFragment findMatchFragment = FindMatchFragment.newInstance(article.getArticleId(), category);
         updateFragment(findMatchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
     }
 
@@ -839,7 +839,7 @@ public class MainActivity extends Activity implements
                     //launch match filter fragment for searched article
                     Article article = (Article) articles.get(0);
 
-                    MatchFragment matchFragment = MatchFragment.newInstance(article.getArticleId(), true);
+                    MatchFragment matchFragment = MatchFragment.newInstance(article, true);
                     updateFragment(matchFragment, SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
                     setTitle("Match");
                 }

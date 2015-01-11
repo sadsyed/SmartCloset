@@ -13,10 +13,17 @@
         android:layout_marginTop="10dp"
         android:textStyle="bold" />
 
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:id="@+id/selectedImageView"
+        android:layout_below="@+id/articleInfoTextView"
+        android:layout_marginTop="5dp"/>
+
     <LinearLayout
         style="@style/InputLinearLayout"
         android:id="@+id/articleCategoryLinearLayout"
-        android:layout_below="@+id/articleInfoTextView">
+        android:layout_below="@+id/selectedImageView">
 
         <TextView
             style="@style/InputLabelTextView"

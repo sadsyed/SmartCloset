@@ -53,8 +53,24 @@
 
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:id="@+id/articlePriceLinearLayout"
+        android:id="@+id/articleColorsLinearLayout"
         android:layout_below="@+id/articleTagsLinearLayout">
+
+        <TextView
+            style="@style/InputLabelTextView"
+            android:text="Colors"
+            android:id="@+id/articleColorTextViewLabel" />
+
+        <EditText
+            style="@style/InputEditTextView"
+            android:id="@+id/articleColorsEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/InputLinearLayout"
+        android:id="@+id/articlePriceLinearLayout"
+        android:layout_below="@+id/articleColorsLinearLayout">
 
         <TextView
             style="@style/InputLabelTextView"

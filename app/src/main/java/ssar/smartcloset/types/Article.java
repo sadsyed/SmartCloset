@@ -3,6 +3,7 @@ package ssar.smartcloset.types;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class Article implements CustomListItem, Parcelable{
     private String[] articleLastUsed;
     private int articleTimesUsed;
     private List<String> articleTags;
+    private List<String> articleColors;
     private Float articlePrice;
     private String articleDescription;
     private Boolean articleOkToSell;
@@ -88,6 +90,42 @@ public class Article implements CustomListItem, Parcelable{
         this.articleTags = tags;
     }
 
+    public List<String> getArticleColors() {
+        return articleColors;
+    }
+
+    public void setArticleColors(List<String> articleColors) {
+        this.articleColors = articleColors;
+    }
+
+    public void setArticleColors(String colors) {
+        List<String> colorsList = new ArrayList<String>();
+        String[] colorsArray = colors.split(",");
+
+        if(colorsArray != null) {
+            for (int i=0; i< colorsArray.length; i++) {
+                colorsList.add(colorsArray[i]);
+            }
+        } else {
+            colorsList.add(colors);
+        }
+        this.articleColors = colorsList;
+    }
+
+    public void setArticleTags(String tags) {
+        List<String> tagsList = new ArrayList<String>();
+        String[] tagsArray = tags.split(",");
+
+        if(tagsArray != null) {
+            for (int i = 0; i < tagsArray.length; i++) {
+                tagsList.add(tagsArray[i]);
+            }
+        } else {
+            tagsList.add(tags);
+        }
+        this.articleTags = tagsList;
+    }
+
     public String getTagsStringValue() {
         StringBuilder tagsStringValue = new StringBuilder();
         tagsStringValue.append(getTags().toString());
@@ -96,6 +134,16 @@ public class Article implements CustomListItem, Parcelable{
         tagsStringValue.deleteCharAt(tagsStringValue.indexOf("["));
 
         return tagsStringValue.toString();
+    }
+
+    public String getColorsStringValue() {
+        StringBuilder colorsStringValue = new StringBuilder();
+        colorsStringValue.append(getArticleColors().toString());
+
+        colorsStringValue.deleteCharAt(colorsStringValue.indexOf("]"));
+        colorsStringValue.deleteCharAt(colorsStringValue.indexOf("["));
+
+        return colorsStringValue.toString();
     }
 
     public int getArticleTimesUsed() {

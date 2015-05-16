@@ -55,6 +55,7 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
     EditText articleNameEditText;
     EditText articleDescriptionEditText;
     EditText articleTagsEditText;
+    EditText articleColorsEditText;
     EditText articlePriceEditText;
     CheckBox articleOkToSellCheckbox;
     CheckBox articlePrivateCheckbox;
@@ -102,6 +103,7 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         articleNameEditText.setEnabled(false);
         articleDescriptionEditText = (EditText) view.findViewById(R.id.articleDescriptionEditText);
         articleTagsEditText = (EditText) view.findViewById(R.id.articleTagsEditText);
+        articleColorsEditText = (EditText) view.findViewById(R.id.articleColorsEditText);
         articlePriceEditText = (EditText) view.findViewById(R.id.articlePriceEditText);
         articleOkToSellCheckbox = (CheckBox) view.findViewById(R.id.articleOkToSellCheckbox);
         articlePrivateCheckbox = (CheckBox) view.findViewById(R.id.articlePrivateCheckbox);
@@ -110,6 +112,7 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         articleNameEditText.setText(article.getArticleName());
         articleDescriptionEditText.setText(article.getArticleDescription());
         articleTagsEditText.setText(article.getTagsStringValue());
+        articleColorsEditText.setText(article.getColorsStringValue());
         articlePriceEditText.setText(article.getArticlePrice().toString());
         articleOkToSellCheckbox.setChecked(article.getArticleOkToSell());
 
@@ -164,6 +167,13 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
             if(!article.getTags().toString().equals(articleTagsEditText.getText().toString())) {
                 requestJSON.put("articleTags", articleTagsEditText.getText().toString());
                 //Create a list of
+            }
+
+            if(!article.getArticleColors().toString().equals(articleColorsEditText.getText().toString())) {
+                Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": article colors: " + articleColorsEditText.getText().toString());
+                //newArticle.setArticleColors(articleColorsEditText.getText().toString());
+                //Log.v(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": new article colors: " + newArticle.getArticleColors());
+                requestJSON.put("articleColors", articleColorsEditText.getText().toString());
             }
 
             if(!article.getArticlePrice().toString().equals(articlePriceEditText.getText().toString())) {

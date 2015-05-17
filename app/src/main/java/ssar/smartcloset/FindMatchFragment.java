@@ -124,6 +124,8 @@ public class FindMatchFragment extends Fragment implements AdapterView.OnItemCli
         //get onItemClickListener so we can be notified on item clicks
         gridView.setOnItemClickListener(this);
 
+        ((MainActivity)getActivity()).matchMode = true;
+
         // Inflate the layout for this fragment
         return view;
     }

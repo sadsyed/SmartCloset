@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -51,11 +53,14 @@ public class UploadImageFragment extends Fragment {
     public static final String ARG_ARTICLE_ID = "articleId";
 
     public TestUploadRequestReceiver testUploadRequestReceiver;
+    public ColorExtractionRequestReceiver colorExtractionRequestReceiver;
+
     IntentFilter filter;
     private String articleId;
     Uri selectedimg;
     String imagePath;
     String currentUuid="";
+    String imageUrl;
 
     private OnUploadImageFragmentInteractionListener onUploadImageFragmentInteractionListener;
     private ProgressDialog progressDialog;
@@ -256,6 +261,36 @@ public class UploadImageFragment extends Fragment {
         progressDialog.show();
     }
 
+    private void startColorExtractionService(String imagePath) {
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        colorExtractionRequestReceiver = new ColorExtractionRequestReceiver(SmartClosetConstants.EXTRACT_ARTICLE_IMAGE_COLORS);
+        ((MainActivity)getActivity()).registerReceiver(colorExtractionRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("imageurl", imagePath);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+        }
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting removeBackground request");
+        Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.EXTRACT_ARTICLE_IMAGE_COLORS);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        //msgIntent.putExtra("articleId", articleId);
+        //msgIntent.putExtra("ImagePath", imagePath);
+        getActivity().startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
+
+
+        progressDialog.setMessage("Removing backgorund =| ...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //progressDialog.setIndeterminate(true);
+        progressDialog.show();
+    }
+
     private File createImageFile() throws IOException {
         String mCurrentPhotoPath;
 
@@ -305,9 +340,32 @@ public class UploadImageFragment extends Fragment {
             if(testUploadRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(testUploadRequestReceiver);
+
                 } catch (IllegalArgumentException e){
                     Log.i(CLASSNAME, "Error unregistering receiver: " + e.getMessage());
                 }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(CLASSNAME, "Image Upload Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    imagePath = (String)json.get("file");
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image URL: " + imagePath);
+
+                    /*if(errorcode == 0) {
+                        ToastMessage.displayShortToastMessage(getActivity(), "Article was updated successfully");
+                    }*/
+                    //callback to launch UploadImageFragment upon the successful creation of new article
+                    //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+                } catch (Exception e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+                }
+            } catch (JSONException e)
+            {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
             }
 
             progressDialog.dismiss();
@@ -319,7 +377,7 @@ public class UploadImageFragment extends Fragment {
             takeAPicture.setVisibility(View.GONE);
             writeTagButton.setVisibility(View.VISIBLE);
 
-            //onUploadImageFragmentInteractionListener.onUploadImageFragmentInteraction(articleId);
+            startColorExtractionService(imagePath);
         }
     }
 
@@ -335,7 +393,43 @@ public class UploadImageFragment extends Fragment {
      */
     public interface OnUploadImageFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onUploadImageFragmentInteraction(String currentUuid);
+        public void onUploadImageFragmentInteraction(String articleId);
     }
 
+    private class ColorExtractionRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = TestUploadRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public ColorExtractionRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(colorExtractionRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(colorExtractionRequestReceiver);
+
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Amazon Color Extraction response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+
+            progressDialog.dismiss();
+
+            //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Article successfully created");
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Background removed successfully =D");
+        }
+    }
 }

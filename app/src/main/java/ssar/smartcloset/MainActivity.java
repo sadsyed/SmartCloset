@@ -440,7 +440,7 @@ public class MainActivity extends Activity implements
                 matchArticleRequestReceiver = new SmartClosetRequestReceiver(SmartClosetConstants.READ_ARTICLE);
                 this.registerReceiver(matchArticleRequestReceiver, filter);
 
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting Match Article request");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ** Starting Match Article request");
                 Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());

@@ -142,4 +142,40 @@ public class JsonParserUtil {
         }
         return user;
     }
+
+    public static List<String> jsonToStringList(String responseJSON) {
+        JSONObject json;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+
+        List<String> colors = new ArrayList<String>();
+
+        try {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Request JSON: " + responseJSON);
+
+            json = new JSONObject(responseJSON);
+            JSONArray jsonArray = new JSONArray();
+
+            jsonArray = json.getJSONArray("colors");
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": jsonArray: " + jsonArray.toString());
+
+            if(jsonArray.length() > 0) {
+                for (int i=0; i<jsonArray.length(); i++) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": color: " + jsonArray.getString(i));
+                    colors.add(jsonArray.getString(i));
+                }
+            } else {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " jsonArray empty");
+                return null;
+            }
+
+        } catch (JSONException e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + e);
+        }
+        return colors;
+    }
+
 }

@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -32,7 +33,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import ssar.smartcloset.util.JsonParserUtil;
 import ssar.smartcloset.util.SmartClosetConstants;
 import ssar.smartcloset.util.ToastMessage;
 
@@ -54,11 +57,14 @@ public class UploadImageFragment extends Fragment {
 
     public TestUploadRequestReceiver testUploadRequestReceiver;
     public ColorExtractionRequestReceiver colorExtractionRequestReceiver;
+    public UpdateImageColorsRequestReceiver updateImageColorsRequestReceiver;
 
     IntentFilter filter;
     private String articleId;
     Uri selectedimg;
     String imagePath;
+    //String imageColors;
+    JSONArray imageColors;
     String currentUuid="";
     String imageUrl;
 
@@ -291,6 +297,35 @@ public class UploadImageFragment extends Fragment {
         progressDialog.show();
     }
 
+    private void startUpdateImageColorsService(JSONArray imageColors) {
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        updateImageColorsRequestReceiver = new UpdateImageColorsRequestReceiver(SmartClosetConstants.UPDATE_ARTICLE_IMAGE_COLORS);
+        ((MainActivity)getActivity()).registerReceiver(updateImageColorsRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("articleId", articleId);
+            requestJSON.put("imageColors", imageColors);
+            //requestJSON.put("imageColors", "red");
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
+        }
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting UpdateArticleImageColors request");
+        Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPDATE_ARTICLE_IMAGE_COLORS);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        getActivity().startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME +  ": Started intent service");
+
+        progressDialog.setMessage("Updating article with image colors ...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //progressDialog.setIndeterminate(true);
+        progressDialog.show();
+    }
+
     private File createImageFile() throws IOException {
         String mCurrentPhotoPath;
 
@@ -377,6 +412,7 @@ public class UploadImageFragment extends Fragment {
             takeAPicture.setVisibility(View.GONE);
             writeTagButton.setVisibility(View.VISIBLE);
 
+            //remove the background from the image and extract three most common colors
             startColorExtractionService(imagePath);
         }
     }
@@ -396,8 +432,9 @@ public class UploadImageFragment extends Fragment {
         public void onUploadImageFragmentInteraction(String articleId);
     }
 
+
     private class ColorExtractionRequestReceiver extends BroadcastReceiver {
-        public final String CLASSNAME = TestUploadRequestReceiver.class.getSimpleName();
+        public final String CLASSNAME = ColorExtractionRequestReceiver.class.getSimpleName();
         private String serviceUrl;
 
         public ColorExtractionRequestReceiver (String serviceUrl) {
@@ -418,11 +455,40 @@ public class UploadImageFragment extends Fragment {
             String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Amazon Color Extraction response JSON: " + responseJSON);
             JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    JSONArray jsonArray = new JSONArray();
+                    jsonArray = json.getJSONArray("colors");
+                    imageColors = jsonArray;
+                    //imageColors = (String)json.get("colors");
+                    /*Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image hexcolors: " + imageColors);
+
+                    List<String> colors = JsonParserUtil.jsonToStringList(responseJSON);
+
+                    StringBuilder colorStringBuilder = new StringBuilder();
+
+                    for (String color : colors) {
+                        colorStringBuilder.append(color).append(",");
+                    }
+                    imageColors = colorStringBuilder.toString();*/
+                    //imageColors = colors.toString();
+
+                    /*if(errorcode == 0) {
+                        ToastMessage.displayShortToastMessage(getActivity(), "Article was updated successfully");
+                    }*/
+                    //callback to launch UploadImageFragment upon the successful creation of new article
+                    //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+                } catch (Exception e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object: " + e.getMessage());
+                }
+            } catch (JSONException e)
+            {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
 
             progressDialog.dismiss();
 
-            //callback to launch UploadImageFragment upon the successful creation of new article
-            ToastMessage.displayLongToastMessage(context, "Article successfully created");
             //disable selectFileButton and takeAPictureButton
             selectFileButton.setVisibility(View.GONE);
             takeAPicture.setVisibility(View.GONE);
@@ -430,6 +496,62 @@ public class UploadImageFragment extends Fragment {
 
             //callback to launch UploadImageFragment upon the successful creation of new article
             ToastMessage.displayLongToastMessage(context, "Background removed successfully =D");
+
+            //update the article with extracted colors
+            startUpdateImageColorsService(imageColors);
+        }
+    }
+
+    private class UpdateImageColorsRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = UpdateImageColorsRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public UpdateImageColorsRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(updateImageColorsRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(updateImageColorsRequestReceiver);
+
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Updated article with image colors: " + responseJSON);
+            JSONObject json = new JSONObject();
+            /*try {
+                json = new JSONObject(responseJSON);
+                try {
+                    imageColors = (String)json.get("colors");
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image hexcolors: " + imageColors);
+
+                    /*if(errorcode == 0) {
+                        ToastMessage.displayShortToastMessage(getActivity(), "Article was updated successfully");
+                    }*/
+                    //callback to launch UploadImageFragment upon the successful creation of new article
+                    //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+            /*    } catch (Exception e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+                }
+            } catch (JSONException e)
+            {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }*/
+
+            progressDialog.dismiss();
+
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Article colors update successfully =D");
         }
     }
 }

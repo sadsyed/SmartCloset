@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -28,6 +29,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +54,9 @@ import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         ClosetFragment.OnCategorySelectedListener,
         CategoryFragment.OnCategoryFragmentInteractionListener,
@@ -92,6 +103,19 @@ public class MainActivity extends Activity implements
 
     public boolean matchMode = false;
 
+    //-- Google Signin ---
+    // Request code used to invoke sign in user interactions.
+    private static final int RC_SIGN_IN = 0;
+
+    // Client used to interact with Google APIs
+    private GoogleApiClient mGoogleApiClient;
+
+    // Is there a ConnectionResult resolution in progress
+    private boolean mIsResolving = false;
+
+    // Should we automatically resolve ConnectionResult when possible?
+    private boolean mShouldResolve = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +127,17 @@ public class MainActivity extends Activity implements
 
         //load slider menu items
         loadSliderMenu(savedInstanceState);
+
+        //-- Google Signin ---
+        // Build GoogleApiClient with access to basic profile
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(new Scope(Scopes.PROFILE))
+                .build();
+
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -147,25 +182,136 @@ public class MainActivity extends Activity implements
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        if(savedInstanceState == null) {
+        /*if(savedInstanceState == null) {
+
             if(getExistingUser().getUserName() != null) {
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-                //display read tag message
+                //display read tag message - mark isLoggedIn to true
                 FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
                 updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
             } else {
                 //launch LogIn/Create Account page
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-                //display Category Fragment
+                //display Category Fragment - mark isLoggenIn to false
                 FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
                 updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
             }
 
+        }*/
+    }
+
+    //-- Google Signin ---
+    @Override
+    public void onConnected(Bundle bundle) {
+        // onConnected indicates that an account was selected on the device, that the selected
+        // account has granted any requested permissions to our app and that we were able to
+        // establish a service connection to Google Play services.
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onConnected:" + bundle);
+        mShouldResolve = false;
+
+        // Show the signed-in UI
+        //showSignedInUI();
+        ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
+
+        //only works if user has a google+ profile
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            String personName = currentPerson.getDisplayName();
+            String personPhoto = currentPerson.getImage().getUrl();
+            String personGooglePlusProfile = currentPerson.getUrl();
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + personName);
+            ToastMessage.displayLongToastMessage(this, "Logged in as : " + personName);
+        } else {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Don't know who is logged in =(...");
+        }
+
+        String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + email);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.sign_in_button) {
+            onSignInClicked();
         }
     }
 
+    private void onSignInClicked() {
+        // User clicked the sign-in button, so begin the sign-in process and automatically attemot to resolve any errors that occur
+        mShouldResolve = true;
+        mGoogleApiClient.connect();
+
+        //Show a message to the user that we are signing in
+        ToastMessage.displayLongToastMessage(this, "Signing in =D");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Could not connect to Google Play Services.  The user needs to select an account,
+        // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
+        // ConnectionResult to see possible error codes.
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onConnectionFailed:" + connectionResult);
+
+        if (!mIsResolving && mShouldResolve) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                    mIsResolving = true;
+                } catch (IntentSender.SendIntentException e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Could not resolve ConnectionResult.", e);
+                    mIsResolving = false;
+                    mGoogleApiClient.connect();
+                }
+            } else {
+                // Could not resolve the connection result, show the user an
+                // error dialog.
+                //showErrorDialog(connectionResult);
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error Dialog");
+            }
+        } else {
+            // Show the signed-out UI
+            //showSignedOutUI();
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Signed Out UI");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+
+        if (requestCode == RC_SIGN_IN) {
+            // If the error resolution was not successful we should not resolve further.
+            if (resultCode != RESULT_OK) {
+                mShouldResolve = false;
+            }
+
+            mIsResolving = false;
+            mGoogleApiClient.connect();
+        }
+    }
+
+    //-- Slider Menu ---
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

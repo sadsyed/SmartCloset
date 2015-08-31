@@ -36,7 +36,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.Account;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -143,7 +142,7 @@ public class MainActivity extends Activity implements
                 .addScope(new Scope(Scopes.PROFILE))
                 .build();
 
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        //findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -220,6 +219,11 @@ public class MainActivity extends Activity implements
         // Show the signed-in UI
         //showSignedInUI();
         ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+        //display read tag message - mark isLoggedIn to true
+        FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+        updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
 
         //only works if user has a google+ profile
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
@@ -231,7 +235,7 @@ public class MainActivity extends Activity implements
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + personName);
             ToastMessage.displayLongToastMessage(this, "Logged in as : " + personName);
         } else {
-            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Don't know who is logged in =(...");
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User doesn't have a google plus profile =(...");
         }
 
         String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -247,9 +251,9 @@ public class MainActivity extends Activity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.sign_in_button) {
+        /*if (v.getId() == R.id.sign_in_button) {
             onSignInClicked();
-        }
+        }*/
     }
 
     private void onSignInClicked() {
@@ -300,6 +304,13 @@ public class MainActivity extends Activity implements
             // Show the signed-out UI
             //showSignedOutUI();
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Signed Out UI");
+
+            //launch LogIn/Create Account page
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+            //display Category Fragment - mark isLoggenIn to false
+            FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
+            updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         }
     }
 
@@ -729,6 +740,10 @@ public class MainActivity extends Activity implements
                 LoginFragment loginFragment = new LoginFragment();
                 updateFragment(loginFragment, SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
                 setFragmentTitle(SmartClosetConstants.SLIDEMENU_PROFILE_ITEM);
+                break;
+            case R.id.googleSignInButton:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Sign in with Google....");
+                onSignInClicked();
                 break;
         }
     }

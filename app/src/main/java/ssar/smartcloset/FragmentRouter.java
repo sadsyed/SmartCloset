@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.SignInButton;
+
 import ssar.smartcloset.util.SmartClosetConstants;
 
 /**
@@ -47,6 +49,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
     private Button newTagButton;
     private Button createAccountButton;
     private Button logInButton;
+    private SignInButton googleSignInButton;
     private TextView readTagTextView;
     private ImageView verticalSeparator;
 
@@ -87,6 +90,7 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
 
         createAccountButton = (Button) view.findViewById(R.id.createAccountButton);
         logInButton = (Button) view.findViewById(R.id.logInButton);
+        googleSignInButton = (SignInButton) view.findViewById(R.id.googleSignInButton);
         readTagTextView = (TextView) view.findViewById(R.id.readTagEditText);
         verticalSeparator = (ImageView) view.findViewById(R.id.verticalSeparator);
 
@@ -102,12 +106,15 @@ public class FragmentRouter extends Fragment implements View.OnClickListener{
             readTagTextView.setVisibility(View.GONE);
             createAccountButton.setVisibility(View.VISIBLE);
             logInButton.setVisibility(View.VISIBLE);
+            googleSignInButton.setVisibility(View.VISIBLE);
 
             createAccountButton.setOnClickListener(this);
             logInButton.setOnClickListener(this);
+            googleSignInButton.setOnClickListener(this);
         } else {
             createAccountButton.setVisibility(View.GONE);
             logInButton.setVisibility(View.GONE);
+            googleSignInButton.setVisibility(View.GONE);
             verticalSeparator.setVisibility(View.GONE);
 
             readTagTextView.setVisibility(View.VISIBLE);

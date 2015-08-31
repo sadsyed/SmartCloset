@@ -18,6 +18,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -29,16 +30,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Account;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +120,7 @@ public class MainActivity extends Activity implements
 
     // Should we automatically resolve ConnectionResult when possible?
     private boolean mShouldResolve = false;
+    private static final String SERVER_CLIENT_ID = "40560021354-k08ugq82ifbisuc8k0nh79pv91jhcmq2.apps.googleusercontent.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,6 +236,8 @@ public class MainActivity extends Activity implements
 
         String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + email);
+
+        new GetIdTokenTask().execute();
     }
 
     @Override
@@ -995,4 +1003,47 @@ public class MainActivity extends Activity implements
             }
         }
     }
+
+    private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Account name is: " + accountName);
+
+            //Account account = new Account(accountName, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            //String scopes = "oauth2:server:client_id:" + SERVER_CLIENT_ID + ":api_scope:https://www.googleapis.com/auth/plus.login"; // Not the app's client ID.
+            //String scopes = "oauth2:googleapis.com/auth/userinfo.profile";
+            //String scopes = "oauth2:https://www.googleapis.com/auth/plus.login";
+            //String scopes = "https://www.googleapis.com/auth/userinfo.profile";
+            String scopes = "oauth2:" + Scopes.PROFILE;
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": scope with server client id : " + scopes );
+            try {
+                return GoogleAuthUtil.getToken(getApplicationContext(), accountName, scopes);
+            } catch (IOException e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error retrieving ID token.", e);
+                return null;
+            } catch (GoogleAuthException e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Error retrieving ID token.", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ID token: " + result);
+            if (result != null) {
+                // Successfully retrieved ID Token
+                // ...
+            } else {
+                // There was some error getting the ID Token
+                // ...
+            }
+        }
+
+    }
+
 }
+
+

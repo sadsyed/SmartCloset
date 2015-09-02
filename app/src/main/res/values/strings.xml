@@ -17,7 +17,7 @@
     <string name="newtag_article_description">Enter article description.</string>
     <string name="newtag_article_name">Enter article name.</string>
     <string name="newtag_article_tags">Enter article tags.</string>
-    <string name="newtag_article_price">Enter article price.</string>
+    <string name="newtag_article_price">Enter article price.</string>o
     <string name="newtag_article_owner">Enter article owner.</string>
     <string name="newtag_id_button">Update article Id</string>
     <string name="newtag_articledescription">Enter article description.</string>
@@ -29,7 +29,7 @@
     <string name="newtag_write_msg">Tap and hold the tag against the back of the phone to write.</string>
 
     <string name="profile_user_name_label">User Name</string>
-    <string name="profile_first_name_label">First Name</string>
+    <string name="profile_first_name_label">First Nameo</string>
     <string name="profile_last_name_label">Last Name</string>
     <string name="profile_email_label">Email</string>
     <string name="profile_user_pin_label">Pin</string>
@@ -54,13 +54,14 @@
 
     <!-- Nav Drawer Menu Itemes-->
     <string-array name="nav_drawer_items">
-        <item>Home</item>
-        <item>Closet</item>
-        <item>Search</item>
-        <item>New Tag</item>
-        <item>Profile</item>
-        <item>Match</item>
-        <item>Article</item>
+        <item>Home</item><!-- 0 -->
+        <item>Closet</item><!-- 1 -->
+        <item>Search</item><!-- 2 -->
+        <item>New Tag</item><!-- 3 -->
+        <item>Profile</item><!-- 4 -->
+        <item>Match</item><!-- 5 -->
+        <item>Article</item><!-- 6 -->
+        <item>Log out</item><!-- 7 -->
     </string-array>
 
 </resources>

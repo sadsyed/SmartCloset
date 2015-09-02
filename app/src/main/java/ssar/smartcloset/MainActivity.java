@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -121,6 +122,8 @@ public class MainActivity extends Activity implements
     private boolean mShouldResolve = false;
     private static final String SERVER_CLIENT_ID = "40560021354-k08ugq82ifbisuc8k0nh79pv91jhcmq2.apps.googleusercontent.com";
 
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,6 +163,7 @@ public class MainActivity extends Activity implements
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[5]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7]));
 
         drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -218,7 +222,7 @@ public class MainActivity extends Activity implements
 
         // Show the signed-in UI
         //showSignedInUI();
-        ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
+        //ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
         //display read tag message - mark isLoggedIn to true
         FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
@@ -459,6 +463,34 @@ public class MainActivity extends Activity implements
                     setFragmentTitle(position);
                 }
                 break;
+            case 6:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
+                if(mGoogleApiClient.isConnected()) {
+                    //start the progress dialog
+                    progressDialog = ProgressDialog.show(MainActivity.this, "", "Logging out...");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                //log out currently logged user
+                                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                                mGoogleApiClient.disconnect();
+                                Thread.sleep(2000);
+                            } catch (Exception e) {
+                                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error while loggin out");
+                            }
+                            //dismiss the progress dialog
+                            progressDialog.dismiss();
+                        }
+                    }).start();
+
+                    //launch LogIn/Create Account page
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                    //display Category Fragment - mark isLoggenIn to false
+                    FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
+                    updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                    setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                }
             default:
                 break;
         }

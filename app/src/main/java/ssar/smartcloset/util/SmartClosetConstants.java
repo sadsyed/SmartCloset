@@ -24,6 +24,7 @@ public class SmartClosetConstants {
     public static final String GET_USER_ACCOUNT = APP_SPOT + "/GetUserAccount";
     public static final String FIND_MATCH = APP_SPOT + "/FindMatch";
     public static final String UPDATE_ARTICLE_IMAGE_COLORS = APP_SPOT + "/UpdateArticleImageColors";
+    public static final String TOKEN_SIGNIN = APP_SPOT + "/TokenSignin";
 
 
     //Amazon Elastic Beanstalk service url

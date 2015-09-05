@@ -124,6 +124,11 @@ public class MainActivity extends Activity implements
 
     ProgressDialog progressDialog;
 
+    //-- Authenticate with a Backend Server
+    // tokenId for authentication with a backend server
+    String tokenId;
+    public AuthenticationRequestReceiver authenticationRequestReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +151,7 @@ public class MainActivity extends Activity implements
                 .build();
 
         //findViewById(R.id.sign_in_button).setOnClickListener(this);
+        progressDialog = new ProgressDialog(this);
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -245,7 +251,7 @@ public class MainActivity extends Activity implements
         String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + email);
 
-        new GetIdTokenTask().execute();
+        new GetIdTokenTask(this).execute();
     }
 
     @Override
@@ -1053,6 +1059,12 @@ public class MainActivity extends Activity implements
 
     private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
 
+        private Context mContext;
+
+        public GetIdTokenTask (Context context) {
+            mContext = context;
+        }
+
         @Override
         protected String doInBackground(Void... params) {
             String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -1082,13 +1094,99 @@ public class MainActivity extends Activity implements
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ID token: " + result);
             if (result != null) {
                 // Successfully retrieved ID Token
-                // ...
+                tokenId = result;
+
+                //send tokenId to backend server
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting authentication with backend server using tokenId: " + tokenId);
+
+                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                authenticationRequestReceiver = new AuthenticationRequestReceiver(SmartClosetConstants.TOKEN_SIGNIN);
+                mContext.registerReceiver(authenticationRequestReceiver, filter);
+
+                //set the tokenId in the JSON request object
+                JSONObject requestJSON = new JSONObject();
+                try {
+                    requestJSON.put("tokenId", tokenId);
+                } catch (Exception e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating a JSON request with tokenId");
+                }
+
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting TokenSigin request");
+                Intent msgIntent = new Intent(mContext, SmartClosetIntentService.class);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.TOKEN_SIGNIN);
+                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+                msgIntent.putExtra("tokenId", tokenId);
+                mContext.startService(msgIntent);
+
+                progressDialog.setMessage("Authenticating with a Backend Server...");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                //progressDialog.setIndeterminate(true);
+                progressDialog.show();
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Authenticating with Backend Server... ");
             } else {
                 // There was some error getting the ID Token
                 // ...
             }
         }
 
+    }
+
+    public class AuthenticationRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = AuthenticationRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public AuthenticationRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(authenticationRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(authenticationRequestReceiver);
+
+                } catch (IllegalArgumentException e) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": TestSignin service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            Boolean valid;
+
+            try {
+                json = new JSONObject(responseJSON);
+                JSONObject accessTokenStatus = (JSONObject) json.get("access_token_status");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": access_token_status: " + accessTokenStatus);
+                valid = (Boolean) accessTokenStatus.get("valid");
+                //imagePath = (String)json.get("file");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log in is successful: " + valid);
+
+                if(valid) {
+                    ToastMessage.displayShortToastMessage(context, "User was authenticated successfully");
+                } else {
+                    ToastMessage.displayLongToastMessage(context, "Server authentication failed");
+                }
+                //callback to launch UploadImageFragment upon the successful creation of new article
+                //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+            }
+
+            progressDialog.dismiss();
+
+           /* //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Article successfully created");
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //remove the background from the image and extract three most common colors
+            startColorExtractionService(imagePath);*/
+        }
     }
 
 }

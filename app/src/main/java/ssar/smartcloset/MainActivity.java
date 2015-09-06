@@ -88,6 +88,7 @@ public class MainActivity extends Activity implements
     public SmartClosetRequestReceiver useArticleRequestReceiver;
     public SmartClosetRequestReceiver readArticleRequestReceiver;
     public SmartClosetRequestReceiver matchArticleRequestReceiver;
+    public CreateProfileRequestReceiver createProfileRequestReceiver;
     IntentFilter filter;
 
     public boolean writeMode = false;
@@ -105,6 +106,7 @@ public class MainActivity extends Activity implements
     private NavDrawerListAdapter navDrawerListAdapter;
 
     private SharedPreferences sharedPreferences;
+    public static final String PREF_NAME = "smartProfilePreference";
 
     public boolean matchMode = false;
 
@@ -128,6 +130,10 @@ public class MainActivity extends Activity implements
     // tokenId for authentication with a backend server
     String tokenId;
     public AuthenticationRequestReceiver authenticationRequestReceiver;
+
+    private String userName;
+    private String userEmail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,20 +244,55 @@ public class MainActivity extends Activity implements
         //only works if user has a google+ profile
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            String personName = currentPerson.getDisplayName();
+            userName = currentPerson.getDisplayName();
             String personPhoto = currentPerson.getImage().getUrl();
             String personGooglePlusProfile = currentPerson.getUrl();
 
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + personName);
-            ToastMessage.displayLongToastMessage(this, "Logged in as : " + personName);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + userName);
+            ToastMessage.displayLongToastMessage(this, "Logged in as : " + userName);
         } else {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User doesn't have a google plus profile =(...");
         }
 
-        String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + email);
+        userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
-        new GetIdTokenTask(this).execute();
+        //new GetIdTokenTask(this).execute();
+
+        //Create user profile with Backend Server
+        createUserProfile();
+    }
+
+    private void createUserProfile() {
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        createProfileRequestReceiver = new CreateProfileRequestReceiver(SmartClosetConstants.CREATE_PROFILE);
+        this.registerReceiver(createProfileRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("username", userName);
+            requestJSON.put("email", userEmail);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Exception while creating an request JSON.");
+        }
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Starting Create Profile request");
+        Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.CREATE_PROFILE);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Finished Creating intent");
+        this.startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Started intent service");
+
+        //TODO: move to the boradcast receiever
+        //add profile to apps preference
+        sharedPreferences = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+        e.commit();
     }
 
     @Override
@@ -1188,6 +1229,46 @@ public class MainActivity extends Activity implements
             startColorExtractionService(imagePath);*/
         }
     }
+
+    public class CreateProfileRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = CreateProfileRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public CreateProfileRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(createProfileRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(createProfileRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    Integer errorcode = (Integer) json.get("errorcode");
+                    if(errorcode == 0)  {
+                        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User created successfully");
+                    }
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("errorcode");
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Failed to create user profile");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
+        }
+    }
+
 
 }
 

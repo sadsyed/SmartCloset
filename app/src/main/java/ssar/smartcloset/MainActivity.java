@@ -257,12 +257,22 @@ public class MainActivity extends Activity implements
         userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
+        // reset user tokenId
         new GetIdTokenTask(this).execute();
 
-        if(getExistingUser().getUserName() == null) {
+        // update user preferences
+        //add profile to apps preference
+        sharedPreferences = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+        e.commit();
+        
+        /*if(getExistingUser().getUserName() == null) {
             //Create user profile with Backend Server
             createUserProfile();
-        }
+        }*/
     }
 
     private void createUserProfile() {
@@ -471,7 +481,7 @@ public class MainActivity extends Activity implements
                 if(isUserLoggedIn()) {
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                     //display Category Fragment
-                    ClosetFragment closetFragment = new ClosetFragment().newInstance(tokenId);
+                    ClosetFragment closetFragment = new ClosetFragment().newInstance(tokenId, userEmail);
                     updateFragment(closetFragment, position);
                     setFragmentTitle(position);
                 }
@@ -1139,7 +1149,7 @@ public class MainActivity extends Activity implements
                 // Successfully retrieved ID Token
                 tokenId = result;
 
-                authenticateWithBackendServer();
+                //authenticateWithBackendServer();
             } else {
                 // There was some error getting the ID Token
                 // ...

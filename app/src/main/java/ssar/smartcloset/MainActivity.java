@@ -257,10 +257,12 @@ public class MainActivity extends Activity implements
         userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
-        //new GetIdTokenTask(this).execute();
+        new GetIdTokenTask(this).execute();
 
-        //Create user profile with Backend Server
-        createUserProfile();
+        if(getExistingUser().getUserName() == null) {
+            //Create user profile with Backend Server
+            createUserProfile();
+        }
     }
 
     private void createUserProfile() {
@@ -467,9 +469,9 @@ public class MainActivity extends Activity implements
                 break;
             case 1:
                 if(isUserLoggedIn()) {
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                     //display Category Fragment
-                    ClosetFragment closetFragment = new ClosetFragment();
+                    ClosetFragment closetFragment = new ClosetFragment().newInstance(tokenId);
                     updateFragment(closetFragment, position);
                     setFragmentTitle(position);
                 }
@@ -1137,40 +1139,43 @@ public class MainActivity extends Activity implements
                 // Successfully retrieved ID Token
                 tokenId = result;
 
-                //send tokenId to backend server
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting authentication with backend server using tokenId: " + tokenId);
-
-                filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
-                filter.addCategory(Intent.CATEGORY_DEFAULT);
-                authenticationRequestReceiver = new AuthenticationRequestReceiver(SmartClosetConstants.TOKEN_SIGNIN);
-                mContext.registerReceiver(authenticationRequestReceiver, filter);
-
-                //set the tokenId in the JSON request object
-                JSONObject requestJSON = new JSONObject();
-                try {
-                    requestJSON.put("tokenId", tokenId);
-                } catch (Exception e) {
-                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating a JSON request with tokenId");
-                }
-
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting TokenSigin request");
-                Intent msgIntent = new Intent(mContext, SmartClosetIntentService.class);
-                msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.TOKEN_SIGNIN);
-                msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
-                msgIntent.putExtra("tokenId", tokenId);
-                mContext.startService(msgIntent);
-
-                progressDialog.setMessage("Authenticating with a Backend Server...");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                //progressDialog.setIndeterminate(true);
-                progressDialog.show();
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Authenticating with Backend Server... ");
+                authenticateWithBackendServer();
             } else {
                 // There was some error getting the ID Token
                 // ...
             }
         }
 
+        private void authenticateWithBackendServer() {
+            //send tokenId to backend server
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting authentication with backend server using tokenId: " + tokenId);
+
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            authenticationRequestReceiver = new AuthenticationRequestReceiver(SmartClosetConstants.TOKEN_SIGNIN);
+            mContext.registerReceiver(authenticationRequestReceiver, filter);
+
+            //set the tokenId in the JSON request object
+            JSONObject requestJSON = new JSONObject();
+            try {
+                requestJSON.put("tokenId", tokenId);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating a JSON request with tokenId");
+            }
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting TokenSigin request");
+            Intent msgIntent = new Intent(mContext, SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.TOKEN_SIGNIN);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+            msgIntent.putExtra("tokenId", tokenId);
+            mContext.startService(msgIntent);
+
+            progressDialog.setMessage("Authenticating with a Backend Server...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            //progressDialog.setIndeterminate(true);
+            progressDialog.show();
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Authenticating with Backend Server... ");
+        }
     }
 
     public class AuthenticationRequestReceiver extends BroadcastReceiver {

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -87,6 +88,7 @@ public class MainActivity extends Activity implements
     public SmartClosetRequestReceiver useArticleRequestReceiver;
     public SmartClosetRequestReceiver readArticleRequestReceiver;
     public SmartClosetRequestReceiver matchArticleRequestReceiver;
+    public CreateProfileRequestReceiver createProfileRequestReceiver;
     IntentFilter filter;
 
     public boolean writeMode = false;
@@ -104,6 +106,7 @@ public class MainActivity extends Activity implements
     private NavDrawerListAdapter navDrawerListAdapter;
 
     private SharedPreferences sharedPreferences;
+    public static final String PREF_NAME = "smartProfilePreference";
 
     public boolean matchMode = false;
 
@@ -120,6 +123,17 @@ public class MainActivity extends Activity implements
     // Should we automatically resolve ConnectionResult when possible?
     private boolean mShouldResolve = false;
     private static final String SERVER_CLIENT_ID = "40560021354-k08ugq82ifbisuc8k0nh79pv91jhcmq2.apps.googleusercontent.com";
+
+    ProgressDialog progressDialog;
+
+    //-- Authenticate with a Backend Server
+    // tokenId for authentication with a backend server
+    String tokenId;
+    public AuthenticationRequestReceiver authenticationRequestReceiver;
+
+    private String userName;
+    private String userEmail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +157,7 @@ public class MainActivity extends Activity implements
                 .build();
 
         //findViewById(R.id.sign_in_button).setOnClickListener(this);
+        progressDialog = new ProgressDialog(this);
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -160,6 +175,7 @@ public class MainActivity extends Activity implements
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4]));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[5]));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7]));
 
         drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -218,7 +234,7 @@ public class MainActivity extends Activity implements
 
         // Show the signed-in UI
         //showSignedInUI();
-        ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
+        //ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
         //display read tag message - mark isLoggedIn to true
         FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
@@ -228,20 +244,67 @@ public class MainActivity extends Activity implements
         //only works if user has a google+ profile
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            String personName = currentPerson.getDisplayName();
+            userName = currentPerson.getDisplayName();
             String personPhoto = currentPerson.getImage().getUrl();
             String personGooglePlusProfile = currentPerson.getUrl();
 
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + personName);
-            ToastMessage.displayLongToastMessage(this, "Logged in as : " + personName);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Logged in as: " + userName);
+            ToastMessage.displayLongToastMessage(this, "Logged in as : " + userName);
         } else {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User doesn't have a google plus profile =(...");
         }
 
-        String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + email);
+        userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
-        new GetIdTokenTask().execute();
+        // reset user tokenId
+        new GetIdTokenTask(this).execute();
+
+        // update user preferences
+        //add profile to apps preference
+        sharedPreferences = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+        e.commit();
+        
+        /*if(getExistingUser().getUserName() == null) {
+            //Create user profile with Backend Server
+            createUserProfile();
+        }*/
+    }
+
+    private void createUserProfile() {
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        createProfileRequestReceiver = new CreateProfileRequestReceiver(SmartClosetConstants.CREATE_PROFILE);
+        this.registerReceiver(createProfileRequestReceiver, filter);
+
+        //set the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("username", userName);
+            requestJSON.put("email", userEmail);
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Exception while creating an request JSON.");
+        }
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Starting Create Profile request");
+        Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.CREATE_PROFILE);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Finished Creating intent");
+        this.startService(msgIntent);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Started intent service");
+
+        //TODO: move to the boradcast receiever
+        //add profile to apps preference
+        sharedPreferences = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+        e.commit();
     }
 
     @Override
@@ -416,9 +479,9 @@ public class MainActivity extends Activity implements
                 break;
             case 1:
                 if(isUserLoggedIn()) {
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Category Fragment..... ");
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                     //display Category Fragment
-                    ClosetFragment closetFragment = new ClosetFragment();
+                    ClosetFragment closetFragment = new ClosetFragment().newInstance(tokenId, userEmail);
                     updateFragment(closetFragment, position);
                     setFragmentTitle(position);
                 }
@@ -459,6 +522,34 @@ public class MainActivity extends Activity implements
                     setFragmentTitle(position);
                 }
                 break;
+            case 6:
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
+                if(mGoogleApiClient.isConnected()) {
+                    //start the progress dialog
+                    progressDialog = ProgressDialog.show(MainActivity.this, "", "Logging out...");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                //log out currently logged user
+                                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                                mGoogleApiClient.disconnect();
+                                Thread.sleep(2000);
+                            } catch (Exception e) {
+                                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error while loggin out");
+                            }
+                            //dismiss the progress dialog
+                            progressDialog.dismiss();
+                        }
+                    }).start();
+
+                    //launch LogIn/Create Account page
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
+                    //display Category Fragment - mark isLoggenIn to false
+                    FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
+                    updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                    setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                }
             default:
                 break;
         }
@@ -1021,6 +1112,12 @@ public class MainActivity extends Activity implements
 
     private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
 
+        private Context mContext;
+
+        public GetIdTokenTask (Context context) {
+            mContext = context;
+        }
+
         @Override
         protected String doInBackground(Void... params) {
             String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -1050,14 +1147,143 @@ public class MainActivity extends Activity implements
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ID token: " + result);
             if (result != null) {
                 // Successfully retrieved ID Token
-                // ...
+                tokenId = result;
+
+                //authenticateWithBackendServer();
             } else {
                 // There was some error getting the ID Token
                 // ...
             }
         }
 
+        private void authenticateWithBackendServer() {
+            //send tokenId to backend server
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting authentication with backend server using tokenId: " + tokenId);
+
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            authenticationRequestReceiver = new AuthenticationRequestReceiver(SmartClosetConstants.TOKEN_SIGNIN);
+            mContext.registerReceiver(authenticationRequestReceiver, filter);
+
+            //set the tokenId in the JSON request object
+            JSONObject requestJSON = new JSONObject();
+            try {
+                requestJSON.put("tokenId", tokenId);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating a JSON request with tokenId");
+            }
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting TokenSigin request");
+            Intent msgIntent = new Intent(mContext, SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.TOKEN_SIGNIN);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+            msgIntent.putExtra("tokenId", tokenId);
+            mContext.startService(msgIntent);
+
+            progressDialog.setMessage("Authenticating with a Backend Server...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            //progressDialog.setIndeterminate(true);
+            progressDialog.show();
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Authenticating with Backend Server... ");
+        }
     }
+
+    public class AuthenticationRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = AuthenticationRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public AuthenticationRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(authenticationRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(authenticationRequestReceiver);
+
+                } catch (IllegalArgumentException e) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": TestSignin service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            Boolean valid;
+
+            try {
+                json = new JSONObject(responseJSON);
+                JSONObject accessTokenStatus = (JSONObject) json.get("access_token_status");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": access_token_status: " + accessTokenStatus);
+                valid = (Boolean) accessTokenStatus.get("valid");
+                //imagePath = (String)json.get("file");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log in is successful: " + valid);
+
+                if(valid) {
+                    ToastMessage.displayShortToastMessage(context, "User was authenticated successfully");
+                } else {
+                    ToastMessage.displayLongToastMessage(context, "Server authentication failed");
+                }
+                //callback to launch UploadImageFragment upon the successful creation of new article
+                //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+            }
+
+            progressDialog.dismiss();
+
+           /* //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Article successfully created");
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //remove the background from the image and extract three most common colors
+            startColorExtractionService(imagePath);*/
+        }
+    }
+
+    public class CreateProfileRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = CreateProfileRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public CreateProfileRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(createProfileRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(createProfileRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    Integer errorcode = (Integer) json.get("errorcode");
+                    if(errorcode == 0)  {
+                        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User created successfully");
+                    }
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("errorcode");
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Failed to create user profile");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
+        }
+    }
+
 
 }
 

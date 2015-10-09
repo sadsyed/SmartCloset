@@ -39,6 +39,13 @@ import ssar.smartcloset.util.SmartClosetConstants;
  */
 public class ClosetFragment extends Fragment implements AdapterView.OnItemClickListener{
     private String CLASSNAME = ClosetFragment.class.getSimpleName();
+
+    private static final String ARG_TOKEN_ID = "tokenId";
+    private static final String ARG_USER_EMAIL = "userEmail";
+
+    private String tokenId;
+    private String userEmail;
+
     private SmartClosetRequestReceiver getCategoriesRequestReceiver;
     IntentFilter filter;
 
@@ -74,9 +81,23 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
     public ClosetFragment() {
     }
 
+    public static ClosetFragment newInstance(String tokenId, String userEmail) {
+        ClosetFragment closetFragment = new ClosetFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
+        args.putString(ARG_USER_EMAIL, userEmail);
+        closetFragment.setArguments(args);
+        return closetFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
+            userEmail = getArguments().getString(ARG_USER_EMAIL);
+        }
 
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -89,7 +110,8 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
         //set the JSON request object
         JSONObject requestJSON = new JSONObject();
         try {
-            requestJSON.put("emailFilter", loggedInUser.getUserEmail());
+            requestJSON.put("emailFilter", userEmail);
+            requestJSON.put("tokenId", tokenId);
         } catch (Exception e) {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
         }

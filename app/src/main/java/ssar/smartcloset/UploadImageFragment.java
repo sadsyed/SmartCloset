@@ -313,6 +313,7 @@ public class UploadImageFragment extends Fragment {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
         }
 
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": requestJson for UpdateArticleImageColors: " + requestJSON.toString());
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting UpdateArticleImageColors request");
         Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPDATE_ARTICLE_IMAGE_COLORS);

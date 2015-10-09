@@ -17,13 +17,15 @@ public class SmartClosetConstants {
     public static final String USE_ARTICLE = APP_SPOT + "/UseArticle";
     public static final String GET_CATEGORIES = APP_SPOT + "/GetCategories";
     public static final String GET_CATEGORY = APP_SPOT + "/GetCategory";
-    public static final String CREATE_PROFILE = APP_SPOT + "/signup2";
+    //public static final String CREATE_PROFILE = APP_SPOT + "/signup2";
+    public static final String CREATE_PROFILE = APP_SPOT + "/CreateProfile";
     public static final String SEARCH_ARTICLES = APP_SPOT + "/SearchArticles";
     public static final String READ_ARTICLE = APP_SPOT + "/ReadArticle";
     public static final String UPDATE_ARTICLE = APP_SPOT + "/UpdateArticle";
     public static final String GET_USER_ACCOUNT = APP_SPOT + "/GetUserAccount";
     public static final String FIND_MATCH = APP_SPOT + "/FindMatch";
     public static final String UPDATE_ARTICLE_IMAGE_COLORS = APP_SPOT + "/UpdateArticleImageColors";
+    public static final String TOKEN_SIGNIN = APP_SPOT + "/TokenSignin";
 
 
     //Amazon Elastic Beanstalk service url

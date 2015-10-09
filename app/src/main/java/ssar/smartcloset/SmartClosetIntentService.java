@@ -9,6 +9,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -17,6 +18,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
@@ -24,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import ssar.smartcloset.util.SmartClosetConstants;
 
@@ -165,6 +169,11 @@ public class SmartClosetIntentService extends IntentService {
                     post.setEntity(stringEntity);
                     break;
                 case SmartClosetConstants.UPDATE_ARTICLE_IMAGE_COLORS:
+                    stringEntity = new StringEntity(requestJSON);
+                    stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    post.setEntity(stringEntity);
+                    break;
+                case SmartClosetConstants.TOKEN_SIGNIN:
                     stringEntity = new StringEntity(requestJSON);
                     stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     post.setEntity(stringEntity);

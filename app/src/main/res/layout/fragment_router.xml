@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:textAlignment="gravity"
         android:gravity="center"
-        android:textStyle="bold|italic"
+        android:textStyle="bold"
         android:typeface="monospace" />
 
     <ImageView

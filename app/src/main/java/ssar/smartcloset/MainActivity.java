@@ -970,7 +970,7 @@ public class MainActivity extends Activity implements
 
     private void launhSearchFragment(String searchType, String searchValue, String email) {
         //launch search fragment to invoke search and get results
-        SearchFragment searchFragment = new SearchFragment().newInstance(searchType, searchValue, email);
+        SearchFragment searchFragment = new SearchFragment().newInstance(tokenId, searchType, searchValue, email);
         updateFragment(searchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
         //ToastMessage.displayLongToastMessage(this, "Search Type: " + searchType + ", Search Value: " + searchValue + ", Email: " + email);
     }

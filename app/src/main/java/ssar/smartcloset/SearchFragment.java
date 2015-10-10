@@ -38,10 +38,12 @@ import ssar.smartcloset.util.ToastMessage;
 public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener{
     private static final String CLASSNAME = SearchFragment.class.getSimpleName();
 
+    private static final String ARG_TOKEN_ID = "tokenId";
     private static final String ARG_SEARCH_TYPE = "searchType";
     private static final String ARG_SEARCH_VALUE = "searchValue";
     private static final String ARG_EMAIL = "email";
 
+    private String tokenId;
     private String searchType;
     private String searchValue;
     private String loggedInUseremail;
@@ -71,9 +73,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
      * @param loggedInUseremail Parameter 3
      * @return A new instance of fragment BaseSearchFragment.
      */
-    public static SearchFragment newInstance(String searchType, String searchValue, String loggedInUseremail) {
+    public static SearchFragment newInstance(String tokenId, String searchType, String searchValue, String loggedInUseremail) {
         SearchFragment fragment = new SearchFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
         args.putString(ARG_SEARCH_TYPE, searchType);
         args.putString(ARG_SEARCH_VALUE, searchValue);
         args.putString(ARG_EMAIL, loggedInUseremail);
@@ -89,6 +92,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
             searchType = getArguments().getString(ARG_SEARCH_TYPE);
             searchValue = getArguments().getString(ARG_SEARCH_VALUE);
             loggedInUseremail = getArguments().getString(ARG_EMAIL);
@@ -102,6 +106,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         //set the JSON request object
         JSONObject requestJSON = new JSONObject();
         try {
+            requestJSON.put("tokenId", tokenId);
             requestJSON.put("filterType", searchType);
             requestJSON.put("filterString", searchValue);
             requestJSON.put("email", loggedInUseremail);

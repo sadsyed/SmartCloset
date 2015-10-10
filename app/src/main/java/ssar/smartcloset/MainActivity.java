@@ -856,6 +856,7 @@ public class MainActivity extends Activity implements
 
         CategoryFragment categoryFragment = new CategoryFragment();
         Bundle args = new Bundle();
+        args.putString(CategoryFragment.ARG_TOKEN_ID, tokenId);
         args.putString(CategoryFragment.ARG_CATEGORY_SELECTED, categorySelected);
         categoryFragment.setArguments(args);
 

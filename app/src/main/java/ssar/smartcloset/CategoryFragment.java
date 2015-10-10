@@ -40,12 +40,14 @@ import ssar.smartcloset.util.SmartClosetConstants;
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener{
     public final static String CLASSNAME = CategoryFragment.class.getSimpleName();
 
+    public final static String ARG_TOKEN_ID = "tokenId";
     public final static String ARG_CATEGORY_SELECTED = "categorySelected";
 
     private OnCategoryFragmentInteractionListener onCategoryFragmentInteractionListener;
     private SmartClosetRequestReceiver getCategoryArticlesRequestReceiver;
     IntentFilter filter;
 
+    private String tokenId;
     private String categorySelected;
     private String currentCatergory = null;
     private List<CustomListItem> articles;
@@ -68,9 +70,10 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
      * @param categorySelected Parameter 1.
      * @return A new instance of fragment CategoryFragment.
      */
-    public static CategoryFragment newInstance(String categorySelected) {
+    public static CategoryFragment newInstance(String tokenId, String categorySelected) {
         CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
         args.putString(ARG_CATEGORY_SELECTED, categorySelected);
         fragment.setArguments(args);
         return fragment;
@@ -83,6 +86,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
             categorySelected = getArguments().getString(ARG_CATEGORY_SELECTED);
         }
     }
@@ -129,6 +133,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             try {
                 requestJSON.put("category", args.getString(ARG_CATEGORY_SELECTED));
                 requestJSON.put("emailFilter", loggedInUser.getUserEmail());
+                requestJSON.put("tokenId", tokenId);
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }

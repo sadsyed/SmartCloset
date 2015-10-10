@@ -878,7 +878,7 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUpdateArticleFragment..... ");
 
         //launch UpdateArticleFragment for the selected article
-        UpdateArticleFragment updateArticleFragment = UpdateArticleFragment.newInstance(article);
+        UpdateArticleFragment updateArticleFragment = UpdateArticleFragment.newInstance(tokenId, article);
 
         updateFragment(updateArticleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
         setTitle(article.getArticleName());

@@ -43,8 +43,10 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
     private static final String CLASSNAME = UpdateArticleFragment.class.getSimpleName();
 
     // the fragment initialization parameters
+    private static final String ARG_TOKEN_ID = "tokenId";
     private static final String ARG_ARTICLE = "article";
 
+    private String tokenId;
     private Article article;
 
     private OnUpdateArticleFragmentInteractionListener onUpdateArticleFragmentInteractionListener;
@@ -71,9 +73,10 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
      * @return A new instance of fragment UpdateArticleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static UpdateArticleFragment newInstance(Article article) {
+    public static UpdateArticleFragment newInstance(String tokenId, Article article) {
         UpdateArticleFragment fragment = new UpdateArticleFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
         args.putParcelable(ARG_ARTICLE, article);
         fragment.setArguments(args);
         return fragment;
@@ -87,6 +90,7 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
             article = getArguments().getParcelable(ARG_ARTICLE);
         }
     }
@@ -151,6 +155,8 @@ public class UpdateArticleFragment extends Fragment implements View.OnClickListe
         //set the JSON request object
         JSONObject requestJSON = new JSONObject();
         try {
+            requestJSON.put("tokenId", tokenId);
+
             requestJSON.put("articleId", article.getArticleId());
             //newArticle.setArticleId(article.getArticleId());
 

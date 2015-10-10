@@ -80,6 +80,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener{
         TextView title = (TextView) view.findViewById(R.id.articleName);
         title.setText(article.getArticleName());
 
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Retrieve Article Image: " + article.getItemImageURL());
         new DownloadImageTask((ImageView)view.findViewById(R.id.articleImage)).execute(article.getItemImageURL());
 
         TextView lastUsedDateTextView = (TextView) view.findViewById(R.id.articleLastUsedDate);

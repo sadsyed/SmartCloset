@@ -1028,8 +1028,14 @@ public class MainActivity extends Activity implements
         }
     }
 
-    public void onSigninFragmentInteraction(Uri uri) {
+    public void onSigninFragmentInteraction(Boolean loggedOut) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSigninFragmentInteraction..... ");
+
+        if (loggedOut) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+            SigninFragment signinFragment = new SigninFragment().newInstance(false);
+            updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        }
     }
 
     private void updateFragment(Fragment fragment, Integer position) {

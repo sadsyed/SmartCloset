@@ -220,16 +220,6 @@ public class SigninFragment extends Fragment implements
         new GetIdTokenTask(getActivity()).execute();
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId: " + tokenId);
 
-        // update user preferences
-        //add profile to apps preference
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SmartClosetConstants.PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPreferences.edit();
-
-        e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
-        e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
-        e.putString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, tokenId);
-        e.commit();
-
         /*if(getExistingUser().getUserName() == null) {
             //Create user profile with Backend Server
             createUserProfile();
@@ -336,12 +326,8 @@ public class SigninFragment extends Fragment implements
             e.putString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, null);
             e.commit();
 
-            //launch LogIn/Create Account page
-            //Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-            //display Category Fragment - mark isLoggenIn to false
-            FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
-            // updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-            //setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            // callback the MainActivity indicating user is logged out
+            onSigninFragmentInteractionListener.onSigninFragmentInteraction(true);
        }
     }
 
@@ -362,13 +348,13 @@ public class SigninFragment extends Fragment implements
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+/*    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (onSigninFragmentInteractionListener != null) {
             onSigninFragmentInteractionListener.onSigninFragmentInteraction(uri);
         }
     }
-
+*/
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -398,7 +384,7 @@ public class SigninFragment extends Fragment implements
      */
     public interface OnSiginFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onSigninFragmentInteraction(Uri uri);
+        public void onSigninFragmentInteraction(Boolean loggedOut);
     }
 
     private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
@@ -423,7 +409,19 @@ public class SigninFragment extends Fragment implements
 
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": scope with server client id : " + scopes );
             try {
-                return GoogleAuthUtil.getToken(getActivity(), accountName, scopes);
+                tokenId = GoogleAuthUtil.getToken(getActivity(), accountName, scopes);
+
+                // update user preferences
+                //add profile to apps preference
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SmartClosetConstants.PREF_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = sharedPreferences.edit();
+
+                e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
+                e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+                e.putString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, tokenId);
+                e.commit();
+
+                return tokenId;
             } catch (IOException e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error retrieving ID token.", e);
                 return null;

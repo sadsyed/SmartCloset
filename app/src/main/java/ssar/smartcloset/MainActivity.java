@@ -514,7 +514,7 @@ public class MainActivity extends Activity implements
                 if(isUserLoggedIn()) {
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": New Tag Fragment..... ");
                     //display New Tag Fragment
-                    NewTagFragment newTagFragment = new NewTagFragment();
+                    NewTagFragment newTagFragment = NewTagFragment.newInstance(getExistingUser().getTokenId());
                     updateFragment(newTagFragment, position);
                     setFragmentTitle(position);
                 }
@@ -883,7 +883,7 @@ public class MainActivity extends Activity implements
 
         CategoryFragment categoryFragment = new CategoryFragment();
         Bundle args = new Bundle();
-        args.putString(CategoryFragment.ARG_TOKEN_ID, tokenId);
+        args.putString(CategoryFragment.ARG_TOKEN_ID, getExistingUser().getTokenId());
         args.putString(CategoryFragment.ARG_CATEGORY_SELECTED, categorySelected);
         categoryFragment.setArguments(args);
 

@@ -51,6 +51,7 @@ public class SmartClosetConstants {
     public static final String SHAREDPREFERENCE_EMAIL = "Email";
     public static final String SHAREDPREFERENCE_PASSWORD = "Password";
     public static final String SHAREDPREFERENCE_PIN = "Pin";
+    public static final String SHAREDPREFERENCE_TOKEN_ID = "tokenId";
 
     public static final String SEARCHTAB_BASE_SEARCH = "Base Search";
     public static final String SEARCHTAB_USAGE_FILTER = "Usage Filter";

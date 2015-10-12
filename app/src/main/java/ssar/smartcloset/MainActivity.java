@@ -59,9 +59,6 @@ import ssar.smartcloset.util.ToastMessage;
 
 
 public class MainActivity extends Activity implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener,
         FragmentRouter.OnFragmentRouterInteractionListener,
         ClosetFragment.OnCategorySelectedListener,
         CategoryFragment.OnCategoryFragmentInteractionListener,
@@ -80,7 +77,8 @@ public class MainActivity extends Activity implements
         UpdateArticleFragment.OnUpdateArticleFragmentInteractionListener,
         LoginFragment.OnLoginFragmentInteractionListener,
         MatchFragment.OnMatchFragmentInteractionListener,
-        FindMatchFragment.OnFindMatchFragmentInteractionListener{
+        FindMatchFragment.OnFindMatchFragmentInteractionListener,
+        SigninFragment.OnSiginFragmentInteractionListener {
     private static final String CLASSNAME = MainActivity.class.getSimpleName();
 
     protected NfcAdapter nfcAdapter;
@@ -110,7 +108,7 @@ public class MainActivity extends Activity implements
 
     public boolean matchMode = false;
 
-    //-- Google Signin ---
+ /*   //-- Google Signin ---
     // Request code used to invoke sign in user interactions.
     private static final int RC_SIGN_IN = 0;
 
@@ -125,11 +123,11 @@ public class MainActivity extends Activity implements
     private static final String SERVER_CLIENT_ID = "40560021354-k08ugq82ifbisuc8k0nh79pv91jhcmq2.apps.googleusercontent.com";
 
     ProgressDialog progressDialog;
-
+*/
     //-- Authenticate with a Backend Server
     // tokenId for authentication with a backend server
     String tokenId;
-    public AuthenticationRequestReceiver authenticationRequestReceiver;
+//    public AuthenticationRequestReceiver authenticationRequestReceiver;
 
     private String userName;
     private String userEmail;
@@ -147,7 +145,7 @@ public class MainActivity extends Activity implements
         //load slider menu items
         loadSliderMenu(savedInstanceState);
 
-        //-- Google Signin ---
+     /*   //-- Google Signin ---
         // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -158,6 +156,7 @@ public class MainActivity extends Activity implements
 
         //findViewById(R.id.sign_in_button).setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
+        */
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -203,6 +202,20 @@ public class MainActivity extends Activity implements
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+        if (isUserLoggedIn()) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment .... ");
+            //display read tag message - mark isLoggedIn to true
+            FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+            updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        } else {
+            // launch Login/Signup fragment
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+            SigninFragment signinFragment = new SigninFragment().newInstance(false);
+            updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            //setFragmentTitle("Sign in");
+        }
+
         /*if(savedInstanceState == null) {
 
             if(getExistingUser().getUserName() != null) {
@@ -224,7 +237,7 @@ public class MainActivity extends Activity implements
     }
 
     //-- Google Signin ---
-    @Override
+/*    @Override
     public void onConnected(Bundle bundle) {
         // onConnected indicates that an account was selected on the device, that the selected
         // account has granted any requested permissions to our app and that we were able to
@@ -273,9 +286,9 @@ public class MainActivity extends Activity implements
             //Create user profile with Backend Server
             createUserProfile();
         }*/
-    }
+//    }
 
-    private void createUserProfile() {
+/*    private void createUserProfile() {
         filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         createProfileRequestReceiver = new CreateProfileRequestReceiver(SmartClosetConstants.CREATE_PROFILE);
@@ -304,6 +317,7 @@ public class MainActivity extends Activity implements
 
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userName);
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, userEmail);
+        e.putString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, tokenId);
         e.commit();
     }
 
@@ -311,15 +325,15 @@ public class MainActivity extends Activity implements
     public void onConnectionSuspended(int i) {
 
     }
-
-    @Override
+*/
+/*    @Override
     public void onClick(View v) {
         /*if (v.getId() == R.id.sign_in_button) {
             onSignInClicked();
         }*/
-    }
+//    }
 
-    private void onSignInClicked() {
+/*    private void onSignInClicked() {
         // User clicked the sign-in button, so begin the sign-in process and automatically attemot to resolve any errors that occur
         mShouldResolve = true;
         mGoogleApiClient.connect();
@@ -327,20 +341,20 @@ public class MainActivity extends Activity implements
         //Show a message to the user that we are signing in
         ToastMessage.displayLongToastMessage(this, "Signing in =D");
     }
-
+*/
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+       // mGoogleApiClient.disconnect();
     }
 
-    @Override
+/*    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // Could not connect to Google Play Services.  The user needs to select an account,
         // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
@@ -392,7 +406,7 @@ public class MainActivity extends Activity implements
             mGoogleApiClient.connect();
         }
     }
-
+*/
     //-- Slider Menu ---
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
@@ -481,7 +495,8 @@ public class MainActivity extends Activity implements
                 if(isUserLoggedIn()) {
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Closet Fragment..... ");
                     //display Category Fragment
-                    ClosetFragment closetFragment = new ClosetFragment().newInstance(tokenId, userEmail);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId: " + getExistingUser().getTokenId());
+                    ClosetFragment closetFragment = new ClosetFragment().newInstance(getExistingUser().getTokenId(), getExistingUser().getUserEmail());
                     updateFragment(closetFragment, position);
                     setFragmentTitle(position);
                 }
@@ -523,7 +538,11 @@ public class MainActivity extends Activity implements
                 }
                 break;
             case 6:
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
+                // launch Login/Signup fragment
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+                SigninFragment signinFragment = new SigninFragment().newInstance(true);
+                updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+             /*   Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
                 if(mGoogleApiClient.isConnected()) {
                     //start the progress dialog
                     progressDialog = ProgressDialog.show(MainActivity.this, "", "Logging out...");
@@ -543,13 +562,21 @@ public class MainActivity extends Activity implements
                         }
                     }).start();
 
+                    sharedPreferences = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor e = sharedPreferences.edit();
+
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, null);
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, null);
+                    e.putString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, null);
+                    e.commit();
+
                     //launch LogIn/Create Account page
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
                     //display Category Fragment - mark isLoggenIn to false
                     FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
                     updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
                     setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-                }
+                }*/
             default:
                 break;
         }
@@ -559,7 +586,7 @@ public class MainActivity extends Activity implements
 
     private boolean isUserLoggedIn() {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": isUserLoggedIn: " + getExistingUser().getUserName());
-        if(getExistingUser().getUserName() == null) {
+        if(getExistingUser().getUserEmail() == null) {
             ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
             /*// launch log/in Create Account page
             ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
@@ -834,7 +861,7 @@ public class MainActivity extends Activity implements
                 break;
             case R.id.googleSignInButton:
                 Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Sign in with Google....");
-                onSignInClicked();
+               // onSignInClicked();
                 break;
         }
     }
@@ -1001,6 +1028,10 @@ public class MainActivity extends Activity implements
         }
     }
 
+    public void onSigninFragmentInteraction(Uri uri) {
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSigninFragmentInteraction..... ");
+    }
+
     private void updateFragment(Fragment fragment, Integer position) {
        FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -1022,6 +1053,7 @@ public class MainActivity extends Activity implements
         existingUser.setLastName(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, null));
         existingUser.setUserEmail(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, null));
         existingUser.setUserPin(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, null));
+        existingUser.setTokenId(sharedPreferences.getString(SmartClosetConstants.SHAREDPREFERENCE_TOKEN_ID, null));
 
         return existingUser;
     }
@@ -1111,7 +1143,7 @@ public class MainActivity extends Activity implements
         }
     }
 
-    private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
+/*    private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
 
         private Context mContext;
 
@@ -1243,8 +1275,8 @@ public class MainActivity extends Activity implements
 
             //remove the background from the image and extract three most common colors
             startColorExtractionService(imagePath);*/
-        }
-    }
+//        }
+//    }
 
     public class CreateProfileRequestReceiver extends BroadcastReceiver {
         public final String CLASSNAME = CreateProfileRequestReceiver.class.getSimpleName();

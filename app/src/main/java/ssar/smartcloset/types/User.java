@@ -11,6 +11,7 @@ public class User {
     private String userPin;
     private String userPassword;
     private String userMarkdown;
+    private String tokenId;
 
     public String getUserName() {
         return userName;
@@ -68,6 +69,14 @@ public class User {
         this.userMarkdown = userMarkdown;
     }
 
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
+    }
+
     public String toString() {
         StringBuilder user = new StringBuilder();
 
@@ -76,7 +85,8 @@ public class User {
                 .append("Last Name: ").append(lastName)
                 .append("User Email: ").append(userName)
                 .append("User Pin: ").append(userPin)
-                .append("User Markdown: ").append(userMarkdown);
+                .append("User Markdown: ").append(userMarkdown)
+                .append("Token Id: ").append(tokenId);
 
         return user.toString();
     }

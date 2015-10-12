@@ -116,7 +116,7 @@ public class ClosetFragment extends Fragment implements AdapterView.OnItemClickL
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
         }
 
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategories request");
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": JSON Request: " + requestJSON.toString());        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting GetCategories request");
         Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.GET_CATEGORIES);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());

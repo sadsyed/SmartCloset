@@ -79,6 +79,7 @@ public class SmartClosetIntentService extends IntentService {
                 case SmartClosetConstants.UPLOAD_ARTICLE_IMAGE:
                     post.addHeader("Accept", "application/json");
                     post.addHeader("Content-type", "multipart/form-data");
+                    post.addHeader("tokenId", intent.getStringExtra("tokenId"));
                     post.addHeader("articleId", intent.getStringExtra("articleId"));
                     MultipartEntityBuilder builder = MultipartEntityBuilder.create();
                     builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);

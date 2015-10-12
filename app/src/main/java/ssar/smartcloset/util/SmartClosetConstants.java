@@ -11,7 +11,7 @@ public class SmartClosetConstants {
     public static final String MAINMENU_NEWTAG_BUTTON = "MAINMENU_NEWTAG_BUTTON";
 
     public static final String APP_SPOT = "http://moonlit-shadow-813.appspot.com";
-    //public static final String APP_SPOT = "http://storefrontssar2.appspot.com";
+    //public static final String APP_SPOT = "http//localhost:17080";
     public static final String CREATE_ARTICLE = APP_SPOT + "/CreateArticle";
     public static final String UPLOAD_ARTICLE_IMAGE = APP_SPOT + "/AndroidUploadHandler";
     public static final String USE_ARTICLE = APP_SPOT + "/UseArticle";

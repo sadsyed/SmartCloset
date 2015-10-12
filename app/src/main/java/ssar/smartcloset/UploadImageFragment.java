@@ -53,6 +53,7 @@ public class UploadImageFragment extends Fragment {
     private static final int REQUEST_IMAGE = 10;
 
     // the fragment initialization parameters
+    private static final String ARG_TOKEN_ID = "tokenId";
     public static final String ARG_ARTICLE_ID = "articleId";
 
     public TestUploadRequestReceiver testUploadRequestReceiver;
@@ -60,7 +61,10 @@ public class UploadImageFragment extends Fragment {
     public UpdateImageColorsRequestReceiver updateImageColorsRequestReceiver;
 
     IntentFilter filter;
+
+    private String tokenId;
     private String articleId;
+
     Uri selectedimg;
     String imagePath;
     //String imageColors;
@@ -82,12 +86,14 @@ public class UploadImageFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param articleId Parameter 1.
+     * @param tokenId  Parameter 1.
+     * @param articleId Parameter 2.
      * @return A new instance of fragment UploadImageFragment.
      */
-    public static UploadImageFragment newInstance(String articleId) {
+    public static UploadImageFragment newInstance(String tokenId, String articleId) {
         UploadImageFragment fragment = new UploadImageFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
         args.putString(ARG_ARTICLE_ID, articleId);;
         fragment.setArguments(args);
         return fragment;
@@ -101,6 +107,7 @@ public class UploadImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
             articleId = getArguments().getString(ARG_ARTICLE_ID);
         }
 
@@ -257,6 +264,7 @@ public class UploadImageFragment extends Fragment {
 
         Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
         msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.UPLOAD_ARTICLE_IMAGE);
+        msgIntent.putExtra("tokenId", tokenId);
         msgIntent.putExtra("articleId", articleId);
         msgIntent.putExtra("ImagePath", imagePath);
         getActivity().startService(msgIntent);
@@ -391,6 +399,15 @@ public class UploadImageFragment extends Fragment {
                     imagePath = (String)json.get("file");
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Image URL: " + imagePath);
 
+                    //check error code for authentication failure
+                    if (imagePath == null) {
+                        int errorcode = json.getInt("errorcode");
+
+                        if (errorcode == -2) {
+                            ToastMessage.displayLongToastMessage(getActivity(), "Log in to create an new article");
+                        }
+                    }
+
                     /*if(errorcode == 0) {
                         ToastMessage.displayShortToastMessage(getActivity(), "Article was updated successfully");
                     }*/
@@ -402,6 +419,7 @@ public class UploadImageFragment extends Fragment {
             } catch (JSONException e)
             {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + e.toString());
             }
 
             progressDialog.dismiss();

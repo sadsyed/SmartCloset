@@ -422,6 +422,7 @@ public class UploadImageFragment extends Fragment {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + e.toString());
             }
 
+
             progressDialog.dismiss();
 
             //callback to launch UploadImageFragment upon the successful creation of new article

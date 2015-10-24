@@ -821,6 +821,7 @@ public class MainActivity extends Activity implements
         JSONObject requestJSON = new JSONObject();
         try {
             requestJSON.put("articleId", articleUuid);
+            requestJSON.put("tokenId", getExistingUser().getTokenId());
         } catch (Exception e) {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
         }
@@ -1110,7 +1111,7 @@ public class MainActivity extends Activity implements
                     context.unregisterReceiver(readArticleRequestReceiver);
 
                     String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ReadArticle Service response JSON: " + responseJSON);
 
                     // get list of articles in the selected category
                     articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);

@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.channels.CancelledKeyException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -713,6 +714,8 @@ public class MainActivity extends Activity implements
             try {
                 requestJSON.put("articleId", articleId);
                 requestJSON.put("tokenId", getExistingUser().getTokenId());
+                requestJSON.put("email", getExistingUser().getUserEmail());
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": readTag RequestJson = " + requestJSON.toString());
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }
@@ -729,7 +732,7 @@ public class MainActivity extends Activity implements
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
                 this.startService(msgIntent);
-                Log.i(CLASSNAME, "Started intent service");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Started intent service");
             }
             //search details for tagged item
             else if (searchMode) {
@@ -744,7 +747,7 @@ public class MainActivity extends Activity implements
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.READ_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
                 this.startService(msgIntent);
-                Log.i(CLASSNAME, "Started intent service");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Started intent service");
             }
             //if searchMode is not active, mark the usage
             else {
@@ -758,7 +761,7 @@ public class MainActivity extends Activity implements
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.USE_ARTICLE);
                 msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
                 this.startService(msgIntent);
-                Log.i(CLASSNAME, "Started intent service");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Started intent service");
             }
         }
     }
@@ -907,7 +910,7 @@ public class MainActivity extends Activity implements
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onUpdateArticleFragment..... ");
 
         //launch UpdateArticleFragment for the selected article
-        UpdateArticleFragment updateArticleFragment = UpdateArticleFragment.newInstance(tokenId, article);
+        UpdateArticleFragment updateArticleFragment = UpdateArticleFragment.newInstance(getExistingUser().getTokenId(), article);
 
         updateFragment(updateArticleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
         setTitle(article.getArticleName());
@@ -1007,7 +1010,9 @@ public class MainActivity extends Activity implements
     public void onMatchFragmentInteraction(Article article, String category) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onMatchFragmentInteraction......");
         // launch findMatchFragment to find match for selected article
-        FindMatchFragment findMatchFragment = FindMatchFragment.newInstance(article.getArticleId(), category);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId = " + getExistingUser().getTokenId());
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": userEmail = " + getExistingUser().getUserEmail());
+        FindMatchFragment findMatchFragment = FindMatchFragment.newInstance(getExistingUser().getTokenId(), getExistingUser().getUserEmail(), article.getArticleId(), category);
         updateFragment(findMatchFragment, SmartClosetConstants.SLIDEMENU_SEARCH_ITEM);
     }
 
@@ -1103,7 +1108,7 @@ public class MainActivity extends Activity implements
                         Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
                     }
                 } catch (IllegalArgumentException e){
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
             else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && readArticleRequestReceiver != null) {
@@ -1124,7 +1129,7 @@ public class MainActivity extends Activity implements
                     setTitle(article.getArticleType());
                 }
                 catch (IllegalArgumentException e){
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
             else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && matchArticleRequestReceiver != null) {
@@ -1134,18 +1139,28 @@ public class MainActivity extends Activity implements
                     String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Service response JSON: " + responseJSON);
 
-                    // get list of articles in the selected category
-                    articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+                    JSONObject json = new JSONObject(responseJSON);
+                    int errorcode = json.getInt("errorcode");
 
-                    //launch match filter fragment for searched article
-                    Article article = (Article) articles.get(0);
+                    if (errorcode == 1) {
+                        // no article found
+                        Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + json.getString("errormsg"));
+                        ToastMessage.displayLongToastMessage(context, "No article found, tag again");
+                    } else {
+                        // get list of articles in the selected category
+                        articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
 
-                    MatchFragment matchFragment = MatchFragment.newInstance(article, true);
-                    updateFragment(matchFragment, SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
-                    setTitle("Match");
-                }
-                catch (IllegalArgumentException e){
-                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                        //launch match filter fragment for searched article
+                        Article article = (Article) articles.get(0);
+
+                        MatchFragment matchFragment = MatchFragment.newInstance(article, true);
+                        updateFragment(matchFragment, SmartClosetConstants.SLIDEMENU_MATCH_ITEM);
+                        setTitle("Match");
+                    }
+                } catch (IllegalArgumentException e){
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                } catch (JSONException e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object: " + e.getMessage());
                 }
             }
         }

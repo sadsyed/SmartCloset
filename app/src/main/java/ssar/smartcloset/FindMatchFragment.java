@@ -17,6 +17,7 @@ import android.widget.GridView;
 
 import org.json.JSONObject;
 
+import java.nio.channels.CancelledKeyException;
 import java.util.List;
 
 import ssar.smartcloset.types.Article;
@@ -39,9 +40,13 @@ public class FindMatchFragment extends Fragment implements AdapterView.OnItemCli
     private static final String CLASSNAME = FindMatchFragment.class.getSimpleName();
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_TOKEN_ID = "tokenId";
+    private static final String ARG_EMAIL = "email";
     private static final String ARG_ARTICLE_ID = "articleId";
     private static final String ARG_CATEGORY = "category";
 
+    private String tokenId;
+    private String email;
     private String articleId;
     private String category;
     private List<CustomListItem> articles;
@@ -69,9 +74,11 @@ public class FindMatchFragment extends Fragment implements AdapterView.OnItemCli
      * @return A new instance of fragment FindMatchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FindMatchFragment newInstance(String articleId, String category) {
+    public static FindMatchFragment newInstance(String tokenId, String email, String articleId, String category) {
         FindMatchFragment fragment = new FindMatchFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TOKEN_ID, tokenId);
+        args.putString(ARG_EMAIL, email);
         args.putString(ARG_ARTICLE_ID, articleId);
         args.putString(ARG_CATEGORY, category);
         fragment.setArguments(args);
@@ -86,6 +93,8 @@ public class FindMatchFragment extends Fragment implements AdapterView.OnItemCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            tokenId = getArguments().getString(ARG_TOKEN_ID);
+            email = getArguments().getString(ARG_EMAIL);
             articleId = getArguments().getString(ARG_ARTICLE_ID);
             category = getArguments().getString(ARG_CATEGORY);
         }
@@ -97,9 +106,11 @@ public class FindMatchFragment extends Fragment implements AdapterView.OnItemCli
         //set the JSON request object
         JSONObject requestJSON = new JSONObject();
         try {
+            requestJSON.put("tokenId", tokenId);
+            requestJSON.put("email", email);
             requestJSON.put("articleId", articleId);
             requestJSON.put("category", category);
-            //TODO: requestJSON.put("email", loggedInUseremail);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": RequestJson =  " + requestJSON.toString());
         } catch (Exception e) {
             Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
         }

@@ -712,6 +712,7 @@ public class MainActivity extends Activity implements
             JSONObject requestJSON = new JSONObject();
             try {
                 requestJSON.put("articleId", articleId);
+                requestJSON.put("tokenId", getExistingUser().getTokenId());
             } catch (Exception e) {
                 Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating an request JSON.");
             }

@@ -128,7 +128,8 @@ public class MainActivity extends Activity implements
     //-- Authenticate with a Backend Server
     // tokenId for authentication with a backend server
     String tokenId;
-//    public AuthenticationRequestReceiver authenticationRequestReceiver;
+    public AuthenticationRequestReceiver authenticationRequestReceiver;
+    ProgressDialog progressDialog;
 
     private String userName;
     private String userEmail;
@@ -203,7 +204,12 @@ public class MainActivity extends Activity implements
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        if (isUserLoggedIn()) {
+        if (getExistingUser().getTokenId() != null) {
+            // authenticate tokenId
+            authenticateWithBackendServer();
+        }
+
+        /*if (isUserLoggedIn()) {
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment .... ");
             //display read tag message - mark isLoggedIn to true
             FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
@@ -215,7 +221,7 @@ public class MainActivity extends Activity implements
             SigninFragment signinFragment = new SigninFragment().newInstance(false);
             updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
             //setFragmentTitle("Sign in");
-        }
+        }*/
 
         /*if(savedInstanceState == null) {
 
@@ -587,6 +593,11 @@ public class MainActivity extends Activity implements
 
     private boolean isUserLoggedIn() {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": isUserLoggedIn: " + getExistingUser().getUserName());
+
+        /*if (getExistingUser().getTokenId() != null) {
+            // authenticate tokenId
+            authenticateWithBackendServer();
+        }*/
         if(getExistingUser().getUserEmail() == null) {
             ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
             /*// launch log/in Create Account page
@@ -599,6 +610,39 @@ public class MainActivity extends Activity implements
             return false;
         }
         return true;
+    }
+
+    private void authenticateWithBackendServer() {
+        //send tokenId to backend server
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting authentication with backend server using tokenId: " + tokenId);
+
+        filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        authenticationRequestReceiver = new AuthenticationRequestReceiver(SmartClosetConstants.TOKEN_SIGNIN);
+        this.registerReceiver(authenticationRequestReceiver, filter);
+
+        //set the tokenId in the JSON request object
+        JSONObject requestJSON = new JSONObject();
+        try {
+            requestJSON.put("tokenId", getExistingUser().getTokenId());
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": requestJson with tokenId : " + requestJSON.toString());
+        } catch (Exception e) {
+            Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception while creating a JSON request with tokenId");
+        }
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Starting TokenSigin request");
+        Intent msgIntent = new Intent(this, SmartClosetIntentService.class);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.TOKEN_SIGNIN);
+        msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+        msgIntent.putExtra("tokenId", tokenId);
+        this.startService(msgIntent);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Authenticating with a Backend Server...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //progressDialog.setIndeterminate(true);
+        progressDialog.show();
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Authenticating with Backend Server... ");
     }
 
     private void setFragmentTitle(int position) {
@@ -1340,7 +1384,75 @@ public class MainActivity extends Activity implements
         }
     }
 
+    public class AuthenticationRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = AuthenticationRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
 
+        public AuthenticationRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(authenticationRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(authenticationRequestReceiver);
+
+                } catch (IllegalArgumentException e) {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": TestSignin service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            Boolean valid;
+
+            try {
+                json = new JSONObject(responseJSON);
+                JSONObject accessTokenStatus = (JSONObject) json.get("access_token_status");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": access_token_status: " + accessTokenStatus);
+                valid = (Boolean) accessTokenStatus.get("valid");
+                //imagePath = (String)json.get("file");
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log in is successful: " + valid);
+
+                if(valid) {
+                    //ToastMessage.displayShortToastMessage(context, "User was authenticated successfully");
+
+                    // display the Home Fragment
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment .... ");
+                    //display read tag message - mark isLoggedIn to true
+                    FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+                    updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                    setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                } else {
+                    //ToastMessage.displayLongToastMessage(context, "Server authentication failed");
+
+                    // launch Login/Signup fragment
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+                    SigninFragment signinFragment = new SigninFragment().newInstance(false);
+                    updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                    //setFragmentTitle("Sign in");
+                }
+                //callback to launch UploadImageFragment upon the successful creation of new article
+                //onNewTagFragmentInteractionListener.onNewTagFragmentInteraction(currentUuid);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object");
+            }
+
+            progressDialog.dismiss();
+
+           /* //callback to launch UploadImageFragment upon the successful creation of new article
+            ToastMessage.displayLongToastMessage(context, "Article successfully created");
+            //disable selectFileButton and takeAPictureButton
+            selectFileButton.setVisibility(View.GONE);
+            takeAPicture.setVisibility(View.GONE);
+            writeTagButton.setVisibility(View.VISIBLE);
+
+            //remove the background from the image and extract three most common colors
+            startColorExtractionService(imagePath);*/
+        }
+    }
 }
 
 

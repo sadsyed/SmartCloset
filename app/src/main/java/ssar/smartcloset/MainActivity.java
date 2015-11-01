@@ -1214,6 +1214,7 @@ public class MainActivity extends Activity implements
                     Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
                 }
             }
+            // search Article
             else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && readArticleRequestReceiver != null) {
                 try {
                     context.unregisterReceiver(readArticleRequestReceiver);
@@ -1221,18 +1222,28 @@ public class MainActivity extends Activity implements
                     String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": ReadArticle Service response JSON: " + responseJSON);
 
-                    // get list of articles in the selected category
-                    articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
+                    JSONObject json = new JSONObject(responseJSON);
+                    int errorcode = json.getInt("errorcode");
 
-                    //launch article fragment for searched article
-                    Article article = (Article) articles.get(0);
-                    ArticleFragment articleFragment = new ArticleFragment().newInstance(article);
+                    if (errorcode == 1) {
+                        //no article found
+                        Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": " + json.getString("errormsg"));
+                        ToastMessage.displayLongToastMessage(context, "No article found, tag again");
+                    } else {
+                        // get list of articles in the selected category
+                        articles = JsonParserUtil.jsonToArticle(serviceUrl, responseJSON);
 
-                    updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
-                    setTitle(article.getArticleType());
-                }
-                catch (IllegalArgumentException e){
+                        //launch article fragment for searched article
+                        Article article = (Article) articles.get(0);
+                        ArticleFragment articleFragment = new ArticleFragment().newInstance(article);
+
+                        updateFragment(articleFragment, SmartClosetConstants.SLIDEMENU_ARTICLE_ITEM);
+                        setTitle(article.getArticleType());
+                    }
+                } catch (IllegalArgumentException e){
                     Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                } catch (JSONException e) {
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error reading the JSON return object: " + e.getMessage());
                 }
             }
             else if(serviceUrl.equals(SmartClosetConstants.READ_ARTICLE) && matchArticleRequestReceiver != null) {

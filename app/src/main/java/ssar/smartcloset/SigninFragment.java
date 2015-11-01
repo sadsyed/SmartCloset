@@ -191,15 +191,6 @@ public class SigninFragment extends Fragment implements
         Log.d(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onConnected:" + bundle);
         mShouldResolve = false;
 
-        // Show the signed-in UI
-        //showSignedInUI();
-        //ToastMessage.displayLongToastMessage(this, "Signed in UI - category view");
-        //Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-        //display read tag message - mark isLoggedIn to true
-       // FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
-       // updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-       // setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-
         //only works if user has a google+ profile
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -216,7 +207,7 @@ public class SigninFragment extends Fragment implements
         userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
-        // reset user tokenId
+        // reset user tokenId and set the user Profile
         new GetIdTokenTask(getActivity()).execute();
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId: " + tokenId);
 
@@ -224,11 +215,6 @@ public class SigninFragment extends Fragment implements
         if (!logout) {
             onSigninFragmentInteractionListener.onSigninFragmentInteraction(false);
         }
-
-        /*if(getExistingUser().getUserName() == null) {
-            //Create user profile with Backend Server
-            createUserProfile();
-        }*/
     }
 
     @Override

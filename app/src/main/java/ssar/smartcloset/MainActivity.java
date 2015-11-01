@@ -2,6 +2,7 @@ package ssar.smartcloset;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -134,6 +135,10 @@ public class MainActivity extends Activity implements
     private String userName;
     private String userEmail;
 
+    FragmentTransaction transaction;
+    FragmentManager manager;
+    SigninFragment signinFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +150,7 @@ public class MainActivity extends Activity implements
         handleNfcIntent(getIntent());
 
         //load slider menu items
-        loadSliderMenu(savedInstanceState);
+       loadSliderMenu(savedInstanceState);
 
      /*   //-- Google Signin ---
         // Build GoogleApiClient with access to basic profile
@@ -159,6 +164,26 @@ public class MainActivity extends Activity implements
         //findViewById(R.id.sign_in_button).setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         */
+
+        /*Fragment inputFragment  = new SigninFragment();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.signin_fragment,inputFragment,"resultSigninTag").commit();*/
+
+       /* Fragment inputFragment  = new SigninFragment();
+
+        manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.signin_fragment,inputFragment,"resultfragtag").commit();*/
+
+        /*Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "MainActivity.onCreate");
+        signinFragment = new SigninFragment();
+
+        manager = getFragmentManager();
+        manager.beginTransaction().replace(R.id.signin_fragment, signinFragment, "SigninFragment").commit();
+        /*Fragment signinFragment = new SigninFragment();
+        manager = getFragmentManager();
+        manager.beginTransaction().add(R.id.signin_fragment, signinFragment,"SigninFragment").commit();*/
+        //Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Added SigninFragment to Fragment Manager: " + manager.toString());
     }
 
     private void loadSliderMenu(Bundle savedInstanceState) {
@@ -414,6 +439,35 @@ public class MainActivity extends Activity implements
         }
     }
 */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SigninFragment.RC_SIGN_IN) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": in MainActivity.onActivityResult");
+
+            /*FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.findFragmentById(R.id.signin_fragment).onActivityResult(requestCode, resultCode, data);*/
+            //SigninFragment signinfragment = (SigninFragment) getFragmentManager().findFragmentByTag("resultfragtag");
+            //Fragment siginfragment = getFragmentManager().findFragmentById(R.id.signin_fragment).getTargetFragment();
+
+            //signinfragment.onActivityResult(requestCode, resultCode, data);
+
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "MainActivity.onCreate");
+            signinFragment = new SigninFragment();
+
+            manager = getFragmentManager();
+            manager.beginTransaction().replace(R.id.signin_fragment, signinFragment, "SigninFragment").commit();
+        /*Fragment signinFragment = new SigninFragment();
+        manager = getFragmentManager();
+        manager.beginTransaction().add(R.id.signin_fragment, signinFragment,"SigninFragment").commit();*/
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Added SigninFragment to Fragment Manager: " + manager.toString());
+
+            //Fragment fragment = manager.findFragmentByTag("SigninFragment");
+            //fragment.onActivityResult(requestCode, resultCode, data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     //-- Slider Menu ---
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
@@ -545,10 +599,12 @@ public class MainActivity extends Activity implements
                 }
                 break;
             case 6:
-                // launch Login/Signup fragment
-                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
-                SigninFragment signinFragment = new SigninFragment().newInstance(true);
-                updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                if(isUserLoggedIn()) {
+                    // launch Login/Signup fragment
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+                    SigninFragment signinFragment = new SigninFragment().newInstance(true);
+                    updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+                }
              /*   Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
                 if(mGoogleApiClient.isConnected()) {
                     //start the progress dialog
@@ -594,21 +650,17 @@ public class MainActivity extends Activity implements
     private boolean isUserLoggedIn() {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": isUserLoggedIn: " + getExistingUser().getUserName());
 
-        /*if (getExistingUser().getTokenId() != null) {
-            // authenticate tokenId
-            authenticateWithBackendServer();
-        }*/
         if(getExistingUser().getUserEmail() == null) {
             ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
-            /*// launch log/in Create Account page
-            ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment..... ");
-            //display Category Fragment
-            FragmentRouter fragmentRouter = new FragmentRouter().newInstance(false);
-            updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
-            setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);*/
+
+            // launch Login/Signup fragment
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
+            SigninFragment signinFragment = new SigninFragment().newInstance(false);
+            updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+
             return false;
         }
+
         return true;
     }
 
@@ -1086,6 +1138,13 @@ public class MainActivity extends Activity implements
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
             SigninFragment signinFragment = new SigninFragment().newInstance(false);
             updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        } else {
+            // display the Home Fragment
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Home Fragment .... ");
+            //display read tag message - mark isLoggedIn to true
+            FragmentRouter fragmentRouter = new FragmentRouter().newInstance(true);
+            updateFragment(fragmentRouter, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+            setFragmentTitle(SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         }
     }
 

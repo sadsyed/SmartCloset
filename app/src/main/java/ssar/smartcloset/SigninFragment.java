@@ -57,7 +57,7 @@ public class SigninFragment extends Fragment implements
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private Boolean logout;
+    private Boolean logout = false;
     private String mParam2;
 
     /** Standard activity result: operation succeeded. */
@@ -73,7 +73,7 @@ public class SigninFragment extends Fragment implements
 
     //-- Google Signin ---
     // Request code used to invoke sign in user interactions.
-    private static final int RC_SIGN_IN = 0;
+    public static final int RC_SIGN_IN = 0;
 
     // Client used to interact with Google APIs
     private GoogleApiClient mGoogleApiClient;
@@ -220,6 +220,11 @@ public class SigninFragment extends Fragment implements
         new GetIdTokenTask(getActivity()).execute();
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId: " + tokenId);
 
+        // load HomeFragment
+        if (!logout) {
+            onSigninFragmentInteractionListener.onSigninFragmentInteraction(false);
+        }
+
         /*if(getExistingUser().getUserName() == null) {
             //Create user profile with Backend Server
             createUserProfile();
@@ -234,6 +239,8 @@ public class SigninFragment extends Fragment implements
     private void onSignInClicked() {
         // User clicked the sign-in button, so begin the sign-in process and automatically attemot to resolve any errors that occur
         mShouldResolve = true;
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Sign in button clicked");
         mGoogleApiClient.connect();
 
         //Show a message to the user that we are signing in
@@ -250,6 +257,7 @@ public class SigninFragment extends Fragment implements
         if (!mIsResolving && mShouldResolve) {
             if (connectionResult.hasResolution()) {
                 try {
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": startResolutionForResult");
                     connectionResult.startResolutionForResult(getActivity(), RC_SIGN_IN);
                     mIsResolving = true;
                 } catch (IntentSender.SendIntentException e) {

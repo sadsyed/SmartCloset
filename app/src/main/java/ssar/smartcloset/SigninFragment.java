@@ -97,7 +97,9 @@ public class SigninFragment extends Fragment implements
 
     private OnSiginFragmentInteractionListener onSigninFragmentInteractionListener;
 
-    private SignInButton googleSigninButton;
+    //private SignInButton googleSigninButton;
+    private Button googleSigninButton;
+    private Button googlesignUpButton;
     private Button googleSignoutButton;
 
     /**
@@ -148,8 +150,11 @@ public class SigninFragment extends Fragment implements
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_signin, container, false);
 
-        googleSigninButton = (SignInButton) view.findViewById(R.id.googleSignInButton);
+        googleSigninButton = (Button) view.findViewById(R.id.googleSignInButton);
         googleSigninButton.setOnClickListener(this);
+
+        googlesignUpButton = (Button) view.findViewById(R.id.googleSignUpButton);
+        googlesignUpButton.setOnClickListener(this);
 
         googleSignoutButton = (Button) view.findViewById(R.id.signoutButton);
         googleSignoutButton.setOnClickListener(this);
@@ -158,9 +163,11 @@ public class SigninFragment extends Fragment implements
 
         if (logout) {
             googleSigninButton.setVisibility(View.GONE);
+            googlesignUpButton.setVisibility(View.GONE);
             googleSignoutButton.setVisibility(View.VISIBLE);
         } else {
             googleSigninButton.setVisibility(View.VISIBLE);
+            googlesignUpButton.setVisibility(View.GONE);
             googleSignoutButton.setVisibility(View.GONE);
         }
 

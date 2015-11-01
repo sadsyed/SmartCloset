@@ -29,21 +29,41 @@
         android:layout_below="@+id/titleTextView"
         android:layout_centerHorizontal="true" />
 
-    <LinearLayout
-        android:layout_width="215dip"
+    <Button
+        android:id="@+id/googleSignInButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical"
+        android:background="@color/google_blue"
+        android:drawableLeft="@drawable/btn_google_dark_normal"
+        android:drawablePadding="24dp"
+        android:text="@string/common_signin_button_text_long"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textAlignment="gravity"
         android:layout_below="@+id/separator"
-        android:layout_marginTop="40dp"
-        android:id="@+id/linearLayout2">
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginTop="40dp"/>
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/googleSignInButton"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/googleSignUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/google_blue"
+        android:drawableLeft="@drawable/btn_google_dark_normal"
+        android:drawablePadding="24dp"
+        android:text="Sign up with Google"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textAlignment="gravity"
+        android:layout_below="@+id/separator"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginTop="40dp"/>
 
     <Button
         android:id="@+id/signoutButton"
@@ -55,8 +75,8 @@
         android:textSize="14dp"
         android:textAlignment="center"
         android:text="Logout"
-        android:layout_below="@+id/separator"
         android:layout_marginTop="40dp"
-        android:layout_alignEnd="@+id/linearLayout2" />
+        android:layout_below="@+id/separator"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

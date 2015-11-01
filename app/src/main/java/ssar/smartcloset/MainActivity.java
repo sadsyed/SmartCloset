@@ -229,9 +229,11 @@ public class MainActivity extends Activity implements
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        if (getExistingUser().getTokenId() != null) {
-            // authenticate tokenId
-            authenticateWithBackendServer();
+        if (isUserLoggedIn()) {
+            if (getExistingUser().getTokenId() != null) {
+                // authenticate tokenId
+                authenticateWithBackendServer();
+            }
         }
 
         /*if (isUserLoggedIn()) {

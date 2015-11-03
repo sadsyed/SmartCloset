@@ -7,4 +7,5 @@
     <color name="sc_green">#93c135</color>
     <color name="sc_yellow">#ffd7d219</color>
     <color name="google_blue">#4285F4</color>
+    <color name="signin_gray">#4f4e4e</color>
 </resources>

@@ -35,40 +35,8 @@
 
     <LinearLayout
         style="@style/InputLinearLayout"
-        android:id="@+id/firstNameLinearLayout"
-        android:layout_below="@id/userNameLinearLayout">
-
-        <TextView
-            style="@style/InputLabelTextView"
-            android:text="@string/profile_first_name_label"
-            android:id="@+id/firstNameTextViewLabel" />
-
-        <EditText
-            style="@style/InputEditTextView"
-            android:id="@+id/firstNameEditText" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        style="@style/InputLinearLayout"
-        android:id="@+id/lastNameLinearLayout"
-        android:layout_below="@id/firstNameLinearLayout">
-
-        <TextView
-            style="@style/InputLabelTextView"
-            android:text="@string/profile_last_name_label"
-            android:id="@+id/lastNameTextViewLabel" />
-
-        <EditText
-            style="@style/InputEditTextView"
-            android:id="@+id/lastNameEditText" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        style="@style/InputLinearLayout"
         android:id="@+id/emailLinearLayout"
-        android:layout_below="@id/lastNameLinearLayout">
+        android:layout_below="@id/userNameLinearLayout">
 
         <TextView
             style="@style/InputLabelTextView"

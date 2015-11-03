@@ -47,8 +47,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     IntentFilter filter;
 
     private EditText userNameEditText;
-    private EditText firstNameEditText;
-    private EditText lastNameEditText;
     private EditText emailEditText;
     private EditText pinEditText;
     private EditText passwordEditText;
@@ -99,8 +97,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             view = inflater.inflate(R.layout.fragment_profile, container, false);
 
             userNameEditText = (EditText) view.findViewById(R.id.userNameEditText);
-            firstNameEditText = (EditText) view.findViewById(R.id.firstNameEditText);
-            lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
 
             TextView profileTitleTextView = (TextView) view.findViewById(R.id.profileTitleTextView);
@@ -112,10 +108,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
             userNameEditText.setEnabled(false);
             userNameEditText.setText(existingUser.getUserName());
-            firstNameEditText.setEnabled(false);
-            firstNameEditText.setText(existingUser.getFirstName());
-            lastNameEditText.setEnabled(false);
-            lastNameEditText.setText(existingUser.getLastName());
+
             emailEditText.setEnabled(false);
             emailEditText.setText(existingUser.getUserEmail());
         } else {
@@ -123,8 +116,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             view = inflater.inflate(R.layout.fragment_create_profile, container, false);
 
             userNameEditText = (EditText) view.findViewById(R.id.userNameEditText);
-            firstNameEditText = (EditText) view.findViewById(R.id.firstNameEditText);
-            lastNameEditText = (EditText) view.findViewById(R.id.lastNameEditText);
             emailEditText = (EditText) view.findViewById(R.id.emailEditText);
             passwordEditText = (EditText) view.findViewById(R.id.passwordEditText);
             pinEditText = (EditText) view.findViewById(R.id.pinEditText);
@@ -140,8 +131,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         //send create profile request to the server
         User newUser = new User();
         newUser.setUserName(userNameEditText.getText().toString());
-        newUser.setFirstName(firstNameEditText.getText().toString());
-        newUser.setLastName(lastNameEditText.getText().toString());
         newUser.setUserEmail(emailEditText.getText().toString());
         newUser.setUserPassword(passwordEditText.getText().toString());
         newUser.setUserPin(pinEditText.getText().toString());
@@ -177,8 +166,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         SharedPreferences.Editor e = sharedPreferences.edit();
 
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_USER_NAME, userNameEditText.getText().toString());
-        e.putString(SmartClosetConstants.SHAREDPREFERENCE_FIRST_NAME, firstNameEditText.getText().toString());
-        e.putString(SmartClosetConstants.SHAREDPREFERENCE_LAST_NAME, lastNameEditText.getText().toString());
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_EMAIL, emailEditText.getText().toString());
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_PASSWORD, passwordEditText.getText().toString());
         e.putString(SmartClosetConstants.SHAREDPREFERENCE_PIN, pinEditText.getText().toString());

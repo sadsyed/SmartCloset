@@ -28,7 +28,7 @@
     <string name="newtag_private_checkbox">This item is private.</string>
     <string name="newtag_write_msg">Tap and hold the tag against the back of the phone to write.</string>
 
-    <string name="profile_user_name_label">User Name</string>
+    <string name="profile_user_name_label">Name</string>
     <string name="profile_first_name_label">First Nameo</string>
     <string name="profile_last_name_label">Last Name</string>
     <string name="profile_email_label">Email</string>

@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 import com.google.android.gms.auth.GoogleAuthException;
@@ -29,6 +31,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -48,17 +51,18 @@ import ssar.smartcloset.util.ToastMessage;
 public class SigninFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        View.OnTouchListener {
     private static final String CLASSNAME = SigninFragment.class.getSimpleName();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_LOGOUT = "logout";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_SIGNIN = "signin";
 
     // TODO: Rename and change types of parameters
     private Boolean logout = false;
-    private String mParam2;
+    private Boolean signin;
 
     /** Standard activity result: operation succeeded. */
     public static final int RESULT_OK = -1;
@@ -101,6 +105,11 @@ public class SigninFragment extends Fragment implements
     private Button googleSigninButton;
     private Button googlesignUpButton;
     private Button googleSignoutButton;
+    private TextView signInTextView;
+
+    //-- Create user account with SCI server
+    private Boolean signingUp = true;
+    private CreateProfileRequestReceiver createProfileRequestReceiver;
 
     /**
      * Use this factory method to create a new instance of
@@ -110,11 +119,11 @@ public class SigninFragment extends Fragment implements
      * @return A new instance of fragment SigninFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SigninFragment newInstance(Boolean logout) {
+    public static SigninFragment newInstance(Boolean logout, Boolean signin) {
         SigninFragment fragment = new SigninFragment();
         Bundle args = new Bundle();
         args.putBoolean(ARG_LOGOUT, logout);
-        //args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_SIGNIN, signin);
         fragment.setArguments(args);
         return fragment;
     }
@@ -128,6 +137,7 @@ public class SigninFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             logout = getArguments().getBoolean(ARG_LOGOUT);
+            signin = getArguments().getBoolean(ARG_SIGNIN);
         }
 
         //-- Google Signin ---
@@ -159,16 +169,27 @@ public class SigninFragment extends Fragment implements
         googleSignoutButton = (Button) view.findViewById(R.id.signoutButton);
         googleSignoutButton.setOnClickListener(this);
 
-        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "logout: " + logout);
+        signInTextView = (TextView) view.findViewById(R.id.signInTextView);
+        signInTextView.setOnTouchListener(this);
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " logout: " + logout);
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " signin: " + signin);
 
         if (logout) {
             googleSigninButton.setVisibility(View.GONE);
             googlesignUpButton.setVisibility(View.GONE);
+            signInTextView.setVisibility(View.GONE);
             googleSignoutButton.setVisibility(View.VISIBLE);
-        } else {
+        } else if (signin) {
             googleSigninButton.setVisibility(View.VISIBLE);
+            signInTextView.setVisibility(View.GONE);
             googlesignUpButton.setVisibility(View.GONE);
             googleSignoutButton.setVisibility(View.GONE);
+        } else {
+            googleSigninButton.setVisibility(View.GONE);
+            signInTextView.setVisibility(View.VISIBLE);
+            googlesignUpButton.setVisibility(View.VISIBLE);
+            googleSignoutButton.setVisibility(view.GONE);
         }
 
         //Find the +1 button
@@ -214,13 +235,36 @@ public class SigninFragment extends Fragment implements
         userEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": user email address is : " + userEmail);
 
+        if (signingUp) {
+            // create account with SCI server
+            filter = new IntentFilter(SmartClosetConstants.PROCESS_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            createProfileRequestReceiver = new CreateProfileRequestReceiver(SmartClosetConstants.CREATE_ARTICLE);
+            getActivity().registerReceiver(createProfileRequestReceiver, filter);
+
+            //set the JSON request object
+            JSONObject requestJSON = new JSONObject();
+            try {
+                requestJSON.put("username",userName);
+                requestJSON.put("email", userEmail);
+            } catch (Exception e) {
+                Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Exception while creating an request JSON.");
+            }
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Starting Create Profile request");
+            Intent msgIntent = new Intent(getActivity(), SmartClosetIntentService.class);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_URL, SmartClosetConstants.CREATE_PROFILE);
+            msgIntent.putExtra(SmartClosetIntentService.REQUEST_JSON, requestJSON.toString());
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Finished Creating intent");
+            ((MainActivity)getActivity()).startService(msgIntent);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + " :Started intent service");
+        }
         // reset user tokenId and set the user Profile
         new GetIdTokenTask(getActivity()).execute();
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": tokenId: " + tokenId);
 
         // load HomeFragment
         if (!logout) {
-            onSigninFragmentInteractionListener.onSigninFragmentInteraction(false);
+            onSigninFragmentInteractionListener.onSigninFragmentInteraction(false, false);
         }
     }
 
@@ -234,10 +278,23 @@ public class SigninFragment extends Fragment implements
         mShouldResolve = true;
 
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Sign in button clicked");
+        signingUp = false;
         mGoogleApiClient.connect();
 
         //Show a message to the user that we are signing in
         ToastMessage.displayLongToastMessage(getActivity(), "Signing in =D");
+    }
+
+    private void onSignUpClicked() {
+        // User clicked the sign-up button, so begin the sign-in process and automatically attempt tp resolve any errors that occur
+        mShouldResolve = true;
+
+        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Sign up button clicked");
+        signingUp  = true;
+        mGoogleApiClient.connect();
+
+        //show a message to the user that we are creating an account
+        ToastMessage.displayLongToastMessage(getActivity(), "Signing up with Google Account");
     }
 
     @Override
@@ -328,7 +385,7 @@ public class SigninFragment extends Fragment implements
             e.commit();
 
             // callback the MainActivity indicating user is logged out
-            onSigninFragmentInteractionListener.onSigninFragmentInteraction(true);
+            onSigninFragmentInteractionListener.onSigninFragmentInteraction(true, false);
        }
     }
 
@@ -344,9 +401,18 @@ public class SigninFragment extends Fragment implements
     public void onClick(View v) {
         if (v.getId() == R.id.googleSignInButton) {
             onSignInClicked();
+        } else if (v.getId() == R.id.googleSignUpButton) {
+            onSignUpClicked();
         } else if (v.getId() == R.id.signoutButton) {
             logoutCurrentUser();
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // callback the MainActivity indicating user wants to sign in with an existing account
+        onSigninFragmentInteractionListener.onSigninFragmentInteraction(false, true);
+        return true;
     }
 
 /*    // TODO: Rename method, update argument and hook method into UI event
@@ -385,7 +451,7 @@ public class SigninFragment extends Fragment implements
      */
     public interface OnSiginFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onSigninFragmentInteraction(Boolean loggedOut);
+        public void onSigninFragmentInteraction(Boolean loggedOut, Boolean siginIn);
     }
 
     private class GetIdTokenTask extends AsyncTask<Void, Void, String> {
@@ -532,6 +598,45 @@ public class SigninFragment extends Fragment implements
 
             //remove the background from the image and extract three most common colors
             startColorExtractionService(imagePath);*/
+        }
+    }
+
+    public class CreateProfileRequestReceiver extends BroadcastReceiver {
+        public final String CLASSNAME = CreateProfileRequestReceiver.class.getSimpleName();
+        private String serviceUrl;
+
+        public CreateProfileRequestReceiver (String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(createProfileRequestReceiver != null) {
+                try {
+                    context.unregisterReceiver(createProfileRequestReceiver);
+                } catch (IllegalArgumentException e){
+                    Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Error unregistering receiver: " + e.getMessage());
+                }
+            }
+
+            String responseJSON = intent.getStringExtra(SmartClosetIntentService.RESPONSE_JSON);
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Create Profile Service response JSON: " + responseJSON);
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(responseJSON);
+                try {
+                    Integer errorcode = (Integer) json.get("errorcode");
+                    if(errorcode == 0)  {
+                        Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": User created successfully");
+                    }
+                } catch (Exception e) {
+                    Integer temp = (Integer)json.get("errorcode");
+                    Log.e(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Failed to create user profile");
+                }
+            } catch (JSONException e)
+            {
+                Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Exception creating json object: " + e.getMessage());
+            }
         }
     }
 

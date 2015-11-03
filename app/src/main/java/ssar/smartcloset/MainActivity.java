@@ -454,7 +454,7 @@ public class MainActivity extends Activity implements
             //signinfragment.onActivityResult(requestCode, resultCode, data);
 
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + "MainActivity.onCreate");
-            signinFragment = new SigninFragment();
+            signinFragment = new SigninFragment().newInstance(false, false);
 
             manager = getFragmentManager();
             manager.beginTransaction().replace(R.id.signin_fragment, signinFragment, "SigninFragment").commit();
@@ -604,7 +604,7 @@ public class MainActivity extends Activity implements
                 if(isUserLoggedIn()) {
                     // launch Login/Signup fragment
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
-                    SigninFragment signinFragment = new SigninFragment().newInstance(true);
+                    SigninFragment signinFragment = new SigninFragment().newInstance(true, false);
                     updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
                 }
              /*   Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Log out..... ");
@@ -652,12 +652,13 @@ public class MainActivity extends Activity implements
     private boolean isUserLoggedIn() {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": isUserLoggedIn: " + getExistingUser().getUserName());
 
+        // if user is not logged in, then load SigninFragment
         if(getExistingUser().getUserEmail() == null) {
             ToastMessage.displayLongToastMessage(this, "Please sign in or create a new account");
 
             // launch Login/Signup fragment
             Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
-            SigninFragment signinFragment = new SigninFragment().newInstance(false);
+            SigninFragment signinFragment = new SigninFragment().newInstance(false, false);
             updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
 
             return false;
@@ -1133,12 +1134,16 @@ public class MainActivity extends Activity implements
         }
     }
 
-    public void onSigninFragmentInteraction(Boolean loggedOut) {
+    public void onSigninFragmentInteraction(Boolean loggedOut, Boolean signIn) {
         Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": onSigninFragmentInteraction..... ");
 
-        if (loggedOut) {
-            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
-            SigninFragment signinFragment = new SigninFragment().newInstance(false);
+        if (signIn) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Launch SigninFragment with signin button");
+            SigninFragment signinFragment = new SigninFragment().newInstance(false, true);
+            updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
+        } else if (loggedOut) {
+            Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": Launch SigninFragment with logOut button");
+            SigninFragment signinFragment = new SigninFragment().newInstance(false, false);
             updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
         } else {
             // display the Home Fragment
@@ -1502,7 +1507,7 @@ public class MainActivity extends Activity implements
 
                     // launch Login/Signup fragment
                     Log.i(SmartClosetConstants.SMARTCLOSET_DEBUG_TAG, CLASSNAME + ": SigninFragment .... ");
-                    SigninFragment signinFragment = new SigninFragment().newInstance(false);
+                    SigninFragment signinFragment = new SigninFragment().newInstance(false, false);
                     updateFragment(signinFragment, SmartClosetConstants.SLIDEMENU_HOME_ITEM);
                     //setFragmentTitle("Sign in");
                 }

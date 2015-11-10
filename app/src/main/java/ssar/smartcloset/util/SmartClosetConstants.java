@@ -29,7 +29,7 @@ public class SmartClosetConstants {
 
 
     //Amazon Elastic Beanstalk service url
-    public static final String AMAZON_APP_SPOT = "http://eb-django-app-test.elasticbeanstalk.com";
+    public static final String AMAZON_APP_SPOT = "http://smart-closet-inventory.elasticbeanstalk.com/";
     public static final String EXTRACT_ARTICLE_IMAGE_COLORS = AMAZON_APP_SPOT + "/removebackground/";
 
     public static final String PROCESS_RESPONSE = "ssar.intent.action";
